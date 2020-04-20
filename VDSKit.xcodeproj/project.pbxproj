@@ -1,0 +1,508 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		036C333524491D640021346C /* VDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C332B24491D640021346C /* VDSKit.framework */; };
+		036C333A24491D640021346C /* VDSKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C333924491D640021346C /* VDSKitTests.m */; };
+		036C333C24491D640021346C /* VDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C332E24491D640021346C /* VDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		036C334724491E570021346C /* VDSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C334524491E570021346C /* VDSDatabase.h */; };
+		036C334824491E570021346C /* VDSDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334624491E570021346C /* VDSDatabase.m */; };
+		036C334B24491E790021346C /* VDSDatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C334924491E790021346C /* VDSDatabaseContext.h */; };
+		036C334C24491E790021346C /* VDSDatabaseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334A24491E790021346C /* VDSDatabaseContext.m */; };
+		036C334F24491EA90021346C /* VDSDatabaseOperationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */; };
+		036C335024491EA90021346C /* VDSDatabaseOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */; };
+		036C3353244A230A0021346C /* VDSSnapshotCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C3351244A230A0021346C /* VDSSnapshotCache.h */; };
+		036C3354244A230A0021346C /* VDSSnapshotCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3352244A230A0021346C /* VDSSnapshotCache.m */; };
+		036C3357244A23230021346C /* VDSQueryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C3355244A23230021346C /* VDSQueryCache.h */; };
+		036C3358244A23230021346C /* VDSQueryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3356244A23230021346C /* VDSQueryCache.m */; };
+		036C335B244A233E0021346C /* VDSEntityCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C3359244A233E0021346C /* VDSEntityCache.h */; };
+		036C335C244A233E0021346C /* VDSEntityCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C335A244A233E0021346C /* VDSEntityCache.m */; };
+		036C3360244A2AF80021346C /* VDSErrorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C335F244A2AF80021346C /* VDSErrorConstants.m */; };
+		036C3362244A3D760021346C /* VDSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3361244A3D760021346C /* VDSConstants.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		036C333624491D640021346C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 036C332224491D640021346C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 036C332A24491D640021346C;
+			remoteInfo = VDSKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		036C332B24491D640021346C /* VDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		036C332E24491D640021346C /* VDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSKit.h; sourceTree = "<group>"; };
+		036C332F24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		036C333424491D640021346C /* VDSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VDSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		036C333924491D640021346C /* VDSKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSKitTests.m; sourceTree = "<group>"; };
+		036C333B24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		036C334524491E570021346C /* VDSDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabase.h; sourceTree = "<group>"; };
+		036C334624491E570021346C /* VDSDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabase.m; sourceTree = "<group>"; };
+		036C334924491E790021346C /* VDSDatabaseContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseContext.h; sourceTree = "<group>"; };
+		036C334A24491E790021346C /* VDSDatabaseContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseContext.m; sourceTree = "<group>"; };
+		036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseOperationManager.h; sourceTree = "<group>"; };
+		036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseOperationManager.m; sourceTree = "<group>"; };
+		036C3351244A230A0021346C /* VDSSnapshotCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSSnapshotCache.h; sourceTree = "<group>"; };
+		036C3352244A230A0021346C /* VDSSnapshotCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSSnapshotCache.m; sourceTree = "<group>"; };
+		036C3355244A23230021346C /* VDSQueryCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSQueryCache.h; sourceTree = "<group>"; };
+		036C3356244A23230021346C /* VDSQueryCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSQueryCache.m; sourceTree = "<group>"; };
+		036C3359244A233E0021346C /* VDSEntityCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSEntityCache.h; sourceTree = "<group>"; };
+		036C335A244A233E0021346C /* VDSEntityCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSEntityCache.m; sourceTree = "<group>"; };
+		036C335D244A28520021346C /* VDSConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSConstants.h; sourceTree = "<group>"; };
+		036C335E244A28960021346C /* VDSErrorConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSErrorConstants.h; sourceTree = "<group>"; };
+		036C335F244A2AF80021346C /* VDSErrorConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSErrorConstants.m; sourceTree = "<group>"; };
+		036C3361244A3D760021346C /* VDSConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSConstants.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		036C332824491D640021346C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		036C333124491D640021346C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C333524491D640021346C /* VDSKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		036C332124491D640021346C = {
+			isa = PBXGroup;
+			children = (
+				036C332D24491D640021346C /* VDSKit */,
+				036C333824491D640021346C /* VDSKitTests */,
+				036C332C24491D640021346C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		036C332C24491D640021346C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				036C332B24491D640021346C /* VDSKit.framework */,
+				036C333424491D640021346C /* VDSKitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		036C332D24491D640021346C /* VDSKit */ = {
+			isa = PBXGroup;
+			children = (
+				036C332E24491D640021346C /* VDSKit.h */,
+				036C335D244A28520021346C /* VDSConstants.h */,
+				036C3361244A3D760021346C /* VDSConstants.m */,
+				036C335E244A28960021346C /* VDSErrorConstants.h */,
+				036C335F244A2AF80021346C /* VDSErrorConstants.m */,
+				036C332F24491D640021346C /* Info.plist */,
+				036C334524491E570021346C /* VDSDatabase.h */,
+				036C334624491E570021346C /* VDSDatabase.m */,
+				036C334924491E790021346C /* VDSDatabaseContext.h */,
+				036C334A24491E790021346C /* VDSDatabaseContext.m */,
+				036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */,
+				036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */,
+				036C3351244A230A0021346C /* VDSSnapshotCache.h */,
+				036C3352244A230A0021346C /* VDSSnapshotCache.m */,
+				036C3355244A23230021346C /* VDSQueryCache.h */,
+				036C3356244A23230021346C /* VDSQueryCache.m */,
+				036C3359244A233E0021346C /* VDSEntityCache.h */,
+				036C335A244A233E0021346C /* VDSEntityCache.m */,
+			);
+			path = VDSKit;
+			sourceTree = "<group>";
+		};
+		036C333824491D640021346C /* VDSKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				036C333924491D640021346C /* VDSKitTests.m */,
+				036C333B24491D640021346C /* Info.plist */,
+			);
+			path = VDSKitTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		036C332624491D640021346C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C333C24491D640021346C /* VDSKit.h in Headers */,
+				036C334F24491EA90021346C /* VDSDatabaseOperationManager.h in Headers */,
+				036C334B24491E790021346C /* VDSDatabaseContext.h in Headers */,
+				036C335B244A233E0021346C /* VDSEntityCache.h in Headers */,
+				036C3353244A230A0021346C /* VDSSnapshotCache.h in Headers */,
+				036C3357244A23230021346C /* VDSQueryCache.h in Headers */,
+				036C334724491E570021346C /* VDSDatabase.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		036C332A24491D640021346C /* VDSKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 036C333F24491D640021346C /* Build configuration list for PBXNativeTarget "VDSKit" */;
+			buildPhases = (
+				036C332624491D640021346C /* Headers */,
+				036C332724491D640021346C /* Sources */,
+				036C332824491D640021346C /* Frameworks */,
+				036C332924491D640021346C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VDSKit;
+			productName = VDSKit;
+			productReference = 036C332B24491D640021346C /* VDSKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		036C333324491D640021346C /* VDSKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 036C334224491D640021346C /* Build configuration list for PBXNativeTarget "VDSKitTests" */;
+			buildPhases = (
+				036C333024491D640021346C /* Sources */,
+				036C333124491D640021346C /* Frameworks */,
+				036C333224491D640021346C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				036C333724491D640021346C /* PBXTargetDependency */,
+			);
+			name = VDSKitTests;
+			productName = VDSKitTests;
+			productReference = 036C333424491D640021346C /* VDSKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		036C332224491D640021346C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1140;
+				ORGANIZATIONNAME = "Erikheath Thomas";
+				TargetAttributes = {
+					036C332A24491D640021346C = {
+						CreatedOnToolsVersion = 11.4;
+					};
+					036C333324491D640021346C = {
+						CreatedOnToolsVersion = 11.4;
+					};
+				};
+			};
+			buildConfigurationList = 036C332524491D640021346C /* Build configuration list for PBXProject "VDSKit" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 036C332124491D640021346C;
+			productRefGroup = 036C332C24491D640021346C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				036C332A24491D640021346C /* VDSKit */,
+				036C333324491D640021346C /* VDSKitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		036C332924491D640021346C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		036C333224491D640021346C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		036C332724491D640021346C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C334C24491E790021346C /* VDSDatabaseContext.m in Sources */,
+				036C334824491E570021346C /* VDSDatabase.m in Sources */,
+				036C3358244A23230021346C /* VDSQueryCache.m in Sources */,
+				036C3362244A3D760021346C /* VDSConstants.m in Sources */,
+				036C335C244A233E0021346C /* VDSEntityCache.m in Sources */,
+				036C3354244A230A0021346C /* VDSSnapshotCache.m in Sources */,
+				036C3360244A2AF80021346C /* VDSErrorConstants.m in Sources */,
+				036C335024491EA90021346C /* VDSDatabaseOperationManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		036C333024491D640021346C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				036C333A24491D640021346C /* VDSKitTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		036C333724491D640021346C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 036C332A24491D640021346C /* VDSKit */;
+			targetProxy = 036C333624491D640021346C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		036C333D24491D640021346C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		036C333E24491D640021346C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		036C334024491D640021346C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = T5Q3QH59ZQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VDSKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		036C334124491D640021346C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = T5Q3QH59ZQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VDSKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		036C334324491D640021346C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T5Q3QH59ZQ;
+				INFOPLIST_FILE = VDSKitTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		036C334424491D640021346C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T5Q3QH59ZQ;
+				INFOPLIST_FILE = VDSKitTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		036C332524491D640021346C /* Build configuration list for PBXProject "VDSKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				036C333D24491D640021346C /* Debug */,
+				036C333E24491D640021346C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		036C333F24491D640021346C /* Build configuration list for PBXNativeTarget "VDSKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				036C334024491D640021346C /* Debug */,
+				036C334124491D640021346C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		036C334224491D640021346C /* Build configuration list for PBXNativeTarget "VDSKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				036C334324491D640021346C /* Debug */,
+				036C334424491D640021346C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 036C332224491D640021346C /* Project object */;
+}
