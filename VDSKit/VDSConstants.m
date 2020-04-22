@@ -10,7 +10,12 @@
 
 #pragma mark - VDSKit Cache Constants
 
-VDSCacheKey VDSCacheEntryTimestamp = @"VDSCacheEntryTimestamp";
-VDSCacheKey VDSCacheEntryUUID = @"VDSCacheEntryUUID";
-VDSCacheKey VDSCacheEntryEntityName = @"VDSCacheEntryEntityName";
-VDSCacheKey VDSCacheEntrySnapshots = @"VDSCacheEntrySnapshots";
+VDSCacheKey VDSEntryTimestampKey = @"VDSEntryTimestampKey";
+VDSCacheKey VDSEntryUUIDKey = @"VDSEntryUUIDKey";
+VDSCacheKey VDSEntryEntityNameKey = @"VDSEntryEntityNameKey";
+VDSCacheKey VDSEntrySnapshotKey = @"VDSEntrySnapshotKey";
+
+VDSEvictionCycleKey VDSExpirationCycleKey = @"VDSExpirationCycleKey";
+VDSEvictionCycleKey VDSFIFOPolicyCycleKey = @"VDSFIFOPolicyCycleKey";
+VDSEvictionCycleKey VDSLIFOPolicyCycleKey = @"VDSLIFOPolicyCycleKey";
+VDSEvictionCycleKey VDSUnknownCycleKey = @"VDSUnknownCycleKey";

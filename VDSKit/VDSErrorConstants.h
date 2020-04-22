@@ -18,6 +18,7 @@ FOUNDATION_EXPORT NSString* const VDSKitErrorDomain;
 typedef NS_ENUM(NSUInteger, VDSCacheErrorCode) {
     VDSEntryNotFound = 1,
     VDSUnexpectedNilArgument = 2,
+    VDSUnableToRemoveObject = 3,
 };
 
 
@@ -27,6 +28,7 @@ typedef NSString* const VDSCacheErrorKey;
 
 FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheKeyCanNotBeNilErrorKey;
 FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheArgumentCanNotBeNilErrorKey;
+FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheObjectInUseErrorKey;
 
 typedef NSString* const VDSCacheErrorMessage;
 
@@ -42,6 +44,13 @@ FOUNDATION_EXPORT VDSCacheErrorMessage VDSNilArgumentErrorMessageFormat;
 #ifndef VDS_NIL_ARGUMENT_MESSAGE
 #define VDS_NIL_ARGUMENT_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilArgumentErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
 #endif
+
+FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat;
+
+#ifndef VDS_OBJECT_IN_USE_MESSAGE
+#define VDS_OBJECT_IN_USE_MESSAGE(OBJECT, KEY) [NSString stringWithFormat:VDSObjectInUseErrorMessageFormat, OBJECT, KEY]
+#endif
+
 
 NS_ASSUME_NONNULL_END
 
