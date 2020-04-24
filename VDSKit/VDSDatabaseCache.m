@@ -79,7 +79,9 @@
 
 - (BOOL)processEvictions:(NSError *__autoreleasing  _Nullable *)error
 {
-    
+    BOOL success = YES;
+
+    return success;
 }
 
 - (BOOL)evictTrackedObject:(id _Nonnull)key

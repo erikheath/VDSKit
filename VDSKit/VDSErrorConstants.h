@@ -22,7 +22,7 @@ typedef NS_ENUM(NSUInteger, VDSCacheErrorCode) {
 };
 
 
-#pragma mark - VDSKit Cache Errors
+#pragma mark - VDSKit Cache Errors -
 
 typedef NSString* const VDSCacheErrorKey;
 
@@ -49,6 +49,27 @@ FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat;
 
 #ifndef VDS_OBJECT_IN_USE_MESSAGE
 #define VDS_OBJECT_IN_USE_MESSAGE(OBJECT, KEY) [NSString stringWithFormat:VDSObjectInUseErrorMessageFormat, OBJECT, KEY]
+#endif
+
+
+#pragma mark - VDSOperationErrors -
+
+typedef NS_ENUM(NSUInteger, VDSOperationErrorCode) {
+    VDSOperationConditionFailed,
+    VDSOperationExecutionFailed,
+    VDSOperationEnqueFailed,
+};
+
+typedef NSString* const VDSOperationErrorKey;
+
+FOUNDATION_EXPORT VDSOperationErrorKey VDSOperationCouldNotEnqueueErrorKey;
+
+typedef NSString* const VDSOperationErrorMessage;
+
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSQueueDelegateBlockedEnquementErrorMessageFormat;
+
+#ifndef VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE
+#define VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE(OPERATION_IDENTIFIER, QUEUE_IDENTIFIER) [NSString stringWithFormat:VDSQueueDelegateBlockedEnquementErrorMessageFormat, OPERATION_IDENTIFIER, QUEUE_IDENTIFIER]
 #endif
 
 

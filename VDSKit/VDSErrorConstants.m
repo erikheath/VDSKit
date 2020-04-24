@@ -25,4 +25,11 @@ VDSCacheErrorMessage VDSNilKeyErrorMessageFormat = @"The key for property %@ sho
 
 VDSCacheErrorMessage VDSNilArgumentErrorMessageFormat = @"The argument %@ for method %@ may not be nil when querying the cache. Try tracing the source of the arguement using the aggregated error report to determine where the nil argument originates.";
 
-VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat = @"The object\n%@\n using key\n%@\n can not be removed because it is in use by the cache. To remove the object, message the cache to remove the object from use, and then attempt removal again.";
+VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat = @"The object\n%@\n using key\n%@\ncan not be removed because it is in use by the cache. To remove the object, message the cache to remove the object from use, and then attempt removal again.";
+
+
+#pragma mark - VDSKit Extended Operation Errors
+
+VDSOperationErrorKey VDSOperationCouldNotEnqueueErrorKey = @"VDSOperationCouldNotEnqueueErrorKey";
+
+VDSOperationErrorMessage VDSQueueDelegateBlockedEnquementErrorMessageFormat = @"The operation\n%@\nwas blocked from being added to the operation queue \n%@\n by the queue delegate.";

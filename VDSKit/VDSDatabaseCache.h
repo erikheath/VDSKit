@@ -117,6 +117,13 @@
 @end
 
 
+#pragma mark - VDSEvictionOperation -
+
+
+@interface VDSEvictionOperation : NSOperation
+
+@end
+
 
 #pragma mark - VDSDatabaseCache -
 

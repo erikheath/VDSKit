@@ -9,10 +9,9 @@
 #import <Foundation/Foundation.h>
 
 
-#pragma mark - VDSKit Cache Constants
+#pragma mark - VDSKit Cache Constants -
 
 typedef NSString* const VDSCacheKey;
-
 FOUNDATION_EXPORT VDSCacheKey VDSEntryTimestampKey;
 FOUNDATION_EXPORT VDSCacheKey VDSEntryUUIDKey;
 FOUNDATION_EXPORT VDSCacheKey VDSEntryEntityNameKey;
@@ -28,7 +27,20 @@ FOUNDATION_EXPORT VDSEvictionCycleKey VDSUnknownCycleKey;
 /// The VDSEvictionPolicy indicates how objects should be removed from a cache.
 /// VDSFIFOPolicy indicates a First In, First Out strategy.
 /// VDSLIFOPolicy indicates a Last In, First Out strategy.
-typedef enum : NSInteger {
+typedef NS_ENUM(NSUInteger, VDSEvictionPolicy) {
     VDSFIFOPolicy = 0,
     VDSLIFOPolicy = 1,
-} VDSEvictionPolicy;
+};
+
+
+#pragma mark - Operation Constants -
+
+typedef NS_ENUM(NSUInteger, VDSOperationState) {
+    VDSOperationInitialized = 1,
+    VDSOperationPending,
+    VDSOperationEvaluating,
+    VDSOperationReady,
+    VDSOperationExecuting,
+    VDSOperationFinishing,
+    VDSOperationFinished,
+};
