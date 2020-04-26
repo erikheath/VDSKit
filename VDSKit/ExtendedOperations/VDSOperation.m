@@ -70,18 +70,61 @@
 
 @implementation VDSOperation
 
-+ (NSSet*)keyPathsForValuesAffectingIsReady {
-    return [NSSet setWithObject:@"state"];
+#pragma mark Properties and KVO Support
+
+@synthesize state = _state;
+
++ (NSSet*)keyPathsForValuesAffectingIsReady
+{
+    return [NSSet setWithObject:NSStringFromSelector(@selector(state))];
 }
 
-+ (NSSet*)keyPathsForValuesAffectingIsExecuting {
-    return [NSSet setWithObject:@"state"];
++ (NSSet*)keyPathsForValuesAffectingIsExecuting
+{
+    return [NSSet setWithObject:NSStringFromSelector(@selector(state))];
 }
 
-+ (NSSet*)keyPathsForValuesAffectingIsFinished {
-    return [NSSet setWithObject:@"state"];
++ (NSSet*)keyPathsForValuesAffectingIsFinished
+{
+    return [NSSet setWithObject:NSStringFromSelector(@selector(state))];
 }
 
+- (VDSOperationState)state
+{
+    VDSOperationState currentState;
+    [_stateCoordinator lock];
+    currentState = _state;
+    [_stateCoordinator unlock];
+    return currentState;
+}
+
+- (void)setState:(VDSOperationState)state
+{
+    [self willChangeValueForKey:NSStringFromSelector(@selector(state))];
+    
+    [_stateCoordinator lock];
+    if ([self canTransitionToState:state error:nil] == YES) { _state = state; }
+    [_stateCoordinator unlock];
+    
+    [self didChangeValueForKey:NSStringFromSelector(@selector(state))];
+}
+
+#pragma mark Object Lifecycle
+
+- (instancetype)init
+{
+    self = [super init];
+    
+    if (self != nil) {
+        _state = VDSOperationInitialized;
+        _stateCoordinator = [NSLock new];
+        _conditions = [NSArray new];
+        _observers = [NSArray new];
+        _errors = [NSArray new];
+    }
+
+    return self;
+}
 
 #pragma mark Configuration
 
