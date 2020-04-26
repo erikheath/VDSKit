@@ -125,8 +125,24 @@
 
 @interface VDSOperationCondition : NSObject
 
+
+/// @summary This class methods causes each condition to evaluate itself for the
+/// operation. It aggregates the results, returning YES if all conditons were
+/// satisfied, and NO if any of the conditons went unsatisfied. If a reference to an
+/// error object is provided, this method aggregates all errors and provides them under
+/// a single aggregation error using the NSUnderlyingErrorsKey within the userInfo dictionary
+/// of the error.
+///
+/// @param operation The operation whose conditons need to be evaluated.
+/// @param error An error aggregating any errors during evaluation. Use the return value to know when
+/// to check for an error object. A return value of NO will always produce an error object.
+///
+/// @returns YES if the operation condition(s) was satisfied, otherwise NO.
++ (BOOL)evaluateConditionsforOperation:(VDSOperation* _Nonnull)operation
+                                 error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+
 /// The name of the condition that will be used in error reporting.
-@property(class, strong, readonly, nonnull) NSString* operationName;
+@property(class, strong, readonly, nonnull) NSString* conditionName;
 
 /// @summary YES if multiple instances of an operation may execute concurrently, NO if only
 /// one instance of an operation may execute at any one time. This affects all
@@ -148,6 +164,14 @@
 /// and that, when run, may satisfy the conditional operation's execution requirements.
 - (VDSOperation* _Nullable)dependencyForOperation:(VDSOperation* _Nonnull)operation;
 
+/// @summary This instance method is the override point that enables subclasses to insert
+/// evaluation logic, error reporting, and a result for a given condition.
+///
+/// @param operation The operation whose conditions will be evaluated.
+/// @param error An error object describing the error. Use the return value to know when
+/// to check for an error object. A return value of NO will always produce an error object.
+///
+/// @returns YES if the condition was satisfied, otherwise NO.
 - (BOOL)evaluateForOperation:(VDSOperation* _Nonnull)operation
                        error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
@@ -192,14 +216,14 @@
 /// VDSOperationFinished  - The operation is done executing and has notified all interested parties.
 ///
 /// @note This property is Key-Value Observable.
-@property(readonly) VDSOperationState operationState;
+@property(readonly) VDSOperationState state;
 
 /// @summary The lock used to guarantee that only one thread may change the state
 /// value at a time.
-@property(strong, readonly, nonnull, nonatomic) NSLock* operationStateCoordinator;
+@property(strong, readonly, nonnull, nonatomic) NSLock* stateCoordinator;
 
 /// The conditions the operation must satisfy before it can execute.
-@property(strong, readonly, nonnull, nonatomic) NSArray<VDSOperationCondition*>* operationConditions;
+@property(strong, readonly, nonnull, nonatomic) NSArray<VDSOperationCondition*>* conditions;
 
 /// @summary The observers that have registed for a subset of delegate notifications.
 ///
@@ -217,12 +241,12 @@
 /// subscribing to notifications or direct Key-Value Observing of the operation. Use
 /// these options when more widespread or more granular notifications, respectively,
 /// are required.
-@property(strong, readonly, nonnull, nonatomic) NSArray* observers;
+@property(strong, readonly, nonnull, nonatomic) NSArray<id<VDSOperationObserver>>* observers;
 
 /// @summary Upon completion, contains the errors, if any, reported during execution of the
 /// operation. During execution, the array is updated as error occur. This property
 /// is Key-Value Observable.
-@property(strong, readonly, nonnull) NSArray<NSError*>* operationErrors;
+@property(strong, readonly, nonnull) NSArray<NSError*>* errors;
 
 
 /// @summary An object conforming to the VDSOperationDelegate protocol. The operation
@@ -239,11 +263,13 @@
 
 /// @summary Adds a VDSOperationCondition to the operation.
 ///
+/// @param condition The condition that should be added to the Operation.
 /// @param error An error object describing the error. Use the return value to know when
 /// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the condition was successfully added, otherwise NO.
-- (BOOL)addCondition:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (BOOL)addCondition:(VDSOperationCondition* _Nonnull)condition
+               error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 /// @summary Removes a VDSOperationCondition from the operation.
 ///
@@ -285,6 +311,18 @@
 /// enters its finished state.
 - (void)addCompletionBlock:(void(^_Nonnull)(void))completionBlock;
 
+/// Adds a dependency while reporting an error if the dependency can not be added.
+/// This method is preferred over addDependency: for adding dependencies to
+/// VDSOperation and its subclasses.
+///
+/// @param operation The operation to add as a dependency
+/// @param error An error object describing the error. Use the return value to know when
+/// to check for an error object. A return value of NO will always produce an error object.
+///
+/// @returns YES if the dependency was successfully added, otherwise NO.
+- (BOOL)addDependency:(VDSOperation* _Nonnull)operation
+                error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+
 /// @summary A convenience method that adds each of the dependencies to the operation by repeatedly
 /// calling the addDependency: method for each of the elements in the array.
 ///
@@ -324,16 +362,19 @@
 /// @summary Produces an operation of the specified class type, typically for use as a dependency
 /// by the receiver.
 ///
-/// @param operationClass The class of the operation to be produced by the receiver.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
-///
-/// @returns YES if the operation could be produced, otherwise NO.
-- (BOOL)produceOperation:(Class _Nonnull)operationClass
-                   error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @param operation The coperation produced by the receiver.
+- (void)produceOperation:(NSOperation* _Nonnull)operation;
 
 /// @summary Primary override point for subclasses to specialize a VDSOperation.
 - (void)execute;
+
+
+/// Convenience method that can be called when an operation finishes with or without an error. Calls
+/// finishWithErrors:. This method is useful as it corresponds to a standard completion patterns used in
+/// Cocoa.
+/// 
+/// @param error An error object describing the error if one occurred.
+- (void)finish:(NSError* _Nullable)error;
 
 /// @summary Called to finsish the execution of the operation's task and to notifiy the operation
 /// and any interested parties that the main task of the operation has completed and the
@@ -357,7 +398,7 @@
 /// @summary Cancels the operation and adds the error to the operationErrors array.
 ///
 /// @param error An error object describing the error.
-- (void)cancelWithError:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (void)cancelWithError:(NSError* _Nullable)error;
 
 
 @end

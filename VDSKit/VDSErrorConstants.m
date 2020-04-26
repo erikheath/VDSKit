@@ -31,5 +31,26 @@ VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat = @"The object\n%@\n using
 #pragma mark - VDSKit Extended Operation Errors
 
 VDSOperationErrorKey VDSOperationCouldNotEnqueueErrorKey = @"VDSOperationCouldNotEnqueueErrorKey";
+VDSOperationErrorKey VDSOperationCouldNotModifyOperationErrorKey = @"VDSOperationCouldNotModifyOperationErrorKey";
+VDSOperationErrorKey VDSOperationInvalidStateErrorKey = @"VDSOperationInvalidStateErrorKey";
+VDSOperationErrorKey VDSOperationFailedConditionErrorKey = @"VDSOperationFailedConditionErrorKey";
 
 VDSOperationErrorMessage VDSQueueDelegateBlockedEnquementErrorMessageFormat = @"The operation\n%@\nwas blocked from being added to the operation queue \n%@\n by the queue delegate.";
+
+VDSOperationErrorMessage VDSOperationCouldNotAddObserverErrorMessageFormat = @"The operation\n%@\ncould not add the observer \n%@\nto its observers.";
+
+VDSOperationErrorMessage VDSOperationCouldNotRemoveObserverErrorMessageFormat = @"The operation\n%@\ncould not remove the observer \n%@\nfrom its observers.";
+
+VDSOperationErrorMessage VDSOperationCouldNotAddConditionErrorMessageFormat = @"The operation\n%@\ncould not add the condition \n%@\nto its conditions.";
+
+VDSOperationErrorMessage VDSOperationCouldNotRemoveCondtionErrorMessageFormat = @"The operation\n%@\ncould not remove the conditions \n%@\nfrom its conditions.";
+
+VDSOperationErrorMessage VDSOperationCouldNotAddDependencyErrorMessageFormat = @"The operation\n%@\ncould not add the dependency \n%@\nto its dependencies.";
+
+VDSOperationErrorMessage VDSOperationCouldNotExecuteOperationWithStateErrorMessageFormat = @"The operation\n%@\nwith state \n%d\ncould not be executed. Ensure that the opertion has been added to a compatible oeration queue and that its state equals VDSOperationReady(4).";
+
+VDSOperationErrorMessage VDSOperationCouldNotEvaluateConditionsWithStateErrorMessageFormat = @"The operation\n%@\nwith state \n%d\ncould not evaluate conditions. Ensure that the opertion has been added to a compatible oeration queue, that its state equals VDSOperationPending(2), and that the operations has not been cancelled.";
+
+VDSOperationErrorMessage VDSOperationCouldNotTransitionToStateErrorMessageFormat = @"The operation\n%@\nwith state \n%d\ncould not transition to new state\n%d\nEnsure that the opertion has been added to a compatible oeration queue, that its state precedes the desired new state, and that the operations has not been cancelled.";
+
+VDSOperationErrorMessage VDSOperationCouldNotSatisfyConditionErrorMessageFormat = @"The operation\n%@\ncould not satisfy the  condition:\n%@\n";
