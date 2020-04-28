@@ -138,7 +138,7 @@
 /// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the operation condition(s) was satisfied, otherwise NO.
-+ (BOOL)evaluateConditionsforOperation:(VDSOperation* _Nonnull)operation
++ (BOOL)evaluateConditionsForOperation:(VDSOperation* _Nonnull)operation
                                  error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 /// The name of the condition that will be used in error reporting.

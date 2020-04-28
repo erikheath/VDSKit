@@ -12,7 +12,7 @@
 
 @implementation VDSOperationCondition
 
-+ (BOOL)evaluateConditionsforOperation:(VDSOperation* _Nonnull)operation
++ (BOOL)evaluateConditionsForOperation:(VDSOperation* _Nonnull)operation
                                  error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
     BOOL success = YES;
@@ -37,7 +37,7 @@
     return success;
 }
 
-+ (NSString*)conditionName { return @"Condition"; }
++ (NSString*)conditionName { return @"Generic Condition"; }
 
 + (BOOL)isMutuallyExclusive { return NO; }
 
@@ -107,6 +107,51 @@
     [_stateCoordinator unlock];
     
     [self didChangeValueForKey:NSStringFromSelector(@selector(state))];
+}
+
+- (BOOL)isReady
+{
+    BOOL success = YES;
+    
+    switch (self.state) {
+        case VDSOperationInitialized:
+        {
+            success = self.isCancelled;
+            break;
+        }
+        case VDSOperationPending:
+        {
+            if (self.isCancelled == YES) {
+                success = YES;
+            } else if ([super isReady] == YES) {
+                [self evaluateConditions:nil];
+                success = NO;
+            }
+            break;
+        }
+        case VDSOperationReady:
+        {
+            success = [super isReady] || [super isCancelled];
+            break;
+        }
+        default:
+        {
+            success = NO;
+            break;
+        }
+    }
+    
+    return success;
+}
+
+- (BOOL)isExecuting
+{
+    return self.state == VDSOperationExecuting;
+}
+
+- (BOOL)isFinished
+{
+    return self.state == VDSOperationFinished;
 }
 
 #pragma mark Object Lifecycle
@@ -306,9 +351,13 @@
     if (success == YES) {
         self.state = VDSOperationEvaluating;
         
-        success = [VDSOperationCondition evaluateConditionsforOperation:self
-                                                                  error:error];
-        self.state = VDSOperationReady;
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+            NSError* conditionError = nil;
+            if ([VDSOperationCondition evaluateConditionsForOperation:self error:&conditionError] == NO) {
+                [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObject:conditionError];
+            }
+            self.state = VDSOperationReady;
+        });
     }
     
     return success;

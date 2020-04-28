@@ -43,7 +43,7 @@ VDSOperationErrorMessage VDSOperationCouldNotRemoveObserverErrorMessageFormat = 
 
 VDSOperationErrorMessage VDSOperationCouldNotAddConditionErrorMessageFormat = @"The operation\n%@\ncould not add the condition \n%@\nto its conditions.";
 
-VDSOperationErrorMessage VDSOperationCouldNotRemoveCondtionErrorMessageFormat = @"The operation\n%@\ncould not remove the conditions \n%@\nfrom its conditions.";
+VDSOperationErrorMessage VDSOperationCouldNotRemoveConditionErrorMessageFormat = @"The operation\n%@\ncould not remove the conditions \n%@\nfrom its conditions.";
 
 VDSOperationErrorMessage VDSOperationCouldNotAddDependencyErrorMessageFormat = @"The operation\n%@\ncould not add the dependency \n%@\nto its dependencies.";
 
@@ -54,3 +54,5 @@ VDSOperationErrorMessage VDSOperationCouldNotEvaluateConditionsWithStateErrorMes
 VDSOperationErrorMessage VDSOperationCouldNotTransitionToStateErrorMessageFormat = @"The operation\n%@\nwith state \n%d\ncould not transition to new state\n%d\nEnsure that the opertion has been added to a compatible oeration queue, that its state precedes the desired new state, and that the operations has not been cancelled.";
 
 VDSOperationErrorMessage VDSOperationCouldNotSatisfyConditionErrorMessageFormat = @"The operation\n%@\ncould not satisfy the  condition:\n%@\n";
+
+

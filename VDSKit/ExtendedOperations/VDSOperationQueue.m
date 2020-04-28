@@ -126,7 +126,7 @@ static dispatch_once_t onceToken;
     // If any of the conditions require mutual exclusivity, add them to the shared Mutex
     // coordinator. Also, the operation must be removed from the mutex coordinator once
     // the operation finishes.
-    for (VDSOperationCondition* condition in operation.operationConditions) {
+    for (VDSOperationCondition* condition in operation.conditions) {
         if ([[condition class] isMutuallyExclusive] == YES) {
             [mutexConditions addObject:NSStringFromClass([condition class])];
         }
@@ -152,7 +152,7 @@ static dispatch_once_t onceToken;
         operation.delegate = self;
         
         //Add depencies to the current operation so that conditions may be satisfied.
-        for (VDSOperationCondition* condition in operation.operationConditions) {
+        for (VDSOperationCondition* condition in operation.conditions) {
             NSOperation* dependency = [condition dependencyForOperation:operation];
             if (dependency != nil) {
                 [operation addDependency:dependency];
