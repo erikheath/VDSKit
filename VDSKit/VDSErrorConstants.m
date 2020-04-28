@@ -16,8 +16,7 @@ NSString* const VDSKitErrorDomain = @"VDSKitErrorDomain";
 VDSCoreErrorKey VDSMultipleErrorsReportErrorKey = @"VDSMultipleErrorsReportErrorKey";
 VDSCoreErrorKey VDSLocationErrorKey = @"VDSLocationErrorKey";
 VDSCoreErrorKey VDSLocationParametersErrorKey = @"VDSLocationParametersErrorKey";
-VDSCoreErrorKey VDSKeyCanNotBeNilErrorKey = @"VDSKeyCanNotBeNilErrorKey";
-VDSCoreErrorKey VDSArgumentCanNotBeNilErrorKey = @"VDSArgumentCanNotBeNilErrorKey";
+
 
 VDSCoreErrorMessage VDSNilKeyErrorMessageFormat = @"The key for property %@ should not be nil. Try tracing the source of the key using the  error to determine where the nil key originates. Also, try placing a breakpoint for this accessor method: %@.";
 
@@ -26,18 +25,12 @@ VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat = @"The argument %@ for met
 #pragma mark - VDSKit Cache Errors
 
 
-VDSCacheErrorKey VDSCacheObjectInUseErrorKey = @"VDSCacheObjectInUseErrorKey";
  
 VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat = @"The object\n%@\n using key\n%@\ncan not be removed because it is in use by the cache. To remove the object, message the cache to remove the object from use, and then attempt removal again.";
 
 
 #pragma mark - VDSKit Extended Operation Errors
-
-VDSOperationErrorKey VDSOperationCouldNotEnqueueErrorKey = @"VDSOperationCouldNotEnqueueErrorKey";
-VDSOperationErrorKey VDSOperationCouldNotModifyOperationErrorKey = @"VDSOperationCouldNotModifyOperationErrorKey";
-VDSOperationErrorKey VDSOperationInvalidStateErrorKey = @"VDSOperationInvalidStateErrorKey";
-VDSOperationErrorKey VDSOperationFailedConditionErrorKey = @"VDSOperationFailedConditionErrorKey";
-
+ // See implementation for description.
 VDSOperationErrorMessage VDSQueueDelegateBlockedEnquementErrorMessageFormat = @"The operation\n%@\nwas blocked from being added to the operation queue \n%@\n by the queue delegate.";
 
 VDSOperationErrorMessage VDSOperationCouldNotAddObserverErrorMessageFormat = @"The operation\n%@\ncould not add the observer \n%@\nto its observers.";

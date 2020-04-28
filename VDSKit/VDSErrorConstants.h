@@ -75,12 +75,8 @@
     of the error. For example, a nil argument was encountered where a non-nil argument
     was expected.
  
- 5. VDSKit Subsystem Error Key: VDSKit provides a number of error keys that correspond
-    to its subsystems such as VDSOperationErrorKey and VDSCacheErrorKey. These error
-    keys provide an interpretation of the cause of the error within the context of the
-    subsystem and the method. Where possible, a recovery suggestion is provided. This
-    suggestion is not appropriate for end users as it represents an internal diagnostic.
-    This value is repeated using the NSDebugDescriptionErrorKey for convenience.
+ 5. VDSKit Subsystem Error Description: A description of the error and when possible,
+    diagnostic advice is provided using the NSDebugDescriptionErrorKey.
  
  6. Multiple Errors Report: In the event that multiple errors occur on multiple threads
     as part of a method's execution, VDSKit reports the individual errors using the
@@ -145,12 +141,15 @@ typedef NS_ENUM(NSUInteger, VDSKitErrorCode) {
     VDSUnknownError = 1, // The cause of the error is unknown.
     VDSMultipleErrors, // Multiple errors have occurred, often simultaneously.
     VDSUnexpectedNilArgument, // A nil argument was recived when non-nil was expected.
+    VDSNilPropertyKey, // A nil key was used to access a property.
     VDSEntryNotFound, // The entry was not found in the cache.
     VDSUnableToRemoveObject, // The entry could not be removed from the cache.
     VDSOperationConditionFailed, // The condition was not satisfied.
     VDSOperationExecutionFailed, // The operation failed to execute.
     VDSOperationEnqueFailed, // The operation could not be added to a queue.
     VDSOperationModificationFailed, // The attempted modification of the operation failed.
+    VDSOperationInvalidState, // The operation is in an invalid state for the request.
+    VDSCacheObjectInUse, // The operation could not be removed because it is in use.
 };
 
 typedef NSString* const VDSCoreErrorKey;
@@ -158,11 +157,9 @@ typedef NSString* const VDSCoreErrorKey;
 FOUNDATION_EXPORT VDSCoreErrorKey VDSMultipleErrorsReportErrorKey; // A key for accessing multiple underlying errors.
 FOUNDATION_EXPORT VDSCoreErrorKey VDSLocationErrorKey; // The selector name where the error occurred.
 FOUNDATION_EXPORT VDSCoreErrorKey VDSLocationParametersErrorKey; // Parameter names and value descriptions.
-FOUNDATION_EXPORT VDSCoreErrorKey VDSKeyCanNotBeNilErrorKey; // Property key can not be nil.
-FOUNDATION_EXPORT VDSCoreErrorKey VDSArgumentCanNotBeNilErrorKey; // Selector argument can not be nil.
+
 
 typedef NSString* const VDSCoreErrorMessage;
-
 
 FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilKeyErrorMessageFormat; // See implementation for description.
 
@@ -177,11 +174,8 @@ FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat; // See i
 #define VDS_NIL_ARGUMENT_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilArgumentErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
 #endif
 
+
 #pragma mark - VDSKit Cache Errors -
-
-typedef NSString* const VDSCacheErrorKey;
-
-FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheObjectInUseErrorKey;
 
 
 typedef NSString* const VDSCacheErrorMessage;
@@ -196,13 +190,6 @@ FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat; // See 
 
 #pragma mark - VDSOperationErrors -
 
-
-typedef NSString* const VDSOperationErrorKey;
-
-FOUNDATION_EXPORT VDSOperationErrorKey VDSOperationCouldNotEnqueueErrorKey;
-FOUNDATION_EXPORT VDSOperationErrorKey VDSOperationCouldNotModifyOperationErrorKey;
-FOUNDATION_EXPORT VDSOperationErrorKey VDSOperationInvalidStateErrorKey;
-FOUNDATION_EXPORT VDSOperationErrorKey VDSOperationFailedConditionErrorKey;
 
 typedef NSString* const VDSOperationErrorMessage;
 

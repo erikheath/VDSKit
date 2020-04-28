@@ -119,7 +119,7 @@ static dispatch_once_t onceToken;
         if (success == NO && error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationEnqueFailed
-                                     userInfo:@{VDSOperationCouldNotEnqueueErrorKey: VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE(operation.name, self.name)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE(operation.name, self.name)}];
         }
     }
 

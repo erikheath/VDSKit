@@ -98,7 +98,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain: VDSKitErrorDomain
                                          code:VDSUnableToRemoveObject
-                                     userInfo:@{VDSCacheObjectInUseErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
         }
     }
     

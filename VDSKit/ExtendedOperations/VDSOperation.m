@@ -184,7 +184,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationModificationFailed
-                                     userInfo:@{VDSOperationCouldNotModifyOperationErrorKey: VDS_OPERATION_COULD_NOT_ADD_CONDITION_MESSAGE(self.name, condition)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_ADD_CONDITION_MESSAGE(self.name, condition)}];
         }
         success = NO;
     }
@@ -203,7 +203,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationModificationFailed
-                                     userInfo:@{VDSOperationCouldNotModifyOperationErrorKey: VDS_OPERATION_COULD_NOT_REMOVE_CONDITION_MESSAGE(self.name, condition)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_REMOVE_CONDITION_MESSAGE(self.name, condition)}];
         }
         success = NO;
     }
@@ -222,7 +222,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationModificationFailed
-                                     userInfo:@{VDSOperationCouldNotModifyOperationErrorKey: VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE(self.name, observer)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE(self.name, observer)}];
         }
         success = NO;
     }
@@ -241,7 +241,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationModificationFailed
-                                     userInfo:@{VDSOperationCouldNotModifyOperationErrorKey: VDS_OPERATION_COULD_NOT_REMOVE_OBSERVER_MESSAGE(self.name, observer)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_REMOVE_OBSERVER_MESSAGE(self.name, observer)}];
         }
         success = NO;
     }
@@ -281,7 +281,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationModificationFailed
-                                     userInfo:@{VDSOperationCouldNotModifyOperationErrorKey: VDS_OPERATION_COULD_NOT_ADD_DEPENDENCY_MESSAGE(self.name, operation)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_ADD_DEPENDENCY_MESSAGE(self.name, operation)}];
         }
         success = NO;
     }
@@ -328,7 +328,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationExecutionFailed
-                                     userInfo:@{VDSOperationInvalidStateErrorKey: VDS_OPERATION_COULD_NOT_TRANSTION_TO_STATE_MESSAGE(self.name, self.state, state)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_TRANSTION_TO_STATE_MESSAGE(self.name, self.state, state)}];
         }
         success = NO;
     }
@@ -344,7 +344,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSOperationExecutionFailed
-                                     userInfo:@{VDSOperationInvalidStateErrorKey:VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(self.name, self.state)}];
+                                     userInfo:@{NSDebugDescriptionErrorKey:VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(self.name, self.state)}];
         }
     }
     
@@ -390,7 +390,7 @@
     if (success == YES && self.state != VDSOperationReady) {
         error = [NSError errorWithDomain:VDSKitErrorDomain
                                     code:VDSOperationExecutionFailed
-                                userInfo:@{VDSOperationInvalidStateErrorKey:VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(self.name, self.state)}];
+                                userInfo:@{NSDebugDescriptionErrorKey:VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(self.name, self.state)}];
         success = NO;
     }
     
