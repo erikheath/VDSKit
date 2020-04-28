@@ -13,18 +13,21 @@
 
 NSString* const VDSKitErrorDomain = @"VDSKitErrorDomain";
 
+VDSCoreErrorKey VDSMultipleErrorsReportErrorKey = @"VDSMultipleErrorsReportErrorKey";
+VDSCoreErrorKey VDSLocationErrorKey = @"VDSLocationErrorKey";
+VDSCoreErrorKey VDSLocationParametersErrorKey = @"VDSLocationParametersErrorKey";
+VDSCoreErrorKey VDSKeyCanNotBeNilErrorKey = @"VDSKeyCanNotBeNilErrorKey";
+VDSCoreErrorKey VDSArgumentCanNotBeNilErrorKey = @"VDSArgumentCanNotBeNilErrorKey";
+
+VDSCoreErrorMessage VDSNilKeyErrorMessageFormat = @"The key for property %@ should not be nil. Try tracing the source of the key using the  error to determine where the nil key originates. Also, try placing a breakpoint for this accessor method: %@.";
+
+VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat = @"The argument %@ for method %@ may not be nil when querying the cache. Try tracing the source of the arguement using the aggregated error report to determine where the nil argument originates.";
 
 #pragma mark - VDSKit Cache Errors
 
-VDSCacheErrorKey VDSCacheKeyCanNotBeNilErrorKey = @"VDSCacheKeyCanNotBeNilErrorKey";
-VDSCacheErrorKey VDSCacheArgumentCanNotBeNilErrorKey = @"VDSCacheArgumentCanNotBeNilErrorKey";
+
 VDSCacheErrorKey VDSCacheObjectInUseErrorKey = @"VDSCacheObjectInUseErrorKey";
  
-
-VDSCacheErrorMessage VDSNilKeyErrorMessageFormat = @"The key for property %@ should not be nil. Try tracing the source of the key using the aggregated error report to determine where the nil key originates. Also, try placing a breakpoint for this accessor method: %@.";
-
-VDSCacheErrorMessage VDSNilArgumentErrorMessageFormat = @"The argument %@ for method %@ may not be nil when querying the cache. Try tracing the source of the arguement using the aggregated error report to determine where the nil argument originates.";
-
 VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat = @"The object\n%@\n using key\n%@\ncan not be removed because it is in use by the cache. To remove the object, message the cache to remove the object from use, and then attempt removal again.";
 
 

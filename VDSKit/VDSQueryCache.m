@@ -70,7 +70,7 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSUnexpectedNilArgument
-                                     userInfo:@{VDSCacheArgumentCanNotBeNilErrorKey:VDS_NIL_ARGUMENT_MESSAGE(@"queryReference", _cmd)}];
+                                     userInfo:@{VDSArgumentCanNotBeNilErrorKey:VDS_NIL_ARGUMENT_MESSAGE(@"queryReference", _cmd)}];
         }
     } else {
         cacheEntry = [_queryCache objectForKey:queryReference];
@@ -89,13 +89,13 @@
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSUnexpectedNilArgument
-                                     userInfo:@{VDSCacheArgumentCanNotBeNilErrorKey:VDS_NIL_ARGUMENT_MESSAGE(@"queryReference", _cmd)}];
+                                     userInfo:@{VDSArgumentCanNotBeNilErrorKey:VDS_NIL_ARGUMENT_MESSAGE(@"queryReference", _cmd)}];
         }
     } else if (entry == nil) {
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
                                          code:VDSUnexpectedNilArgument
-                                     userInfo:@{VDSCacheArgumentCanNotBeNilErrorKey:VDS_NIL_ARGUMENT_MESSAGE(@"entry", _cmd)}];
+                                     userInfo:@{VDSArgumentCanNotBeNilErrorKey:VDS_NIL_ARGUMENT_MESSAGE(@"entry", _cmd)}];
         }
     } else {
         [_queryCache setObject:entry

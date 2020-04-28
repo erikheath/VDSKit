@@ -10,6 +10,13 @@
 /*
  Error Management in VDSKit
  
+ ***********************
+ Error Handling Overview
+ ***********************
+ 
+ 
+ Error Reporting *****************
+ 
  VDSKit makes liberal use of error reporting and error chaining to provide
  consistent, informative, and timely feedback for developers, and where appropriate,
  for end users. To accomplish this, VDSKit follows three general patterns for error
@@ -42,6 +49,9 @@
     occurs. In either case, for classes or objects that log errors, the
     error will be logged internally as indicated by the preceding rule(s).
  
+
+ Error Chaining *****************
+
  In addition to error reporting, VDSKit makes use of error chaining when reporting
  errors. Error chaining links a series of errors together using NSErrors userInfo
  property with the NSUnderlyingError key associated with an error object that underlies
@@ -53,11 +63,11 @@
  include more information than is typical in most frameworks. This includes:
  
  1. Error Location: The selector name is included to identify where in a call stack
-    an error originated. Use the key VDSErrorLocationKey.
+    an error originated. Use the key VDSLocationErrorKey.
  
  2. Parameter Value Descriptions: For each argument submitted to the method, the
     parameter name and description for objects or values for non objects is included
-    with the error. Use the key VDSErrorLocationParametersKey.
+    with the error. Use the key VDSLocationParametersErrorKey.
  
  3. Error Domain: For VDSKit, this is the VDSKitErrorDomain.
  
@@ -74,12 +84,52 @@
  
  6. Multiple Errors Report: In the event that multiple errors occur on multiple threads
     as part of a method's execution, VDSKit reports the individual errors using the
-    VDSMultipleErrorsKey with an array of the error objects. For this type of error,
+    VDSMultipleErrorsReportErrorKey with an array of the error objects. For this type of error,
     the NSUnderlyingErrorsKey is not included in the userInfo dictionary.
  
  Where possible, additional standard Cocoa Error keys are used to provide as rich a
  diagnostic report as possible. Methods that produce user facing error messages are
  documented as doing so.
+ 
+ *************************************************
+ Nil, Exceptions, and Unexpected Argument Handling
+ *************************************************
+ 
+ All VDSKit methods are annotated for nullability and in, out, and inout pointer semantics. However,
+ sending a nil argument to a method in the Objective-C version of VDSKit will not cause an exception
+ to be thrown or program termination. Instead, VDS methods employ a check at the beginning of method
+ execution to determine if parameter arguments meet minimum conditions for execution including
+ nullability, bounds, and in certain cases type. This argument checking is only done on public facing
+ methods, so the additional overhead is minimal while providing important diagnostic details and helping
+ to prevent inconsistent application states due to partial method execution.
+ 
+ 
+ How It Works Internally *****************
+ 
+ (Almost) All VDSKit methods begin with a BOOL success parameter whose value determines whether the
+ method may execute or not. This success parameter's value is initially determined by assessing whether
+ incoming arguments meet the minimum requirements for the method to execute. If arguments fail to meet
+ the requirements, success is set to NO, the main body of the method is prevented from executing, the
+ method will set an error if possible describing the failure, and finally will return NO to the sender.
+ 
+ While not recommended, this behavior can be turned off using an environment setting: VDS_ARG_CHECKS and
+ setting it to NO.
+ 
+ 
+ Dealing With Exceptions *****************
+ 
+ VDSKit does not generate exceptions. The reasons for this are that most errors in VDSKit are going to
+ happen not because of programmer error (which should generate exceptions and be fixed), but because
+ VDSKit is operating in a dynamic environment, often collecting data from unreliable sources over
+ unreliable networks. Using errors enables VDSKit and anything built on top of it to treat this situation
+ as a natural and expected alternate flow of events. This alternate flow will often result in
+ in nil values being passed to parameters that expect non-nil values and is why VDSKit checks
+ incoming argument values and returns errors instead of throwing nil argument exceptions.
+ 
+ However, while VDSKit doesn't throw exceptions, most of the Cocoa systems that VDSKit builds on top of do.
+ Because of this, where an exception is considered to be part of a normal operation, VDSKit will wrap
+ exceptions in Error objects and foward them to a sender. Unexpected exceptions, for example trying to
+ insert a nil into an array are not wrapped and will typically result in a program crash.
  
  */
 
@@ -92,39 +142,50 @@ NS_ASSUME_NONNULL_BEGIN
 FOUNDATION_EXPORT NSString* const VDSKitErrorDomain;
 
 typedef NS_ENUM(NSUInteger, VDSKitErrorCode) {
-    VDSUnknownError = 1,
-    VDSMultipleErrors = 2,
-    VDSUnexpectedNilArgument = 3,
+    VDSUnknownError = 1, // The cause of the error is unknown.
+    VDSMultipleErrors = 2, // Multiple errors have occurred, often simultaneously.
+    VDSUnexpectedNilArgument = 3, // A nil argument was recived when non-nil was expected.
 };
 
-#pragma mark - VDSKit Cache Errors -
+typedef NSString* const VDSCoreErrorKey;
 
-typedef NS_ENUM(NSUInteger, VDSCacheErrorCode) {
-    VDSEntryNotFound = 1,
-    VDSUnableToRemoveObject = 2,
-};
+FOUNDATION_EXPORT VDSCoreErrorKey VDSMultipleErrorsReportErrorKey; // A key for accessing multiple underlying errors.
+FOUNDATION_EXPORT VDSCoreErrorKey VDSLocationErrorKey; // The selector name where the error occurred.
+FOUNDATION_EXPORT VDSCoreErrorKey VDSLocationParametersErrorKey; // Parameter names and value descriptions.
+FOUNDATION_EXPORT VDSCoreErrorKey VDSKeyCanNotBeNilErrorKey; // Key can not be nil.
+FOUNDATION_EXPORT VDSCoreErrorKey VDSArgumentCanNotBeNilErrorKey; // Selector argument can not be nil.
+
+typedef NSString* const VDSCoreErrorMessage;
 
 
-typedef NSString* const VDSCacheErrorKey;
-
-FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheKeyCanNotBeNilErrorKey;
-FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheArgumentCanNotBeNilErrorKey;
-FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheObjectInUseErrorKey;
-
-typedef NSString* const VDSCacheErrorMessage;
-
-FOUNDATION_EXPORT VDSCacheErrorMessage VDSNilKeyErrorMessageFormat;
+FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilKeyErrorMessageFormat;
 
 #ifndef VDS_NIL_KEY_MESSAGE
 #define VDS_NIL_KEY_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilKeyErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
 #endif
 
 
-FOUNDATION_EXPORT VDSCacheErrorMessage VDSNilArgumentErrorMessageFormat;
+FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat;
 
 #ifndef VDS_NIL_ARGUMENT_MESSAGE
 #define VDS_NIL_ARGUMENT_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilArgumentErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
 #endif
+
+#pragma mark - VDSKit Cache Errors -
+
+typedef NS_ENUM(NSUInteger, VDSCacheErrorCode) {
+    VDSEntryNotFound = 1, // The entry was not found in the cache.
+    VDSUnableToRemoveObject = 2, // The entry could not be removed from the cache.
+};
+
+
+typedef NSString* const VDSCacheErrorKey;
+
+
+FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheObjectInUseErrorKey;
+
+typedef NSString* const VDSCacheErrorMessage;
+
 
 FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat;
 
