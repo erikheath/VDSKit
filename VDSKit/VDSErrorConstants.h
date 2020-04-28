@@ -143,8 +143,14 @@ FOUNDATION_EXPORT NSString* const VDSKitErrorDomain;
 
 typedef NS_ENUM(NSUInteger, VDSKitErrorCode) {
     VDSUnknownError = 1, // The cause of the error is unknown.
-    VDSMultipleErrors = 2, // Multiple errors have occurred, often simultaneously.
-    VDSUnexpectedNilArgument = 3, // A nil argument was recived when non-nil was expected.
+    VDSMultipleErrors, // Multiple errors have occurred, often simultaneously.
+    VDSUnexpectedNilArgument, // A nil argument was recived when non-nil was expected.
+    VDSEntryNotFound, // The entry was not found in the cache.
+    VDSUnableToRemoveObject, // The entry could not be removed from the cache.
+    VDSOperationConditionFailed, // The condition was not satisfied.
+    VDSOperationExecutionFailed, // The operation failed to execute.
+    VDSOperationEnqueFailed, // The operation could not be added to a queue.
+    VDSOperationModificationFailed, // The attempted modification of the operation failed.
 };
 
 typedef NSString* const VDSCoreErrorKey;
@@ -152,20 +158,20 @@ typedef NSString* const VDSCoreErrorKey;
 FOUNDATION_EXPORT VDSCoreErrorKey VDSMultipleErrorsReportErrorKey; // A key for accessing multiple underlying errors.
 FOUNDATION_EXPORT VDSCoreErrorKey VDSLocationErrorKey; // The selector name where the error occurred.
 FOUNDATION_EXPORT VDSCoreErrorKey VDSLocationParametersErrorKey; // Parameter names and value descriptions.
-FOUNDATION_EXPORT VDSCoreErrorKey VDSKeyCanNotBeNilErrorKey; // Key can not be nil.
+FOUNDATION_EXPORT VDSCoreErrorKey VDSKeyCanNotBeNilErrorKey; // Property key can not be nil.
 FOUNDATION_EXPORT VDSCoreErrorKey VDSArgumentCanNotBeNilErrorKey; // Selector argument can not be nil.
 
 typedef NSString* const VDSCoreErrorMessage;
 
 
-FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilKeyErrorMessageFormat;
+FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilKeyErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_NIL_KEY_MESSAGE
 #define VDS_NIL_KEY_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilKeyErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
 #endif
 
 
-FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat;
+FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_NIL_ARGUMENT_MESSAGE
 #define VDS_NIL_ARGUMENT_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilArgumentErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
@@ -173,21 +179,15 @@ FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat;
 
 #pragma mark - VDSKit Cache Errors -
 
-typedef NS_ENUM(NSUInteger, VDSCacheErrorCode) {
-    VDSEntryNotFound = 1, // The entry was not found in the cache.
-    VDSUnableToRemoveObject = 2, // The entry could not be removed from the cache.
-};
-
-
 typedef NSString* const VDSCacheErrorKey;
 
-
 FOUNDATION_EXPORT VDSCacheErrorKey VDSCacheObjectInUseErrorKey;
+
 
 typedef NSString* const VDSCacheErrorMessage;
 
 
-FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat;
+FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OBJECT_IN_USE_MESSAGE
 #define VDS_OBJECT_IN_USE_MESSAGE(OBJECT, KEY) [NSString stringWithFormat:VDSObjectInUseErrorMessageFormat, OBJECT, KEY]
@@ -196,12 +196,6 @@ FOUNDATION_EXPORT VDSCacheErrorMessage VDSObjectInUseErrorMessageFormat;
 
 #pragma mark - VDSOperationErrors -
 
-typedef NS_ENUM(NSUInteger, VDSOperationErrorCode) {
-    VDSOperationConditionFailed,
-    VDSOperationExecutionFailed,
-    VDSOperationEnqueFailed,
-    VDSOperationModificationFailed,
-};
 
 typedef NSString* const VDSOperationErrorKey;
 
@@ -212,70 +206,70 @@ FOUNDATION_EXPORT VDSOperationErrorKey VDSOperationFailedConditionErrorKey;
 
 typedef NSString* const VDSOperationErrorMessage;
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSQueueDelegateBlockedEnquementErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSQueueDelegateBlockedEnquementErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE
 #define VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE(OPERATION_IDENTIFIER, QUEUE_IDENTIFIER) [NSString stringWithFormat:VDSQueueDelegateBlockedEnquementErrorMessageFormat, OPERATION_IDENTIFIER, QUEUE_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotAddObserverErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotAddObserverErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE
 #define VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE(OPERATION_IDENTIFIER, OBSERVER_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotAddObserverErrorMessageFormat, OPERATION_IDENTIFIER, OBSERVER_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotRemoveObserverErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotRemoveObserverErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_REMOVE_OBSERVER_MESSAGE
 #define VDS_OPERATION_COULD_NOT_REMOVE_OBSERVER_MESSAGE(OPERATION_IDENTIFIER, OBSERVER_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotRemoveObserverErrorMessageFormat, OPERATION_IDENTIFIER, OBSERVER_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotAddConditionErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotAddConditionErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_ADD_CONDITION_MESSAGE
 #define VDS_OPERATION_COULD_NOT_ADD_CONDITION_MESSAGE(OPERATION_IDENTIFIER, CONDITION_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotAddConditionErrorMessageFormat, OPERATION_IDENTIFIER, CONDITION_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotRemoveConditionErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotRemoveConditionErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_REMOVE_CONDITION_MESSAGE
 #define VDS_OPERATION_COULD_NOT_REMOVE_CONDITION_MESSAGE(OPERATION_IDENTIFIER, CONDITION_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotRemoveConditionErrorMessageFormat, OPERATION_IDENTIFIER, CONDITION_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotAddDependencyErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotAddDependencyErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_ADD_DEPENDENCY_MESSAGE
 #define VDS_OPERATION_COULD_NOT_ADD_DEPENDENCY_MESSAGE(OPERATION_IDENTIFIER, DEPENDENCY_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotAddDependencyErrorMessageFormat, OPERATION_IDENTIFIER, DEPENDENCY_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotExecuteOperationWithStateErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotExecuteOperationWithStateErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE
 #define VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(OPERATION_IDENTIFIER, STATE_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotExecuteOperationWithStateErrorMessageFormat, OPERATION_IDENTIFIER, STATE_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotEvaluateConditionsWithStateErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotEvaluateConditionsWithStateErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE
 #define VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(OPERATION_IDENTIFIER, STATE_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotEvaluateConditionsWithStateErrorMessageFormat, OPERATION_IDENTIFIER, STATE_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotTransitionToStateErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotTransitionToStateErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_TRANSTION_TO_STATE_MESSAGE
 #define VDS_OPERATION_COULD_NOT_TRANSTION_TO_STATE_MESSAGE(OPERATION_IDENTIFIER, CURRENT_STATE_IDENTIFIER, NEW_STATE_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotTransitionToStateErrorMessageFormat, OPERATION_IDENTIFIER, CURRENT_STATE_IDENTIFIER, NEW_STATE_IDENTIFIER]
 #endif
 
 
-FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotSatisfyConditionErrorMessageFormat;
+FOUNDATION_EXPORT VDSOperationErrorMessage VDSOperationCouldNotSatisfyConditionErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_OPERATION_COULD_NOT_SATISFY_CONDITION_MESSAGE
 #define VDS_OPERATION_COULD_NOT_SATISFY_CONDITION_MESSAGE(OPERATION_IDENTIFIER, CONDITION_IDENTIFIER) [NSString stringWithFormat:VDSOperationCouldNotSatisfyConditionErrorMessageFormat, OPERATION_IDENTIFIER, CONDITION_IDENTIFIER]
