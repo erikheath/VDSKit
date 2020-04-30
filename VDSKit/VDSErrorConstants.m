@@ -20,7 +20,9 @@ VDSCoreErrorKey VDSLocationParametersErrorKey = @"VDSLocationParametersErrorKey"
 
 VDSCoreErrorMessage VDSNilKeyErrorMessageFormat = @"The key for property %@ should not be nil. Try tracing the source of the key using the  error to determine where the nil key originates. Also, try placing a breakpoint for this accessor method: %@.";
 
-VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat = @"The argument %@ for method %@ may not be nil when querying the cache. Try tracing the source of the arguement using the aggregated error report to determine where the nil argument originates.";
+VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat = @"The argument %@ for method %@ may not be nil when querying the cache. Try tracing the source of the argument using the aggregated error report to determine where the nil argument originates.";
+
+VDSCoreErrorMessage VDSUnexpectedArgumentTypeErrorMessageFormat  = @"The argument %@ for parameter %@ of method %@ must be of type %@. Try tracing the source of the argument using the error report to determine where the argument originates.";
 
 #pragma mark - VDSKit Cache Errors
 
@@ -50,5 +52,4 @@ VDSOperationErrorMessage VDSOperationCouldNotEvaluateConditionsWithStateErrorMes
 VDSOperationErrorMessage VDSOperationCouldNotTransitionToStateErrorMessageFormat = @"The operation\n%@\nwith state \n%d\ncould not transition to new state\n%d\nEnsure that the opertion has been added to a compatible oeration queue, that its state precedes the desired new state, and that the operations has not been cancelled.";
 
 VDSOperationErrorMessage VDSOperationCouldNotSatisfyConditionErrorMessageFormat = @"The operation\n%@\ncould not satisfy the  condition:\n%@\n";
-
 

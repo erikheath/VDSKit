@@ -7,6 +7,7 @@
 //
 
 #import "VDSOperation.h"
+#import "../VDSErrorFunctions.h"
 
 #pragma mark - VDSOperationCondition -
 
@@ -16,22 +17,34 @@
                                  error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
     BOOL success = YES;
-    NSMutableArray* errorArray = [NSMutableArray new];
     
-    for (VDSOperationCondition* condition in operation.conditions) {
-        NSError* internalError = nil;
-        BOOL satisfied = [condition evaluateForOperation:operation
-                                                   error:&internalError];
-        if (satisfied == NO) { [errorArray addObject: internalError]; }
-    }
+    VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
     
-    if (errorArray.count > 0) {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationExecutionFailed
-                                     userInfo:@{NSUnderlyingErrorKey: [errorArray copy]}];
+    if (success) {
+        NSMutableArray* errorArray = [NSMutableArray new];
+        NSMutableString* failedConditions = [NSMutableString stringWithString:@"\n"];
+        
+        for (VDSOperationCondition* condition in operation.conditions) {
+            NSError* internalError = nil;
+            BOOL satisfied = [condition evaluateForOperation:operation
+                                                       error:&internalError];
+            if (satisfied == NO) {
+                [errorArray addObject: internalError];
+                [failedConditions appendFormat:@"%@\n", NSStringFromClass([condition class])];
+            }
         }
-        success = NO;
+        
+        if (errorArray.count > 0) {
+            if (error != NULL) {
+                *error = [NSError errorWithDomain:VDSKitErrorDomain
+                                             code:VDSOperationExecutionFailed
+                                         userInfo:@{VDSMultipleErrorsReportErrorKey: [errorArray copy],
+                                                    VDSLocationErrorKey: NSStringFromSelector(_cmd),
+                                                    VDSLocationParametersErrorKey:@{@"": [operation description], NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_SATISFY_CONDITION_MESSAGE(operation.name, failedConditions)}
+                                         }];
+            }
+            success = NO;
+        }
     }
     
     return success;
@@ -178,6 +191,8 @@
 {
     BOOL success = YES;
     
+    VDS_NONNULL_CHECK(@"condition", condition, [VDSOperationCondition class], _cmd, error)
+    
     if(_state < VDSOperationEvaluating) {
         [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] addObject:condition];
     } else {
@@ -196,6 +211,8 @@
                   error:(NSError *__autoreleasing  _Nullable *)error
 {
     BOOL success = YES;
+    
+    VDS_NONNULL_CHECK(@"condition", condition, [VDSOperationCondition class], _cmd, error)
     
     if(_state < VDSOperationEvaluating) {
         [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] removeObject:condition];
@@ -230,7 +247,7 @@
     return success;
 }
 
-- (BOOL)removeObserver:(id)observer
+- (BOOL)removeObserver:(id<VDSOperationObserver>)observer
                  error:(NSError *__autoreleasing  _Nullable *)error
 {
     BOOL success = YES;

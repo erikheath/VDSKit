@@ -130,6 +130,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -137,10 +138,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXPORT NSString* const VDSKitErrorDomain;
 
+
 typedef NS_ENUM(NSUInteger, VDSKitErrorCode) {
     VDSUnknownError = 1, // The cause of the error is unknown.
     VDSMultipleErrors, // Multiple errors have occurred, often simultaneously.
     VDSUnexpectedNilArgument, // A nil argument was recived when non-nil was expected.
+    VDSUnexpextedObjectType, // A argument was received of an unexpected type.
     VDSNilPropertyKey, // A nil key was used to access a property.
     VDSEntryNotFound, // The entry was not found in the cache.
     VDSUnableToRemoveObject, // The entry could not be removed from the cache.
@@ -173,6 +176,14 @@ FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat; // See i
 #ifndef VDS_NIL_ARGUMENT_MESSAGE
 #define VDS_NIL_ARGUMENT_MESSAGE(ARGUMENT, METHOD) [NSString stringWithFormat:VDSNilArgumentErrorMessageFormat, ARGUMENT, NSStringFromSelector(METHOD)]
 #endif
+
+
+FOUNDATION_EXPORT VDSCoreErrorMessage VDSUnexpectedArgumentTypeErrorMessageFormat; // See implementation for description.
+
+#ifndef VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE
+#define VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(ARGUMENT, PARAMETER, METHOD, TYPE) [NSString stringWithFormat:VDSUnexpectedArgumentTypeErrorMessageFormat, ARGUMENT, PARAMETER, NSStringFromSelector(METHOD), ( object_isClass(TYPE) ? NSStringFromClass(TYPE) : NSStringFromProtocol(TYPE))]
+#endif
+
 
 
 #pragma mark - VDSKit Cache Errors -
