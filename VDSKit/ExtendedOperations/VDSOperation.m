@@ -16,10 +16,11 @@
 + (BOOL)evaluateConditionsForOperation:(VDSOperation* _Nonnull)operation
                                  error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
-    BOOL success = YES;
     
     VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
     
+    BOOL success = YES;
+
     if (success) {
         NSMutableArray* errorArray = [NSMutableArray new];
         NSMutableString* failedConditions = [NSMutableString stringWithString:@"\n"];
@@ -61,6 +62,8 @@
 - (BOOL)evaluateForOperation:(VDSOperation* _Nonnull)operation
                        error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
+    VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
+    
     return YES;
 }
 @end
@@ -189,10 +192,11 @@
 - (BOOL)addCondition:(VDSOperationCondition* _Nonnull)condition
                error:(NSError *__autoreleasing  _Nullable *)error
 {
-    BOOL success = YES;
     
     VDS_NONNULL_CHECK(@"condition", condition, [VDSOperationCondition class], _cmd, error)
     
+    BOOL success = YES;
+
     if(_state < VDSOperationEvaluating) {
         [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] addObject:condition];
     } else {
@@ -210,10 +214,11 @@
 - (BOOL)removeCondition:(VDSOperationCondition *)condition
                   error:(NSError *__autoreleasing  _Nullable *)error
 {
-    BOOL success = YES;
-    
+   
     VDS_NONNULL_CHECK(@"condition", condition, [VDSOperationCondition class], _cmd, error)
-    
+
+    BOOL success = YES;
+        
     if(_state < VDSOperationEvaluating) {
         [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] removeObject:condition];
     } else {
@@ -228,9 +233,12 @@
     return success;
 }
 
-- (BOOL)addObserver:(id<VDSOperationObserver>)observer
+- (BOOL)addObserver:(id<VDSOperationObserver> _Nonnull)observer
               error:(NSError *__autoreleasing  _Nullable *)error
 {
+    
+    VDS_NONNULL_PROTOCOL_CHECK(@"observer", observer, @protocol(VDSOperationObserver), _cmd, error)
+    
     BOOL success = YES;
     
     if(_state < VDSOperationExecuting) {
@@ -247,9 +255,12 @@
     return success;
 }
 
-- (BOOL)removeObserver:(id<VDSOperationObserver>)observer
+- (BOOL)removeObserver:(id<VDSOperationObserver> _Nonnull)observer
                  error:(NSError *__autoreleasing  _Nullable *)error
 {
+    
+    VDS_NONNULL_PROTOCOL_CHECK(@"observer", observer, @protocol(VDSOperationObserver), _cmd, error)
+    
     BOOL success = YES;
     
     if(_state < VDSOperationExecuting) {
@@ -290,6 +301,8 @@
 - (BOOL)addDependency:(VDSOperation*)operation
                 error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
+    VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
+    
     BOOL success = YES;
     
     if(_state < VDSOperationExecuting) {
@@ -306,9 +319,11 @@
     return success;
 }
 
-- (BOOL)addDependencies:(NSArray<VDSOperation *> *)dependencies
+- (BOOL)addDependencies:(NSArray<VDSOperation*> *)dependencies
                   error:(NSError *__autoreleasing  _Nullable *)error
 {
+    VDS_NONNULL_CHECK(@"dependencies", dependencies, [NSArray class], _cmd, error)
+
     BOOL success = YES;
     
     for (VDSOperation* operation in dependencies) {
@@ -430,7 +445,8 @@
     [self finishWithErrors:nil];
 }
 
-- (void)finish:(NSError *_Nullable)error {
+- (void)finish:(NSError *_Nullable)error
+{
     NSArray* errorArray = nil;
     if (error != nil) {
         errorArray = @[error];

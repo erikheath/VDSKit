@@ -20,8 +20,7 @@
     #ifdef VDS_ARG_CHECKS
 
         #define VDS_STRICT_NONNULL_CHECK(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR) \
-        success = strictNonnullCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR); \
-        if (success == NO) { return success; }
+        if (!strictNonnullCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR)) { return NO; }
 
     #else
 
@@ -39,8 +38,7 @@ BOOL strictNonnullCheck(NSString* name, id argument, Class argType, SEL location
     #ifdef VDS_ARG_CHECKS
 
         #define VDS_NONNULL_CHECK(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR) \
-        success = nonnullCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR); \
-        if (success == NO) { return success; }
+        if (!nonnullCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR)) { return NO; }
 
     #else
 
@@ -58,8 +56,7 @@ BOOL nonnullCheck(NSString* name, id argument, Class argType, SEL location, NSEr
     #ifdef VDS_ARG_CHECKS
 
         #define VDS_STRICT_NULLABLE_CHECK(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR) \
-        success = strictNullableCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR); \
-        if (success == NO) { return success; }
+        if (!strictNullableCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR)) { return NO; }
 
     #else
 
@@ -77,8 +74,7 @@ BOOL strictNullableCheck(NSString* name, id argument, Class argType, SEL locatio
     #ifdef VDS_ARG_CHECKS
 
         #define VDS_NULLABLE_CHECK(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR) \
-        success = strictNonnullCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR); \
-        if (success == NO) { return success; }
+        if (!strictNonnullCheck(NAME, ARGUMENT, CLASS, LOCATION, ERROR_PTR)) { return NO; }
 
     #else
 
@@ -96,8 +92,7 @@ BOOL nullableCheck(NSString* name, id argument, Class argType, SEL location, NSE
     #ifdef VDS_ARG_CHECKS
 
         #define VDS_NULLABLE_PROTOCOL_CHECK(NAME, ARGUMENT, PROTOCOL, LOCATION, ERROR_PTR) \
-        success = strictNonnullCheck(NAME, ARGUMENT, PROTOCOL, LOCATION, ERROR_PTR); \
-        if (success == NO) { return success; }
+        if (!nullableProtocolCheck(NAME, ARGUMENT, PROTOCOL, LOCATION, ERROR_PTR)) { return NO; }
 
     #else
 
@@ -115,8 +110,7 @@ BOOL nullableProtocolCheck(NSString* name, id argument, Protocol* argType, SEL l
     #ifdef VDS_ARG_CHECKS
 
         #define VDS_NONNULL_PROTOCOL_CHECK(NAME, ARGUMENT, PROTOCOL, LOCATION, ERROR_PTR) \
-        success = strictNonnullCheck(NAME, ARGUMENT, PROTOCOL, LOCATION, ERROR_PTR); \
-        if (success == NO) { return success; }
+        if (!nonnullProtocolCheck(NAME, ARGUMENT, PROTOCOL, LOCATION, ERROR_PTR)) { return NO; }
 
     #else
 

@@ -7,7 +7,7 @@
 //
 
 #import "VDSErrorFunctions.h"
-#import "VDSInputVerifier.h"
+#import "VDSInputVerifierFunctions.h"
 #import "VDSErrorConstants.h"
 #import <objc/runtime.h>
 

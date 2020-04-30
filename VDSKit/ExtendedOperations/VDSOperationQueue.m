@@ -20,6 +20,7 @@
 #import "VDSOperationQueue.h"
 #import "VDSBlockObserver.h"
 #import "../VDSErrorConstants.h"
+#import "VDSErrorFunctions.h"
 
 
 #pragma mark - VDSOperationMutexCoordinator -
@@ -108,6 +109,8 @@ static dispatch_once_t onceToken;
 - (BOOL)addOperation:(VDSOperation*)operation
                error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
+    VDS_NULLABLE_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
+    
     BOOL success = YES;
     VDSBlockObserver* observer = nil;
     NSMutableArray* mutexConditions = [NSMutableArray new];
