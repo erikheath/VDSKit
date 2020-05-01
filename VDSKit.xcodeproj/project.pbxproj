@@ -15,6 +15,8 @@
 		032ADF36245A6989008186D3 /* VDSBlockOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF34245A6989008186D3 /* VDSBlockOperation.m */; };
 		032ADF39245B5038008186D3 /* VDSGroupOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 032ADF37245B5038008186D3 /* VDSGroupOperation.h */; };
 		032ADF3A245B5038008186D3 /* VDSGroupOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF38245B5038008186D3 /* VDSGroupOperation.m */; };
+		032ADF3D245BB7B1008186D3 /* VDSMutexCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 032ADF3B245BB7B1008186D3 /* VDSMutexCondition.h */; };
+		032ADF3E245BB7B1008186D3 /* VDSMutexCondition.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF3C245BB7B1008186D3 /* VDSMutexCondition.m */; };
 		036C333524491D640021346C /* VDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C332B24491D640021346C /* VDSKit.framework */; };
 		036C333A24491D640021346C /* VDSKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C333924491D640021346C /* VDSKitTests.m */; };
 		036C333C24491D640021346C /* VDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C332E24491D640021346C /* VDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,6 +63,8 @@
 		032ADF34245A6989008186D3 /* VDSBlockOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSBlockOperation.m; sourceTree = "<group>"; };
 		032ADF37245B5038008186D3 /* VDSGroupOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSGroupOperation.h; sourceTree = "<group>"; };
 		032ADF38245B5038008186D3 /* VDSGroupOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSGroupOperation.m; sourceTree = "<group>"; };
+		032ADF3B245BB7B1008186D3 /* VDSMutexCondition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSMutexCondition.h; sourceTree = "<group>"; };
+		032ADF3C245BB7B1008186D3 /* VDSMutexCondition.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSMutexCondition.m; sourceTree = "<group>"; };
 		036C332B24491D640021346C /* VDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		036C332E24491D640021346C /* VDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSKit.h; sourceTree = "<group>"; };
 		036C332F24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -184,6 +188,8 @@
 				032ADF34245A6989008186D3 /* VDSBlockOperation.m */,
 				032ADF37245B5038008186D3 /* VDSGroupOperation.h */,
 				032ADF38245B5038008186D3 /* VDSGroupOperation.m */,
+				032ADF3B245BB7B1008186D3 /* VDSMutexCondition.h */,
+				032ADF3C245BB7B1008186D3 /* VDSMutexCondition.m */,
 			);
 			path = ExtendedOperations;
 			sourceTree = "<group>";
@@ -195,6 +201,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				032ADF3D245BB7B1008186D3 /* VDSMutexCondition.h in Headers */,
 				03AF92E52451489700E38623 /* VDSOperationQueue.h in Headers */,
 				032ADF2D2459F6B3008186D3 /* VDSErrorFunctions.h in Headers */,
 				036C333C24491D640021346C /* VDSKit.h in Headers */,
@@ -313,6 +320,7 @@
 				03AF92DD244E5DD400E38623 /* VDSDatabaseCache.m in Sources */,
 				036C334C24491E790021346C /* VDSDatabaseContext.m in Sources */,
 				036C334824491E570021346C /* VDSDatabase.m in Sources */,
+				032ADF3E245BB7B1008186D3 /* VDSMutexCondition.m in Sources */,
 				036C3358244A23230021346C /* VDSQueryCache.m in Sources */,
 				036C3362244A3D760021346C /* VDSConstants.m in Sources */,
 				032ADF2E2459F6B3008186D3 /* VDSErrorFunctions.m in Sources */,

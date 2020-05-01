@@ -171,7 +171,7 @@
 /// @param operation The conditional operation.
 /// @returns An operation than can be added to the conditional operation's dependencies
 /// and that, when run, may satisfy the conditional operation's execution requirements.
-- (VDSOperation* _Nullable)dependencyForOperation:(VDSOperation* _Nonnull)operation;
+- (NSOperation* _Nullable)dependencyForOperation:(VDSOperation* _Nonnull)operation;
 
 /// @summary This instance method is the override point that enables subclasses to insert
 /// evaluation logic, error reporting, and a result for a given condition.
