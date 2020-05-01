@@ -9,6 +9,26 @@
 #import "VDSOperation.h"
 #import "../VDSErrorFunctions.h"
 
+#pragma mark - NSOperation+VDSOperation -
+
+@implementation NSOperation (VDSOperation)
+
+- (void)addCompletionBlock:(void(^ _Nonnull)(void))block
+{
+    void(^existingBlock)(void) = self.completionBlock;
+    
+    if (existingBlock != nil) {
+        self.completionBlock = ^{
+            existingBlock();
+            block();
+        };
+    } else {
+        self.completionBlock = block;
+    }
+}
+
+@end
+
 #pragma mark - VDSOperationCondition -
 
 @implementation VDSOperationCondition
@@ -298,15 +318,15 @@
 }
 
 
-- (BOOL)addDependency:(VDSOperation*)operation
+- (BOOL)addDependency:(NSOperation*)operation
                 error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
-    VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
+    VDS_NONNULL_CHECK(@"operation", operation, [NSOperation class], _cmd, error)
     
     BOOL success = YES;
     
     if(_state < VDSOperationExecuting) {
-        [super addDependency:operation];
+        [self addDependency:operation];
     } else {
         if (error != NULL) {
             *error = [NSError errorWithDomain:VDSKitErrorDomain
@@ -319,14 +339,14 @@
     return success;
 }
 
-- (BOOL)addDependencies:(NSArray<VDSOperation*> *)dependencies
+- (BOOL)addDependencies:(NSArray<NSOperation*> *)dependencies
                   error:(NSError *__autoreleasing  _Nullable *)error
 {
     VDS_NONNULL_CHECK(@"dependencies", dependencies, [NSArray class], _cmd, error)
 
     BOOL success = YES;
     
-    for (VDSOperation* operation in dependencies) {
+    for (NSOperation* operation in dependencies) {
         success = [self addDependency:operation error:error];
         if (success == NO) break;
     }

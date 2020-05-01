@@ -26,6 +26,15 @@
 @class VDSOperationQueue;
 
 
+#pragma mark - NSOperation+VDSOperation -
+
+@interface NSOperation (VDSOperation)
+
+- (void)addCompletionBlock:(void(^ _Nonnull)(void))block;
+
+@end
+
+
 #pragma mark - VDSOperationDelegate -
 
 @protocol VDSOperationDelegate <NSObject>
@@ -244,7 +253,7 @@
 @property(strong, readonly, nonnull, nonatomic) NSArray<id<VDSOperationObserver>>* observers;
 
 /// @summary Upon completion, contains the errors, if any, reported during execution of the
-/// operation. During execution, the array is updated as error occur. This property
+/// operation. During execution, the array is updated as errors occur. This property
 /// is Key-Value Observable.
 @property(strong, readonly, nonnull) NSArray<NSError*>* errors;
 
@@ -320,7 +329,7 @@
 /// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the dependency was successfully added, otherwise NO.
-- (BOOL)addDependency:(VDSOperation* _Nonnull)operation
+- (BOOL)addDependency:(NSOperation* _Nonnull)operation
                 error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 /// @summary A convenience method that adds each of the dependencies to the operation by repeatedly
@@ -331,7 +340,7 @@
 /// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the dependencies were successfully added, otherwise NO.
-- (BOOL)addDependencies:(NSArray<VDSOperation*>* _Nonnull)dependencies
+- (BOOL)addDependencies:(NSArray<NSOperation*>* _Nonnull)dependencies
                   error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 

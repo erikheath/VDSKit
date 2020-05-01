@@ -62,7 +62,7 @@
 /// @param queue The queue to which the operation is to be added.
 /// @param operation The operation to be added to the queue.
 - (BOOL)operationQueue:(VDSOperationQueue* _Nonnull)queue
-    shouldAddOperation:(VDSOperation* _Nonnull)operation;
+    shouldAddOperation:(NSOperation* _Nonnull)operation;
 
 /// Notifies the delegate that the operation queue will add
 /// an operation. Use this method for any additional configuration
@@ -70,21 +70,21 @@
 /// @param queue The queue to which the operation will be added.
 /// @param operation The operation that will be added.
 - (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
-      willAddOperation:(VDSOperation* _Nonnull)operation;
+      willAddOperation:(NSOperation* _Nonnull)operation;
 
 /// Notifies the delegate that the operation queue added an
 /// operation to its queue.
 /// @param queue The queue to which the operation was added.
 /// @param operation The operation that was added to the queue.
 - (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
-       didAddOperation:(VDSOperation* _Nonnull)operation;
+       didAddOperation:(NSOperation* _Nonnull)operation;
 
 /// Notifies the delegate that an operation on the queue finished,
 /// reporting any errors if they occurred.
 /// @param queue The queue on which the operation executed.
 /// @param operation The operation that finished.
 - (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
-    operationDidFinish:(VDSOperation* _Nonnull)operation;
+    operationDidFinish:(NSOperation* _Nonnull)operation;
 @end
 
 
@@ -103,7 +103,7 @@
 /// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the operation could be added, otherwise NO.
-- (BOOL)addOperation:(VDSOperation* _Nonnull)operation
+- (BOOL)addOperation:(NSOperation* _Nonnull)operation
                error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 /// This method calls addOperation:error for each operation in the array, and coalesces any errors
@@ -114,7 +114,7 @@
 /// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the operations could be added, otherwise NO.
-- (BOOL)addOperations:(NSArray<VDSOperation*>* _Nonnull)operations
+- (BOOL)addOperations:(NSArray<NSOperation*>* _Nonnull)operations
                 error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 
