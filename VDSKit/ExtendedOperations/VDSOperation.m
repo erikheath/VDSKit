@@ -7,7 +7,8 @@
 //
 
 #import "VDSOperation.h"
-#import "../VDSErrorFunctions.h"
+#import <objc/runtime.h>
+
 
 #pragma mark - NSOperation+VDSOperation -
 
@@ -36,9 +37,13 @@
 + (BOOL)evaluateConditionsForOperation:(VDSOperation* _Nonnull)operation
                                  error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
+    // It is a programmer error to pass a nil operation.
+    NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd)); \
     
-    VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
-    
+    // operation must be a VDSOperation or subclass. NSOperations are not compatible.
+    NSAssert([operation isKindOfClass:[VDSOperation class]],VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(operation, @"operation", _cmd, NSStringFromClass([VDSOperation class])));
+
+        
     BOOL success = YES;
 
     if (success) {
@@ -82,8 +87,9 @@
 - (BOOL)evaluateForOperation:(VDSOperation* _Nonnull)operation
                        error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
-    VDS_NONNULL_CHECK(@"operation", operation, [VDSOperation class], _cmd, error)
-    
+    // It is a programmer error to pass a nil operation.
+    NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd)); \
+
     return YES;
 }
 @end
@@ -139,7 +145,7 @@
     [self willChangeValueForKey:NSStringFromSelector(@selector(state))];
     
     [_stateCoordinator lock];
-    if ([self canTransitionToState:state error:nil] == YES) { _state = state; }
+    if ([self canTransitionToState:state] == YES) { _state = state; }
     [_stateCoordinator unlock];
     
     [self didChangeValueForKey:NSStringFromSelector(@selector(state))];
@@ -160,7 +166,7 @@
             if (self.isCancelled == YES) {
                 success = YES;
             } else if ([super isReady] == YES) {
-                [self evaluateConditions:nil];
+                [self evaluateConditions];
                 success = NO;
             }
             break;
@@ -209,96 +215,45 @@
 
 #pragma mark Configuration
 
-- (BOOL)addCondition:(VDSOperationCondition* _Nonnull)condition
-               error:(NSError *__autoreleasing  _Nullable *)error
+- (void)addCondition:(VDSOperationCondition* _Nonnull)condition
 {
     
-    VDS_NONNULL_CHECK(@"condition", condition, [VDSOperationCondition class], _cmd, error)
-    
-    BOOL success = YES;
+    // It is a programmer error to pass a nil condition.
+    NSAssert(condition != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+     
+    // The condition must be a VDSOperationCondition or subclass.
+    NSAssert([condition isKindOfClass:[VDSOperationCondition class]], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(condition, @"condition", _cmd, NSStringFromClass([VDSOperationCondition class])));
 
-    if(_state < VDSOperationEvaluating) {
-        [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] addObject:condition];
-    } else {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationModificationFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_ADD_CONDITION_MESSAGE(self.name, condition)}];
-        }
-        success = NO;
-    }
+    // The operation state must be less than VDSOperationEvaluating to add a condition.
+    // If it is not, there is likely a race condition or other programmer error.
+    NSAssert(_state < VDSOperationEvaluating, VDS_OPERATION_COULD_NOT_ADD_CONDITION_MESSAGE(self.name, condition));
     
-    return success;
+    [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] addObject:condition];
+    
 }
 
-- (BOOL)removeCondition:(VDSOperationCondition *)condition
-                  error:(NSError *__autoreleasing  _Nullable *)error
-{
-   
-    VDS_NONNULL_CHECK(@"condition", condition, [VDSOperationCondition class], _cmd, error)
-
-    BOOL success = YES;
-        
-    if(_state < VDSOperationEvaluating) {
-        [[self mutableArrayValueForKey:NSStringFromSelector(@selector(conditions))] removeObject:condition];
-    } else {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationModificationFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_REMOVE_CONDITION_MESSAGE(self.name, condition)}];
-        }
-        success = NO;
-    }
-    
-    return success;
-}
-
-- (BOOL)addObserver:(id<VDSOperationObserver> _Nonnull)observer
-              error:(NSError *__autoreleasing  _Nullable *)error
+- (void)addObserver:(id<VDSOperationObserver> _Nonnull)observer
 {
     
-    VDS_NONNULL_PROTOCOL_CHECK(@"observer", observer, @protocol(VDSOperationObserver), _cmd, error)
+    // It is a programmer error to pass a nil condition.
+    NSAssert(observer != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+     
+    // The observer must be a VDSOperationCondition or subclass.
+    NSAssert([observer conformsToProtocol:@protocol(VDSOperationObserver)], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(observer, @"observer", _cmd, NSStringFromProtocol(@protocol(VDSOperationObserver))));
     
-    BOOL success = YES;
-    
-    if(_state < VDSOperationExecuting) {
-        [[self mutableArrayValueForKey:NSStringFromSelector(@selector(observers))] addObject:observer];
-    } else {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationModificationFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE(self.name, observer)}];
-        }
-        success = NO;
-    }
-    
-    return success;
-}
+    // The operation state must be less than VDSOperationEvaluating to add an observer.
+    // If it is not, there is likely a race condition or other programmer error.
+    NSAssert(_state < VDSOperationEvaluating, VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE(self.name, observer));
 
-- (BOOL)removeObserver:(id<VDSOperationObserver> _Nonnull)observer
-                 error:(NSError *__autoreleasing  _Nullable *)error
-{
-    
-    VDS_NONNULL_PROTOCOL_CHECK(@"observer", observer, @protocol(VDSOperationObserver), _cmd, error)
-    
-    BOOL success = YES;
-    
-    if(_state < VDSOperationExecuting) {
-        [[self mutableArrayValueForKey:NSStringFromSelector(@selector(observers))] removeObject:observer];
-    } else {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationModificationFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_REMOVE_OBSERVER_MESSAGE(self.name, observer)}];
-        }
-        success = NO;
-    }
-    
-    return success;
+    [[self mutableArrayValueForKey:NSStringFromSelector(@selector(observers))] addObject:observer];
+
 }
 
 - (void)addCompletionBlock:(void (^)(void))completionBlock
 {
+    // It is a programmer error to pass a nil completionBlock.
+    NSAssert(completionBlock != NULL && completionBlock != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+
     VDSOperation* __weak weakSelf = self;
     if (self.completionBlock != nil) {
         weakSelf.completionBlock = ^{
@@ -310,55 +265,36 @@
     }
 }
 
-- (void)addDependency:(NSOperation*)op
+- (void)addDependency:(NSOperation*)operation
 {
-    if(_state < VDSOperationExecuting) {
-        [super addDependency:op];
-    }
+    // It is a programmer error to pass a nil operation.
+    NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+
+    // The operation must be a NSOperation or subclass.
+    NSAssert([operation isKindOfClass:[NSOperation class]], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(operation, @"operation", _cmd, NSStringFromClass([NSOperation class])));
+
+    // The operation state must be less than VDSOperationEvaluating to add a dependency.
+    // If it is not, there is likely a race condition or other programmer error.
+    NSAssert(_state < VDSOperationExecuting, VDS_OPERATION_COULD_NOT_ADD_DEPENDENCY_MESSAGE(self.name, operation.name));
+    
+    [super addDependency:operation];
 }
 
 
-- (BOOL)addDependency:(NSOperation*)operation
-                error:(NSError* __autoreleasing _Nullable * _Nullable)error
+- (void)addDependencies:(NSArray<NSOperation*> *)dependencies
 {
-    VDS_NONNULL_CHECK(@"operation", operation, [NSOperation class], _cmd, error)
-    
-    BOOL success = YES;
-    
-    if(_state < VDSOperationExecuting) {
-        [self addDependency:operation];
-    } else {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationModificationFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_ADD_DEPENDENCY_MESSAGE(self.name, operation)}];
-        }
-        success = NO;
-    }
-    
-    return success;
-}
+    // It is a programmer error to pass a nil dependencies array.
+    NSAssert(dependencies != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
 
-- (BOOL)addDependencies:(NSArray<NSOperation*> *)dependencies
-                  error:(NSError *__autoreleasing  _Nullable *)error
-{
-    VDS_NONNULL_CHECK(@"dependencies", dependencies, [NSArray class], _cmd, error)
-
-    BOOL success = YES;
-    
     for (NSOperation* operation in dependencies) {
-        success = [self addDependency:operation error:error];
-        if (success == NO) break;
+        [self addDependency:operation];
     }
-    
-    return success;
 }
 
 
 #pragma mark Execution
 
 - (BOOL)canTransitionToState:(VDSOperationState)state
-                       error:(NSError *__autoreleasing  _Nullable *)error
 {
     BOOL success = YES;
     
@@ -377,50 +313,40 @@
     } else if(self.state == VDSOperationFinishing && state == VDSOperationFinished) {
         success = YES;
     } else {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationExecutionFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OPERATION_COULD_NOT_TRANSTION_TO_STATE_MESSAGE(self.name, self.state, state)}];
-        }
         success = NO;
     }
     
     return success;
 }
 
-- (BOOL)evaluateConditions:(NSError *__autoreleasing  _Nullable *)error
+- (void)evaluateConditions
 {
-    BOOL success = YES;
+    NSAssert(self.state != VDSOperationPending || self.isCancelled == YES, VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(self.name, self.state));
     
-    if (self.state != VDSOperationPending || self.isCancelled == YES) {
-        if (error != NULL) {
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSOperationExecutionFailed
-                                     userInfo:@{NSDebugDescriptionErrorKey:VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(self.name, self.state)}];
+    self.state = VDSOperationEvaluating;
+    
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        NSError* conditionError = nil;
+        if ([VDSOperationCondition evaluateConditionsForOperation:self error:&conditionError] == NO) {
+            [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObject:conditionError];
         }
-    }
+        self.state = VDSOperationReady;
+    });
     
-    if (success == YES) {
-        self.state = VDSOperationEvaluating;
-        
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
-            NSError* conditionError = nil;
-            if ([VDSOperationCondition evaluateConditionsForOperation:self error:&conditionError] == NO) {
-                [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObject:conditionError];
-            }
-            self.state = VDSOperationReady;
-        });
-    }
-    
-    return success;
 }
 
 - (void)produceOperation:(NSOperation* _Nonnull)operation
 {
+    // It is a programmer error to pass a nil operation.
+    NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+
     for (id<VDSOperationObserver> observer in _observers) {
         [observer operation:self
         didProduceOperation:operation];
     }
+    
+    [self.delegate operation:self
+         didProduceOperation:operation];
 }
 
 - (void)willEnqueue:(VDSOperationQueue * _Nonnull)queue
@@ -435,29 +361,19 @@
     }
 }
 
-- (void)main {
-    BOOL success = YES;
-    NSError* error = nil;
+- (void)main
+{
+    NSAssert(self.state != VDSOperationReady, VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(self.name, self.state));
     
-    if (success == YES && self.state != VDSOperationReady) {
-        error = [NSError errorWithDomain:VDSKitErrorDomain
-                                    code:VDSOperationExecutionFailed
-                                userInfo:@{NSDebugDescriptionErrorKey:VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(self.name, self.state)}];
-        success = NO;
-    }
-    
-    if (success == YES && self.errors.count == 0 && self.isCancelled == NO) {
+    if (self.errors.count == 0 && self.isCancelled == NO) {
         self.state = VDSOperationExecuting;
         
         for (id<VDSOperationObserver>observer in self.observers) {
             [observer operationDidStart:self];
         }
-    }
-    
-    if (success == YES) {
         [self execute];
     } else {
-        [self finish:error];
+        [self finish:nil];
     }
 }
 

@@ -88,7 +88,7 @@
 /// Notifies the delegate that the opertion produced a new operation
 /// for its dependencies.
 /// @param operation The operation that produced the new operation.
-- (void)operation:(VDSOperation* _Nonnull)operation didProduceOperation:(VDSOperation* _Nonnull)newOperation;
+- (void)operation:(VDSOperation* _Nonnull)operation didProduceOperation:(NSOperation* _Nonnull)newOperation;
 
 /// Notifies the delegate that the operation is beginning the finishing stage of its
 /// execution. This notification happens after the state of the operation moves
@@ -102,7 +102,7 @@
 /// been called.
 /// 
 /// @param operation The operation that has finished executing.
-- (void)operationDidFinish:(VDSOperation* _Nonnull)operation;
+- (void)operationDidFinish:(NSOperation* _Nonnull)operation;
 
 
 @end
@@ -273,44 +273,18 @@
 /// @summary Adds a VDSOperationCondition to the operation.
 ///
 /// @param condition The condition that should be added to the Operation.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
-/// @returns YES if the condition was successfully added, otherwise NO.
-- (BOOL)addCondition:(VDSOperationCondition* _Nonnull)condition
-               error:(NSError* __autoreleasing _Nullable * _Nullable)error;
-
-/// @summary Removes a VDSOperationCondition from the operation.
-///
-/// @param condition The condition to be removed. Uses isEquals: and removes the
-/// first matching condition.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
-///
-/// @returns YES if the condition was successfully removed, otherwise NO.
-- (BOOL)removeCondition:(VDSOperationCondition* _Nonnull)condition
-                  error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if condition is nil, of the wrong type
+/// or the condition could not be added due to operation state.
+- (void)addCondition:(VDSOperationCondition* _Nonnull)condition;
 
 /// @summary Adds an observer, typically another operation, to the receiver.
 ///
 /// @param observer An object conforming to the VDSOperationObserver protocol.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
-/// @returns YES if the observer was successfully added, otherwise NO.
-- (BOOL)addObserver:(id<VDSOperationObserver> _Nonnull)observer
-              error:(NSError* __autoreleasing _Nullable * _Nullable)error;
-
-/// @summary Removes a VDSOperationObserver from the operation.
-///
-/// @param observer An object conforming to the VDSOperationObserver protocol. Use isEquals
-/// and removes the first matching observer.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
-///
-/// @returns YES if the observer was successfully removed, otherwise NO.
-- (BOOL)removeObserver:(id _Nonnull)observer
-                 error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if observer is nil, of the wrong type
+/// or the observer could not be added due to operation state.
+- (void)addObserver:(id<VDSOperationObserver> _Nonnull)observer;
 
 /// @summary Adds a completion block to the operation. If a completion block exists, the
 /// existing block is wrapped in a block that will execute the existing block first
@@ -318,30 +292,26 @@
 ///
 /// @param completionBlock A completion block that will be executed after the operation
 /// enters its finished state.
+///
+/// @throws NSInternalInconsistency exception if completionBlock is nil.
 - (void)addCompletionBlock:(void(^_Nonnull)(void))completionBlock;
 
 /// Adds a dependency while reporting an error if the dependency can not be added.
-/// This method is preferred over addDependency: for adding dependencies to
-/// VDSOperation and its subclasses.
 ///
 /// @param operation The operation to add as a dependency
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
-/// @returns YES if the dependency was successfully added, otherwise NO.
-- (BOOL)addDependency:(NSOperation* _Nonnull)operation
-                error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if operation is nil, of the wrong type
+/// or the dependency could not be added due to operation state.
+- (void)addDependency:(NSOperation* _Nonnull)operation;
 
 /// @summary A convenience method that adds each of the dependencies to the operation by repeatedly
 /// calling the addDependency: method for each of the elements in the array.
 ///
 /// @param dependencies An array of dependencies that will be added to the receiver.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
-/// @returns YES if the dependencies were successfully added, otherwise NO.
-- (BOOL)addDependencies:(NSArray<NSOperation*>* _Nonnull)dependencies
-                  error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if dependencies is nil.
+
+- (void)addDependencies:(NSArray<NSOperation*>* _Nonnull)dependencies;
 
 
 #pragma mark - Execution Behaviors
@@ -351,36 +321,32 @@
 /// a new VDSOperationState.
 ///
 /// @param state A VDSOperationState the operation could transition to.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
 /// @returns YES if the can transition to state, otherwise NO.
-- (BOOL)canTransitionToState:(VDSOperationState)state
-                       error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (BOOL)canTransitionToState:(VDSOperationState)state;
 
 /// @summary Evaluates the conditions associated with the operation, returning YES if conditions
 /// have been satisfied, and NO if they have not been satisfied.
 ///
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
-///
-/// @returns YES if the conditions have been satisfied, otherwise NO.
-- (BOOL)evaluateConditions:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if conditions are evaluated out of order.
+- (void)evaluateConditions;
 
 
 /// @summary Produces an operation of the specified class type, typically for use as a dependency
 /// by the receiver.
 ///
 /// @param operation The coperation produced by the receiver.
+///
+/// @throws NSInternalInconsistency exception if operation is nil.
 - (void)produceOperation:(NSOperation* _Nonnull)operation;
+
 
 /// @summary Primary override point for subclasses to specialize a VDSOperation.
 - (void)execute;
 
 
 /// Convenience method that can be called when an operation finishes with or without an error. Calls
-/// finishWithErrors:. This method is useful as it corresponds to a standard completion patterns used in
-/// Cocoa.
+/// finishWithErrors:.
 /// 
 /// @param error An error object describing the error if one occurred.
 - (void)finish:(NSError* _Nullable)error;

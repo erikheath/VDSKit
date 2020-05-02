@@ -181,7 +181,7 @@ FOUNDATION_EXPORT VDSCoreErrorMessage VDSNilArgumentErrorMessageFormat; // See i
 FOUNDATION_EXPORT VDSCoreErrorMessage VDSUnexpectedArgumentTypeErrorMessageFormat; // See implementation for description.
 
 #ifndef VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE
-#define VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(ARGUMENT, PARAMETER, METHOD, TYPE) [NSString stringWithFormat:VDSUnexpectedArgumentTypeErrorMessageFormat, ARGUMENT, PARAMETER, NSStringFromSelector(METHOD), ( object_isClass(TYPE) ? NSStringFromClass(TYPE) : NSStringFromProtocol(TYPE))]
+#define VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(ARGUMENT, PARAMETER, METHOD, TYPE_NAME) [NSString stringWithFormat:VDSUnexpectedArgumentTypeErrorMessageFormat, ARGUMENT, PARAMETER, NSStringFromSelector(METHOD), TYPE_NAME]
 #endif
 
 

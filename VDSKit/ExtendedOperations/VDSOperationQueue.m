@@ -99,17 +99,26 @@ static dispatch_once_t onceToken;
 
 @implementation VDSOperationQueue
 
-- (BOOL)addOperation:(NSOperation*)operation
-               error:(NSError *__autoreleasing  _Nullable * _Nullable)error
+- (void)addOperation:(NSOperation*)operation
 {
-    VDS_NULLABLE_CHECK(@"operation", operation, [NSOperation class], _cmd, error)
+    // It is a programmer error to pass a nil condition.
+    NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
     
-    BOOL success = YES;
-    
+    // The operation must be a NSOperation or subclass.
+    NSAssert([operation isKindOfClass:[NSOperation class]], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(operation, @"operation", _cmd, NSStringFromClass([NSOperation class])));
+        
+    // The delegate can abort adding the operation to the queue.
+    if (self.delegate != nil &&
+        [self.delegate respondsToSelector:@selector(operationQueue:shouldAddOperation:)] == YES &&
+        [self.delegate operationQueue:self shouldAddOperation:operation] == NO) {
+        return;
+    }
+
     // Enable adding operations to the queue as part of the overall add operation
     // process. This lets NSOperation and other subclasses be interleaved with
     // VDSOperation and its subclasses.
     if ([operation isKindOfClass:[VDSOperation class]] == NO) {
+        
         // To enable delegate notification when the operation finishes,
         // a completion block is added or appended to with a delegate
         // notification.
@@ -122,23 +131,18 @@ static dispatch_once_t onceToken;
                             operationDidFinish:op];
             }
         }];
-        [self addOperation:operation];
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:willAddOperation:)]) {
+            [self.delegate operationQueue:self
+                         willAddOperation:operation];
+        }
+        
     } else {
         // This is exclusively for VDSOperation and its subclasses.
         VDSOperation* vdsOperation = (VDSOperation*)operation;
         VDSBlockObserver* observer = nil;
         NSMutableArray* mutexConditions = [NSMutableArray new];
         
-        if (self.delegate != nil &&
-            [self.delegate respondsToSelector:@selector(operationQueue:shouldAddOperation:)] == YES) {
-            success = [self.delegate operationQueue:self
-                                 shouldAddOperation:vdsOperation];
-            if (success == NO && error != NULL) {
-                *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                             code:VDSOperationEnqueFailed
-                                         userInfo:@{NSDebugDescriptionErrorKey: VDS_QUEUE_DELEGATE_BLOCKED_ENQUEMENT_MESSAGE(operation.name, self.name)}];
-            }
-        }
         
         // If any of the conditions require mutual exclusivity, add them to the shared Mutex
         // coordinator. Also, the operation must be removed from the mutex coordinator once
@@ -149,7 +153,7 @@ static dispatch_once_t onceToken;
             }
         }
         
-        if (success == YES && mutexConditions.count > 0) {
+        if (mutexConditions.count > 0) {
             observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:nil
                                                        produceOperationHandler:nil
                                                         finishOperationHandler:^(VDSOperation * _Nonnull finishOperation) {
@@ -158,60 +162,52 @@ static dispatch_once_t onceToken;
             }];
         }
         
-        if (success == YES && (success = [vdsOperation addObserver:observer error:error]) == YES) {
-            [VDSOperationMutexCoordinator.sharedCoordinator addOperation:vdsOperation
+        [vdsOperation addObserver:observer];
+        [VDSOperationMutexCoordinator.sharedCoordinator addOperation:vdsOperation
                                                       forConditionsTypes:mutexConditions];
-        }
         
-        // Wait to add dependencies until error generating methods have returned without errors.
-        if (success == YES) {
-            // The queue is always the delegate of the operation.
-            vdsOperation.delegate = self;
-            
-            //Add depencies to the current operation so that conditions may be satisfied.
-            for (VDSOperationCondition* condition in vdsOperation.conditions) {
-                NSOperation* dependency = [condition dependencyForOperation:vdsOperation];
-                if (dependency != nil) {
-                    [operation addDependency:dependency];
-                    [self addOperation:dependency];
-                }
+        // The queue is always the delegate of the operation.
+        vdsOperation.delegate = self;
+        
+        //Add depencies to the current operation so that conditions may be satisfied.
+        for (VDSOperationCondition* condition in vdsOperation.conditions) {
+            NSOperation* dependency = [condition dependencyForOperation:vdsOperation];
+            if (dependency != nil) {
+                [operation addDependency:dependency];
+                [self addOperation:dependency];
             }
         }
         
-        // Finally, message the operation that it is being enqueued and add the operation to
-        // the queue now that its execution graph is set up.
-        if (success) {
-            if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:willAddOperation:)]) {
-                [self.delegate operationQueue:self
-                             willAddOperation:vdsOperation];
-            }
-            [vdsOperation willEnqueue:self];
-            [self addOperation:operation];
-            if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:didAddOperation:)]) {
-                [self.delegate operationQueue:self
-                              didAddOperation:vdsOperation];
-            }
-        }
+        // Message the operation that it is being enqueued.
+        [vdsOperation willEnqueue:self];
+        
     }
-    return success;
+    
+    // Finally, notify delegates and add the operation to the queue.
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:willAddOperation:)]) {
+        [self.delegate operationQueue:self
+                     willAddOperation:operation];
+    }
+
+    [super addOperation:operation];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:didAddOperation:)]) {
+        [self.delegate operationQueue:self
+                      didAddOperation:operation];
+    }
+
     
 }
 
-- (BOOL)addOperations:(NSArray<NSOperation*> *)operations
-                error:(NSError *__autoreleasing  _Nullable *)error
+- (void)addOperations:(NSArray<NSOperation*> *)operations
 {
-    VDS_NONNULL_CHECK(@"operations", operations, [NSArray class], _cmd, error)
-    
-    BOOL success = YES;
+    // It is a programmer error to pass a nil condition.
+    NSAssert(operations != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
     
     for (NSOperation* operation in operations) {
-        success = [self addOperation:operation
-                               error:error];
-        if (success == NO) break;
+        [self addOperation:operation];
     }
-    
-    return success;
-    
 }
 
 

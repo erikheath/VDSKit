@@ -19,14 +19,11 @@
 
 + (instancetype _Nullable)initWithOperations:(NSOperation* _Nullable)operation, ...;
 
-- (instancetype _Nullable)initWithOperations:(NSArray<NSOperation*>* _Nullable)operations
-                                       error:(NSError *__autoreleasing  _Nullable * _Nullable)error;
+- (instancetype _Nullable)initWithOperations:(NSArray<NSOperation*>* _Nullable)operations;
 
-- (BOOL)addOperation:(NSOperation* _Nonnull)operation
-               error:(NSError *__autoreleasing  _Nullable * _Nullable)error;
+- (void)addOperation:(NSOperation* _Nonnull)operation;
 
-- (BOOL)addOperations:(NSArray<NSOperation*>* _Nonnull)operations
-                error:(NSError *__autoreleasing  _Nullable * _Nullable)error;
+- (void)addOperations:(NSArray<NSOperation*>* _Nonnull)operations;
 
 
 @end

@@ -99,23 +99,17 @@
 
 /// Attempts to add the operation to the queue.
 /// @param operation The operation that should be added to the queue.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
-/// @returns YES if the operation could be added, otherwise NO.
-- (BOOL)addOperation:(NSOperation* _Nonnull)operation
-               error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if operations is nil or of the wrong type.
+- (void)addOperation:(NSOperation* _Nonnull)operation;
 
 /// This method calls addOperation:error for each operation in the array, and coalesces any errors
 /// that occur into a single error object. If an error occurs, any operations that have been
 /// added are removed if possible.
 /// @param operations The operations that should be added to the queue.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
 ///
-/// @returns YES if the operations could be added, otherwise NO.
-- (BOOL)addOperations:(NSArray<NSOperation*>* _Nonnull)operations
-                error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+/// @throws NSInternalInconsistency exception if operations is nil.
+- (void)addOperations:(NSArray<NSOperation*>* _Nonnull)operations;
 
 
 @end

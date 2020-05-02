@@ -24,11 +24,10 @@
         }
         va_end(argumentList);
     }
-    return [[VDSGroupOperation alloc] initWithOperations:arguments error:NULL];
+    return [[VDSGroupOperation alloc] initWithOperations:arguments];
 }
 
 - (instancetype _Nullable)initWithOperations:(NSArray<NSOperation*>* _Nullable)operations
-                                       error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
     self = [super init];
     if (self != nil) {
@@ -38,45 +37,38 @@
         [_internalQueue setSuspended:YES];
         _internalQueue.delegate = self;
         [_internalQueue addOperation:_startOperation];
-        
         for (NSOperation* operation in operations) {
-            NSError* internalError = nil;
-            [_internalQueue addOperation:operation
-                                   error:&internalError];
-            if (internalError != nil) {
-                if (error != NULL) { *error = internalError; }
-                self = nil;
-                break;
-            }
+            [_internalQueue addOperation:operation];
         }
     }
     
     return self;
 }
 
-- (BOOL)addOperation:(NSOperation* _Nonnull)operation
-               error:(NSError *__autoreleasing  _Nullable * _Nullable)error
+- (void)addOperation:(NSOperation* _Nonnull)operation
 {
-    VDS_NULLABLE_CHECK(@"opertaion", operation, [NSOperation class], _cmd, error)
     
-    return [_internalQueue addOperation:operation
-                                  error:error];
+    // It is a programmer error to pass a nil operation.
+    NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+    
+    // The operation must be a NSOperation or subclass.
+    NSAssert([operation isKindOfClass:[NSOperation class]], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(operation, @"operation", _cmd, NSStringFromClass([NSOperation class])));
+    
+    [_internalQueue addOperation:operation];
 }
 
-- (BOOL)addOperations:(NSArray<NSOperation*>* _Nonnull)operations
-                error:(NSError *__autoreleasing  _Nullable * _Nullable)error
+- (void)addOperations:(NSArray<NSOperation*>* _Nonnull)operations
 {
-    VDS_NULLABLE_CHECK(@"operations", operations, [NSArray class], _cmd, error)
+    // It is a programmer error to pass a nil operation.
+    NSAssert(operations != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
     
-    BOOL success = YES;
-    
+    // The operation must be a NSOperation or subclass.
+    NSAssert([operations isKindOfClass:[NSArray class]], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(operations, @"operations", _cmd, NSStringFromClass([NSArray class])));
+
     for (NSOperation* operation in operations) {
-        success = [self addOperation:operation
-                               error:error];
-        if (success == NO) { break; }
+        [self addOperation:operation];
     }
     
-    return success;
 }
 
 
