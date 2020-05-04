@@ -71,8 +71,6 @@
     XCTAssertEqual(queue.operations[0], operation0);
     XCTAssertEqual(queue.operations[1], operation1);
     XCTAssertEqual(queue.operations[2], opertion2);
-
 }
-
 
 @end

@@ -71,6 +71,10 @@
 		032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSGroupOperationTests.m; sourceTree = "<group>"; };
 		032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSMutexConditionTests.m; sourceTree = "<group>"; };
 		032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSOperationIntegrationTests.m; sourceTree = "<group>"; };
+		033B1A4F2460C28A00E5589B /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OCMock.framework; sourceTree = "<group>"; };
+		033B1A512460C3A200E5589B /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = OCMockStatic/libOCMock.a; sourceTree = "<group>"; };
+		033B1A532460D5D200E5589B /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = OCMock/macOS/OCMock.framework; sourceTree = "<group>"; };
+		033B1A552460D5E300E5589B /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = "OCMock/iOS framework/OCMock.framework"; sourceTree = "<group>"; };
 		036C332B24491D640021346C /* VDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		036C332E24491D640021346C /* VDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSKit.h; sourceTree = "<group>"; };
 		036C332F24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -122,12 +126,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		033B1A4E2460C28A00E5589B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				033B1A532460D5D200E5589B /* OCMock.framework */,
+				033B1A552460D5E300E5589B /* OCMock.framework */,
+				033B1A512460C3A200E5589B /* libOCMock.a */,
+				033B1A4F2460C28A00E5589B /* OCMock.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		036C332124491D640021346C = {
 			isa = PBXGroup;
 			children = (
 				036C332D24491D640021346C /* VDSKit */,
 				036C333824491D640021346C /* VDSKitTests */,
 				036C332C24491D640021346C /* Products */,
+				033B1A4E2460C28A00E5589B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -493,6 +509,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+				);
 				INFOPLIST_FILE = VDSKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -503,6 +523,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -516,6 +537,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+				);
 				INFOPLIST_FILE = VDSKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -526,6 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -535,12 +561,25 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T5Q3QH59ZQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/OCMock/macOS",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+				);
 				INFOPLIST_FILE = VDSKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OCMockStatic",
+				);
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -552,12 +591,25 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = T5Q3QH59ZQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/OCMock/macOS",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
+				);
 				INFOPLIST_FILE = VDSKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/OCMockStatic",
+				);
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
