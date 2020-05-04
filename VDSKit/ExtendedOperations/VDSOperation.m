@@ -98,7 +98,10 @@
 
 #pragma mark - VDSOperation -
 
-@interface VDSOperation ()
+@interface VDSOperation () {
+    BOOL _canceledPending;
+    BOOL _evaluatedPending;
+}
 
 @property(readwrite) VDSOperationState state;
 
@@ -165,16 +168,15 @@
         case VDSOperationPending:
         {
             if (self.isCancelled == YES) {
-                static dispatch_once_t onceToken;
-                dispatch_once(&onceToken, ^{
+                if (_canceledPending == NO) {
+                    _canceledPending = YES;
                     self.state = VDSOperationReady;
-                });
+                }
                 return YES;
             } else if ([super isReady] == YES) {
-                static dispatch_once_t onceToken;
-                dispatch_once(&onceToken, ^{
+                if (_evaluatedPending == NO) {
                     [self evaluateConditions];
-                });
+                }
                 return NO;
             }
         }
@@ -211,6 +213,8 @@
         _conditions = [NSArray new];
         _observers = [NSArray new];
         _errors = [NSArray new];
+        _canceledPending = NO;
+        _evaluatedPending = NO;
     }
 
     return self;

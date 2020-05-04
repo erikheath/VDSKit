@@ -165,41 +165,42 @@
     VDSOperation* operation = [VDSOperation new];
     XCTAssertNotNil(operation);
     XCTAssertEqual(operation.dependencies.count, 0);
-    
+
     NSOperation* nilOp = nil;
     XCTAssertThrowsSpecificNamed([operation addDependency:nilOp], NSException, NSInternalInconsistencyException);
-    
+
     id object = [NSObject new];
     XCTAssertThrowsSpecificNamed([operation addDependency:object], NSException, NSInternalInconsistencyException);
-    
+
     NSOperation* depOp1 = [NSOperation new];
     [operation addDependency:depOp1];
     XCTAssertEqual(operation.dependencies.count, 1);
     XCTAssertEqual(operation.dependencies[0], depOp1);
-    
+
     NSOperation* depOp2 = [NSOperation new];
     [operation addDependency:depOp2];
     XCTAssertEqual(operation.dependencies.count, 2);
     XCTAssertNotEqual(operation.dependencies[0], depOp2);
     XCTAssertEqual(operation.dependencies[1], depOp2);
-    
+
     operation = [VDSOperation new];
     XCTAssertNotNil(operation);
     VDSOperationQueue* queue = [VDSOperationQueue new];
     XCTAssertNotNil(queue);
     [queue setSuspended:YES];
-    
+
     [queue addOperation:operation];
     XCTAssertNoThrowSpecificNamed([operation addDependency:depOp1], NSException, NSInternalInconsistencyException);
+
     
     operation = [VDSOperation new];
     queue = [VDSOperationQueue new];
-    [queue setSuspended:YES];
-    [queue addOperation:operation];
+
     XCTKVOExpectation* expectation = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation expectedValue:@(VDSOperationFinished)];
     XCTWaiter* waiter = [[XCTWaiter alloc] initWithDelegate:self];
-    [queue setSuspended:NO];
-    [waiter waitForExpectations:@[expectation] timeout:10];
+    
+    [queue addOperation:operation];
+    [waiter waitForExpectations:@[expectation] timeout:3];
     
     XCTAssertThrowsSpecificNamed([operation addDependency:depOp2], NSException, NSInternalInconsistencyException);
 
