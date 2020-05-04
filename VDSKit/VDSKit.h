@@ -16,4 +16,13 @@ FOUNDATION_EXPORT const unsigned char VDSKitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <VDSKit/PublicHeader.h>
 
+#import "ExtendedOperations/VDSOperation.h"
+#import "ExtendedOperations/VDSOperationQueue.h"
+#import "ExtendedOperations/VDSBlockObserver.h"
+#import "ExtendedOperations/VDSBlockOperation.h"
+#import "ExtendedOperations/VDSGroupOperation.h"
+#import "ExtendedOperations/VDSMutexCondition.h"
+
+#import "VDSConstants.h"
+#import "VDSErrorConstants.h"
 

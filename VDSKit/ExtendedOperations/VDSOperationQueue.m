@@ -20,7 +20,6 @@
 #import "VDSOperationQueue.h"
 #import "VDSBlockObserver.h"
 #import "../VDSErrorConstants.h"
-#import "VDSErrorFunctions.h"
 
 
 #pragma mark - VDSOperationMutexCoordinator -
@@ -160,11 +159,11 @@ static dispatch_once_t onceToken;
                 [VDSOperationMutexCoordinator.sharedCoordinator removeOperation:vdsOperation
                                                               forConditionTypes:mutexConditions];
             }];
+            [vdsOperation addObserver:observer];
+            [VDSOperationMutexCoordinator.sharedCoordinator addOperation:vdsOperation
+                                                          forConditionsTypes:mutexConditions];
         }
-        
-        [vdsOperation addObserver:observer];
-        [VDSOperationMutexCoordinator.sharedCoordinator addOperation:vdsOperation
-                                                      forConditionsTypes:mutexConditions];
+
         
         // The queue is always the delegate of the operation.
         vdsOperation.delegate = self;
@@ -177,11 +176,11 @@ static dispatch_once_t onceToken;
                 [self addOperation:dependency];
             }
         }
-        
-        // Message the operation that it is being enqueued.
-        [vdsOperation willEnqueue:self];
-        
     }
+    
+
+    // Message the operation that it is being enqueued.
+    if ([operation respondsToSelector:@selector(willEnqueue:)]) { [(VDSOperation*)operation willEnqueue:self]; }
     
     // Finally, notify delegates and add the operation to the queue.
     
@@ -191,12 +190,6 @@ static dispatch_once_t onceToken;
     }
 
     [super addOperation:operation];
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:didAddOperation:)]) {
-        [self.delegate operationQueue:self
-                      didAddOperation:operation];
-    }
-
     
 }
 

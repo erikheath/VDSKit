@@ -227,10 +227,6 @@
 /// @note This property is Key-Value Observable.
 @property(readonly) VDSOperationState state;
 
-/// @summary The lock used to guarantee that only one thread may change the state
-/// value at a time.
-@property(strong, readonly, nonnull, nonatomic) NSLock* stateCoordinator;
-
 /// The conditions the operation must satisfy before it can execute.
 @property(strong, readonly, nonnull, nonatomic) NSArray<VDSOperationCondition*>* conditions;
 
@@ -315,21 +311,6 @@
 
 
 #pragma mark - Execution Behaviors
-
-
-/// @summary Call this method to determine whether an operation can transition to
-/// a new VDSOperationState.
-///
-/// @param state A VDSOperationState the operation could transition to.
-///
-/// @returns YES if the can transition to state, otherwise NO.
-- (BOOL)canTransitionToState:(VDSOperationState)state;
-
-/// @summary Evaluates the conditions associated with the operation, returning YES if conditions
-/// have been satisfied, and NO if they have not been satisfied.
-///
-/// @throws NSInternalInconsistency exception if conditions are evaluated out of order.
-- (void)evaluateConditions;
 
 
 /// @summary Produces an operation of the specified class type, typically for use as a dependency

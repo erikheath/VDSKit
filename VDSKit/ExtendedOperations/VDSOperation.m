@@ -102,6 +102,10 @@
 
 @property(readwrite) VDSOperationState state;
 
+/// @summary The lock used to guarantee that only one thread may change the state
+/// value at a time.
+@property(strong, readonly, nonnull, nonatomic) NSLock* stateCoordinator;
+
 @property(strong, readwrite, nonnull) NSArray<VDSOperationCondition*>* conditions;
 
 @property(strong, readwrite, nonnull) NSArray<id<VDSOperationObserver>>* observers;
@@ -153,37 +157,36 @@
 
 - (BOOL)isReady
 {
-    BOOL success = YES;
-    
     switch (self.state) {
         case VDSOperationInitialized:
         {
-            success = self.isCancelled;
-            break;
+            return self.isCancelled;
         }
         case VDSOperationPending:
         {
             if (self.isCancelled == YES) {
-                success = YES;
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    self.state = VDSOperationReady;
+                });
+                return YES;
             } else if ([super isReady] == YES) {
-                [self evaluateConditions];
-                success = NO;
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    [self evaluateConditions];
+                });
+                return NO;
             }
-            break;
         }
         case VDSOperationReady:
         {
-            success = [super isReady] || [super isCancelled];
-            break;
+            return [super isReady] || [super isCancelled];
         }
         default:
         {
-            success = NO;
-            break;
+            return NO;
         }
     }
-    
-    return success;
 }
 
 - (BOOL)isExecuting
@@ -252,12 +255,12 @@
 - (void)addCompletionBlock:(void (^)(void))completionBlock
 {
     // It is a programmer error to pass a nil completionBlock.
-    NSAssert(completionBlock != NULL && completionBlock != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+    NSAssert(completionBlock != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
 
-    VDSOperation* __weak weakSelf = self;
     if (self.completionBlock != nil) {
-        weakSelf.completionBlock = ^{
-            weakSelf.completionBlock();
+        void(^existingBlock)(void) = self.completionBlock;
+        self.completionBlock = ^{
+            existingBlock();
             completionBlock();
         };
     } else {
@@ -294,23 +297,34 @@
 
 #pragma mark Execution
 
+/// @summary Call this method to determine whether an operation can transition to
+/// a new VDSOperationState. This method is private to the class and should only
+/// be accessed by setState.
+///
+/// @param state A VDSOperationState the operation could transition to.
+///
+/// @returns YES if the can transition to state, otherwise NO.
 - (BOOL)canTransitionToState:(VDSOperationState)state
 {
     BOOL success = YES;
-    
-    if (self.state == VDSOperationInitialized && state == VDSOperationPending) {
+    // TODO: Add ability to transition to ready state when canceled
+    // and synchronize the states so that in a cancelation states
+    // match the core states of isReady, isExecuting, isFinished, isCanceled.
+    if (_state == VDSOperationInitialized && state == VDSOperationPending) {
         success = YES;
-    } else if(self.state == VDSOperationPending && state == VDSOperationEvaluating) {
+    } else if(_state == VDSOperationPending && state == VDSOperationEvaluating) {
         success = YES;
-    } else if(self.state == VDSOperationEvaluating && state == VDSOperationReady) {
+    } else if(_state == VDSOperationPending && state == VDSOperationReady && self.isCancelled == YES) {
         success = YES;
-    } else if(self.state == VDSOperationReady && state == VDSOperationExecuting) {
+    } else if(_state == VDSOperationEvaluating && state == VDSOperationReady) {
         success = YES;
-    } else if(self.state == VDSOperationReady && state == VDSOperationFinishing) {
+    } else if(_state == VDSOperationReady && state == VDSOperationExecuting) {
         success = YES;
-    } else if(self.state == VDSOperationExecuting && state == VDSOperationFinishing) {
+    } else if(_state == VDSOperationReady && state == VDSOperationFinishing) {
         success = YES;
-    } else if(self.state == VDSOperationFinishing && state == VDSOperationFinished) {
+    } else if(_state == VDSOperationExecuting && state == VDSOperationFinishing) {
+        success = YES;
+    } else if(_state == VDSOperationFinishing && state == VDSOperationFinished) {
         success = YES;
     } else {
         success = NO;
@@ -319,13 +333,18 @@
     return success;
 }
 
+/// @summary Evaluates the conditions associated with the operation, returning YES if conditions
+/// have been satisfied, and NO if they have not been satisfied.
+///
+/// @throws NSInternalInconsistency exception if conditions are evaluated out of order.
 - (void)evaluateConditions
 {
-    NSAssert(self.state != VDSOperationPending || self.isCancelled == YES, VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(self.name, self.state));
+    NSAssert(self.state == VDSOperationPending && self.isCancelled == NO, VDS_OPERATION_COULD_NOT_EVALUATE_CONDITIONS_WITH_STATE_MESSAGE(self.name, self.state));
     
     self.state = VDSOperationEvaluating;
-    
+
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
+        
         NSError* conditionError = nil;
         if ([VDSOperationCondition evaluateConditionsForOperation:self error:&conditionError] == NO) {
             [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObject:conditionError];
@@ -357,13 +376,15 @@
 - (void)start {
     [super start];
     if (self.isCancelled == YES) {
+        // If the opertaion is canceled, main will not be called,
+        // so finish must be called from here.
         [self finishWithErrors:nil];
     }
 }
 
 - (void)main
 {
-    NSAssert(self.state != VDSOperationReady, VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(self.name, self.state));
+    NSAssert(self.state == VDSOperationReady, VDS_OPERATION_COULD_NOT_EXECUTE_OPERATION_WITH_STATE_MESSAGE(self.name, self.state));
     
     if (self.errors.count == 0 && self.isCancelled == NO) {
         self.state = VDSOperationExecuting;

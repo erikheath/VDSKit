@@ -72,13 +72,6 @@
 - (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
       willAddOperation:(NSOperation* _Nonnull)operation;
 
-/// Notifies the delegate that the operation queue added an
-/// operation to its queue.
-/// @param queue The queue to which the operation was added.
-/// @param operation The operation that was added to the queue.
-- (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
-       didAddOperation:(NSOperation* _Nonnull)operation;
-
 /// Notifies the delegate that an operation on the queue finished,
 /// reporting any errors if they occurred.
 /// @param queue The queue on which the operation executed.

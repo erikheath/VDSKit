@@ -7,7 +7,6 @@
 //
 
 #import "VDSGroupOperation.h"
-#import "VDSErrorFunctions.h"
 
 @implementation VDSGroupOperation
 
