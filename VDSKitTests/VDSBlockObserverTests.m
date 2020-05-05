@@ -7,6 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "../VDSKit/VDSKit.h"
+
 
 @interface VDSBlockObserverTests : XCTestCase
 
@@ -14,24 +16,58 @@
 
 @implementation VDSBlockObserverTests
 
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-}
-
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+- (void)testBasicInit {
+    VDSBlockObserver* observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:^(VDSOperation * _Nonnull startOperation) {
+        return;
+    } produceOperationHandler:^(VDSOperation * _Nonnull originOperation, NSOperation * _Nonnull producedOperation) {
+        return;
+    } finishOperationHandler:^(VDSOperation * _Nonnull finishOperation) {
+        return;
     }];
+    XCTAssertNotNil(observer);
+    XCTAssertNotNil(observer.didStartOperationHandler);
+    XCTAssertNotNil(observer.didProduceOperationHandler);
+    XCTAssertNotNil(observer.didFinishOperationHandler);
+    
+    observer = [[VDSBlockObserver alloc] init];
+    XCTAssertNil(observer.didStartOperationHandler);
+    XCTAssertNil(observer.didProduceOperationHandler);
+    XCTAssertNil(observer.didFinishOperationHandler);
+    
+    observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:nil produceOperationHandler:nil finishOperationHandler:nil];
+    XCTAssertNil(observer.didStartOperationHandler);
+    XCTAssertNil(observer.didProduceOperationHandler);
+    XCTAssertNil(observer.didFinishOperationHandler);
+    
+}
+
+- (void)testHandlers {
+    BOOL __block startFlag = NO;
+    BOOL __block produceFlag = NO;
+    BOOL __block finishFlag = NO;
+
+    void(^start)(VDSOperation*) = ^(VDSOperation* operation){ startFlag = YES; };
+    void(^produce)(VDSOperation*, NSOperation*) = ^(VDSOperation* operation, NSOperation* newOperation){ produceFlag = YES; };
+    void(^finish)(VDSOperation*) = ^(VDSOperation* operation){ finishFlag = YES; };
+    
+    VDSBlockObserver* observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:start produceOperationHandler:produce finishOperationHandler:finish];
+    XCTAssertNotNil(observer);
+    XCTAssertNotNil(observer.didStartOperationHandler);
+    XCTAssertNotNil(observer.didProduceOperationHandler);
+    XCTAssertNotNil(observer.didFinishOperationHandler);
+    XCTAssertEqual(observer.didStartOperationHandler, start);
+    XCTAssertEqual(observer.didProduceOperationHandler, produce);
+    XCTAssertEqual(observer.didFinishOperationHandler, finish);
+    
+    VDSOperation* operation = [VDSOperation new];
+    NSOperation* newOperation = [NSOperation new];
+    observer.didStartOperationHandler(operation);
+    observer.didProduceOperationHandler(operation, newOperation);
+    observer.didFinishOperationHandler(operation);
+    XCTAssertTrue(startFlag);
+    XCTAssertTrue(produceFlag);
+    XCTAssertTrue(finishFlag);
+    
 }
 
 @end
