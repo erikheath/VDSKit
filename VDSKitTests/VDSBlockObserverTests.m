@@ -29,10 +29,8 @@
     XCTAssertNotNil(observer.didProduceOperationHandler);
     XCTAssertNotNil(observer.didFinishOperationHandler);
     
-    observer = [[VDSBlockObserver alloc] init];
-    XCTAssertNil(observer.didStartOperationHandler);
-    XCTAssertNil(observer.didProduceOperationHandler);
-    XCTAssertNil(observer.didFinishOperationHandler);
+    XCTAssertThrowsSpecific([[VDSBlockObserver alloc] init], NSException);
+
     
     observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:nil produceOperationHandler:nil finishOperationHandler:nil];
     XCTAssertNil(observer.didStartOperationHandler);
