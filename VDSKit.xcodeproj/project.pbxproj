@@ -20,6 +20,7 @@
 		032ADF4A245DD952008186D3 /* VDSGroupOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */; };
 		032ADF4C245DD968008186D3 /* VDSMutexConditionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */; };
 		032ADF4E245F4377008186D3 /* VDSOperationIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */; };
+		033B1A5C246220F200E5589B /* VDSOperationConditionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 033B1A5B246220F200E5589B /* VDSOperationConditionTests.m */; };
 		036C333524491D640021346C /* VDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C332B24491D640021346C /* VDSKit.framework */; };
 		036C333A24491D640021346C /* VDSKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C333924491D640021346C /* VDSKitTests.m */; };
 		036C333C24491D640021346C /* VDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C332E24491D640021346C /* VDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -75,6 +76,7 @@
 		033B1A512460C3A200E5589B /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = OCMockStatic/libOCMock.a; sourceTree = "<group>"; };
 		033B1A532460D5D200E5589B /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = OCMock/macOS/OCMock.framework; sourceTree = "<group>"; };
 		033B1A552460D5E300E5589B /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = "OCMock/iOS framework/OCMock.framework"; sourceTree = "<group>"; };
+		033B1A5B246220F200E5589B /* VDSOperationConditionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSOperationConditionTests.m; sourceTree = "<group>"; };
 		036C332B24491D640021346C /* VDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		036C332E24491D640021346C /* VDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSKit.h; sourceTree = "<group>"; };
 		036C332F24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */,
 				032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */,
 				032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */,
+				033B1A5B246220F200E5589B /* VDSOperationConditionTests.m */,
 			);
 			path = VDSKitTests;
 			sourceTree = "<group>";
@@ -369,6 +372,7 @@
 				032ADF46245DD920008186D3 /* VDSBlockObserverTests.m in Sources */,
 				036C333A24491D640021346C /* VDSKitTests.m in Sources */,
 				032ADF4E245F4377008186D3 /* VDSOperationIntegrationTests.m in Sources */,
+				033B1A5C246220F200E5589B /* VDSOperationConditionTests.m in Sources */,
 				032ADF42245DD8F7008186D3 /* VDSOperationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
