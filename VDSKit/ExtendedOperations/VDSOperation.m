@@ -311,9 +311,7 @@
 - (BOOL)canTransitionToState:(VDSOperationState)state
 {
     BOOL success = YES;
-    // TODO: Add ability to transition to ready state when canceled
-    // and synchronize the states so that in a cancelation states
-    // match the core states of isReady, isExecuting, isFinished, isCanceled.
+
     if (_state == VDSOperationInitialized && state == VDSOperationPending) {
         success = YES;
     } else if(_state == VDSOperationPending && state == VDSOperationEvaluating) {

@@ -92,40 +92,16 @@
  *************************************************
  
  All VDSKit methods are annotated for nullability and in, out, and inout pointer semantics. However,
- sending a nil argument to a method in the Objective-C version of VDSKit will not cause an exception
- to be thrown or program termination. Instead, VDS methods employ a check at the beginning of method
- execution to determine if parameter arguments meet minimum conditions for execution including
+ sending a nil argument to a method in the Objective-C version of VDSKit where a nonnull is required
+ will cause an exception to be thrown or program termination. VDS methods employ a check at the beginning of
+ method execution to determine if parameter arguments meet minimum conditions for execution including
  nullability, bounds, and in certain cases type. This argument checking is only done on public facing
  methods, so the additional overhead is minimal while providing important diagnostic details and helping
  to prevent inconsistent application states due to partial method execution.
  
- 
- How It Works Internally *****************
- 
- (Almost) All VDSKit methods begin with a BOOL success parameter whose value determines whether the
- method may execute or not. This success parameter's value is initially determined by assessing whether
- incoming arguments meet the minimum requirements for the method to execute. If arguments fail to meet
- the requirements, success is set to NO, the main body of the method is prevented from executing, the
- method will set an error if possible describing the failure, and finally will return NO to the sender.
- 
- While not recommended, this behavior can be turned off using an environment setting: VDS_ARG_CHECKS and
- setting it to NO.
- 
- 
  Dealing With Exceptions *****************
  
- VDSKit does not generate exceptions. The reasons for this are that most errors in VDSKit are going to
- happen not because of programmer error (which should generate exceptions and be fixed), but because
- VDSKit is operating in a dynamic environment, often collecting data from unreliable sources over
- unreliable networks. Using errors enables VDSKit and anything built on top of it to treat this situation
- as a natural and expected alternate flow of events. This alternate flow will often result in
- in nil values being passed to parameters that expect non-nil values and is why VDSKit checks
- incoming argument values and returns errors instead of throwing nil argument exceptions.
  
- However, while VDSKit doesn't throw exceptions, most of the Cocoa systems that VDSKit builds on top of do.
- Because of this, where an exception is considered to be part of a normal operation, VDSKit will wrap
- exceptions in Error objects and foward them to a sender. Unexpected exceptions, for example trying to
- insert a nil into an array are not wrapped and will typically result in a program crash.
  
  */
 

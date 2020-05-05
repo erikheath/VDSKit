@@ -139,6 +139,27 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		033B1A5D246224EA00E5589B /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				036C334524491E570021346C /* VDSDatabase.h */,
+				036C334624491E570021346C /* VDSDatabase.m */,
+				036C334924491E790021346C /* VDSDatabaseContext.h */,
+				036C334A24491E790021346C /* VDSDatabaseContext.m */,
+				036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */,
+				036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */,
+				036C3351244A230A0021346C /* VDSSnapshotCache.h */,
+				036C3352244A230A0021346C /* VDSSnapshotCache.m */,
+				036C3355244A23230021346C /* VDSQueryCache.h */,
+				036C3356244A23230021346C /* VDSQueryCache.m */,
+				036C3359244A233E0021346C /* VDSEntityCache.h */,
+				036C335A244A233E0021346C /* VDSEntityCache.m */,
+				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
+				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
 		036C332124491D640021346C = {
 			isa = PBXGroup;
 			children = (
@@ -167,20 +188,7 @@
 				036C3361244A3D760021346C /* VDSConstants.m */,
 				036C335E244A28960021346C /* VDSErrorConstants.h */,
 				036C335F244A2AF80021346C /* VDSErrorConstants.m */,
-				036C334524491E570021346C /* VDSDatabase.h */,
-				036C334624491E570021346C /* VDSDatabase.m */,
-				036C334924491E790021346C /* VDSDatabaseContext.h */,
-				036C334A24491E790021346C /* VDSDatabaseContext.m */,
-				036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */,
-				036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */,
-				036C3351244A230A0021346C /* VDSSnapshotCache.h */,
-				036C3352244A230A0021346C /* VDSSnapshotCache.m */,
-				036C3355244A23230021346C /* VDSQueryCache.h */,
-				036C3356244A23230021346C /* VDSQueryCache.m */,
-				036C3359244A233E0021346C /* VDSEntityCache.h */,
-				036C335A244A233E0021346C /* VDSEntityCache.m */,
-				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
-				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
+				033B1A5D246224EA00E5589B /* Database */,
 				036C332F24491D640021346C /* Info.plist */,
 			);
 			path = VDSKit;
