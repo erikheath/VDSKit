@@ -10,35 +10,46 @@
 
 @implementation VDSBlockOperation
 
+- (instancetype _Nullable)init
+{
+    NSAssert(NO, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+    return nil;
+}
+
 - (instancetype _Nullable)initWithBlock:(void (^_Nullable)(void(^ _Nonnull)(void)))block {
-    self = [super init];
+    NSAssert(block != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+    
+    self = block != nil ? [super init] : nil;
     if (self != nil) {
-        _mainBlock = block;
+        _task = [block copy];
     }
     return self;
 }
 
 - (instancetype _Nullable)initWithMainQueueBlock:(void (^)(void))block {
-    self = [super init];
+    NSAssert(block != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
+
+    self = block != nil ? [super init] : nil;
+    void(^internalBlock)(void) = [block copy];
     if (self != nil) {
         void(^opBlock)(void(^)(void)) = ^void(void(^continuation)(void)) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                block();
+                internalBlock();
                 dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ^{
                     continuation();
                 });
             });
         };
-        _mainBlock = opBlock;
+        _task = opBlock;
     }
     return self;
 }
 
 - (void)execute {
-    if (_mainBlock == nil) {
+    if (_task == nil) {
         [self finish:NULL];
     } else {
-        _mainBlock(^{ [self finish:NULL]; });
+        _task(^{ [self finish:NULL]; });
     }
     return;
 }

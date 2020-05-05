@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "../VDSKit/VDSKit.h"
 
 @interface VDSMutexConditionTests : XCTestCase
 
@@ -14,24 +15,47 @@
 
 @implementation VDSMutexConditionTests
 
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+- (void)testBasicInit {
+    VDSMutexCondition* condition = [VDSMutexCondition new];
+    XCTAssertNotNil(condition);
+    XCTAssertTrue(VDSMutexCondition.isMutuallyExclusive);
+    NSString* conditionName = [NSString stringWithFormat:@"MutuallyExclusive<%@>", NSStringFromClass([VDSMutexCondition class])];
+    XCTAssertEqualObjects(VDSMutexCondition.conditionName, conditionName);
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-}
+- (void)testDependencyForOperation {
+    VDSMutexCondition* condition = [VDSMutexCondition new];
+    XCTAssertNotNil(condition);
+    VDSOperation* operation1 = [VDSOperation new];
+    XCTAssertNil([condition dependencyForOperation:operation1]);
+    VDSOperation* operation2 = [VDSOperation new];
+    XCTAssertNil([condition dependencyForOperation:operation2]);
+    VDSOperation* operation3 = [VDSOperation new];
+    XCTAssertNil([condition dependencyForOperation:operation3]);
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
+    VDSOperationQueue* queue = [VDSOperationQueue new];
+    [queue setSuspended:YES];
+    
+    [operation1 addCondition:condition];
+    [operation2 addCondition:condition];
+    [operation3 addCondition:condition];
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+    [queue addOperations:@[operation1, operation2, operation3]];
+
+    XCTKVOExpectation* expectOp1 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation1 expectedValue:@(VDSOperationExecuting)];
+    XCTKVOExpectation* expectOp2 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation2 expectedValue:@(VDSOperationExecuting)];
+    XCTKVOExpectation* expectOp3 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation3 expectedValue:@(VDSOperationExecuting)];
+
+    XCTKVOExpectation* expectOp1Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation1 expectedValue:@(VDSOperationFinished)];
+    XCTKVOExpectation* expectOp2Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation2 expectedValue:@(VDSOperationFinished)];
+    XCTKVOExpectation* expectOp3Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation3 expectedValue:@(VDSOperationFinished)];
+
+    
+    XCTWaiter* waiter = [[XCTWaiter alloc] initWithDelegate:self];
+    [queue setSuspended:NO];
+    [waiter waitForExpectations:@[expectOp1, expectOp1Fin, expectOp2, expectOp2Fin, expectOp3, expectOp3Fin] timeout:5 enforceOrder:YES];
+    
 }
 
 @end
+

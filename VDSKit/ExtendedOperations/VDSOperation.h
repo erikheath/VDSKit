@@ -112,6 +112,8 @@
 
 @protocol VDSOperationObserver <NSObject>
 
+@optional
+
 /// Notifies the observer that the operation has started.
 /// @param operation The operation that produced the new operation.
 - (void)operationDidStart:(VDSOperation* _Nonnull)operation;
@@ -119,7 +121,7 @@
 /// Notifies the observer that the opertion produced a new operation
 /// for its dependencies.
 /// @param operation The operation that produced the new operation.
-/// @param newOperation The operation the was produced.
+/// @param newOperation The operation that was produced.
 - (void)operation:(VDSOperation* _Nonnull)operation
     didProduceOperation:(NSOperation* _Nonnull)newOperation;
 

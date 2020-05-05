@@ -11,7 +11,7 @@
 
 @interface VDSBlockOperation : VDSOperation
 
-@property(strong, readonly, nullable)void (^mainBlock)(void(^ _Nonnull continuation)(void));
+@property(copy, readonly, nullable)void (^task)(void(^ _Nonnull continuation)(void));
 
 - (instancetype _Nullable )initWithBlock:(void (^_Nullable)(void(^ _Nonnull continuation)(void)))block;
 

@@ -15,6 +15,7 @@
 @synthesize didFinishOperationHandler = _didFinishOperationHandler;
 
 - (instancetype)init {
+    NSAssert(NO, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
     return nil;
 }
 
@@ -30,16 +31,22 @@
 
 
 - (void)operationDidStart:(VDSOperation * _Nonnull)operation {
-    _didStartOperationHandler(operation);
+    if (_didStartOperationHandler != nil) {
+        _didStartOperationHandler(operation);
+    }
 }
 
 - (void)operation:(VDSOperation* _Nonnull)operation
 didProduceOperation:(VDSOperation * _Nonnull)newOperation {
-    _didProduceOperationHandler(operation, newOperation);
+    if (_didProduceOperationHandler != nil) {
+        _didProduceOperationHandler(operation, newOperation);
+    }
 }
 
 - (void)operationDidFinish:(VDSOperation * _Nonnull)operation {
-    _didFinishOperationHandler(operation);
+    if (_didFinishOperationHandler != nil) {
+        _didFinishOperationHandler(operation);
+    }
 }
 
 

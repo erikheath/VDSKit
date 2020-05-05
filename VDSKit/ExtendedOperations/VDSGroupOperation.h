@@ -13,10 +13,6 @@
 
 @property(strong, readonly, nonnull) VDSOperationQueue* internalQueue;
 
-@property(strong, readonly, nonnull) NSOperation* startOperation;
-
-@property(strong, readonly, nonnull) NSOperation* finishOperation;
-
 + (instancetype _Nullable)initWithOperations:(NSOperation* _Nullable)operation, ...;
 
 - (instancetype _Nullable)initWithOperations:(NSArray<NSOperation*>* _Nullable)operations;
@@ -25,6 +21,7 @@
 
 - (void)addOperations:(NSArray<NSOperation*>* _Nonnull)operations;
 
+- (void)operationDidFinish:(NSOperation* _Nonnull)operation;
 
 @end
 

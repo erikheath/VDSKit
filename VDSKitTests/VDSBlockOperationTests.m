@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "../VDSKit/VDSKit.h"
 
 @interface VDSBlockOperationTests : XCTestCase
 
@@ -14,24 +15,53 @@
 
 @implementation VDSBlockOperationTests
 
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+- (void)testBasicInit {
+    XCTAssertThrowsSpecificNamed([VDSBlockOperation new], NSException, NSInternalInconsistencyException);
+    
+    XCTAssertThrowsSpecificNamed([[VDSBlockOperation alloc] initWithBlock:nil], NSException, NSInternalInconsistencyException);
+    
+    XCTAssertThrowsSpecificNamed([[VDSBlockOperation alloc] initWithMainQueueBlock:nil], NSException, NSInternalInconsistencyException);
+    
+    void(^block)(void(^)(void)) = ^(void(^finishBlock)(void)){
+        return;
+    };
+    
+    VDSBlockOperation* operation = [[VDSBlockOperation alloc] initWithBlock:block];
+    XCTAssertNotNil(operation.task);
+    XCTAssertEqual(operation.task, block);
+    
 }
 
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+- (void)testBlockAssignment {
+    XCTestExpectation* expect = [[XCTestExpectation alloc] initWithDescription:@"Block Executed."];
+    XCTWaiter* waiter = [[XCTWaiter alloc] initWithDelegate:self];
+    void(^block)(void(^)(void)) = ^(void(^finishBlock)(void)){
+        [expect fulfill];
+        return;
+    };
+    
+    VDSBlockOperation* operation = [[VDSBlockOperation alloc] initWithBlock:block];
+    VDSOperationQueue* queue = [VDSOperationQueue new];
+    
+    [queue addOperation:operation];
+    [waiter waitForExpectations:@[expect] timeout:3];
+
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+- (void)testMainQueueAssignment {
+    XCTestExpectation* expect = [[XCTestExpectation alloc] initWithDescription:@"Block Executed."];
+    XCTWaiter* waiter = [[XCTWaiter alloc] initWithDelegate:self];
+    void(^block)(void) = ^{
+        if ([[NSThread currentThread] isMainThread]) { [expect fulfill]; }
+        return;
+    };
+    
+    VDSBlockOperation* operation = [[VDSBlockOperation alloc] initWithMainQueueBlock:block];
+    VDSOperationQueue* queue = [VDSOperationQueue new];
+    
+    [queue addOperation:operation];
+    [waiter waitForExpectations:@[expect] timeout:3];
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
-}
 
 @end

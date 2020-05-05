@@ -13,11 +13,11 @@
 
 @interface VDSBlockObserver : NSObject <VDSOperationObserver>
 
-@property(strong, readonly, nullable) void(^didStartOperationHandler)(VDSOperation* _Nonnull);
+@property(copy, readonly, nullable) void(^didStartOperationHandler)(VDSOperation* _Nonnull);
 
-@property(strong, readonly, nullable) void(^didProduceOperationHandler)(VDSOperation* _Nonnull, NSOperation* _Nonnull);
+@property(copy, readonly, nullable) void(^didProduceOperationHandler)(VDSOperation* _Nonnull, NSOperation* _Nonnull);
 
-@property(strong, readonly, nullable) void(^didFinishOperationHandler)(VDSOperation* _Nonnull);
+@property(copy, readonly, nullable) void(^didFinishOperationHandler)(VDSOperation* _Nonnull);
 
 - (instancetype _Nonnull )initWithStartOperationHandler:(void(^_Nullable)(VDSOperation* _Nonnull startOperation))startOperationHandler
                         produceOperationHandler:(void(^_Nullable)(VDSOperation* _Nonnull originOperation, NSOperation* _Nonnull producedOperation))produceOperationHandler

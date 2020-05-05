@@ -36,15 +36,12 @@
 
 static VDSOperationMutexCoordinator* _sharedCoordinator;
 
-// This ensures that this will only be used once whether its used by
-// shared coordinator first or init first.
-static dispatch_once_t onceToken;
-
 @synthesize serializer = _serializer;
 @synthesize mutexOperations = _mutexOperations;
 
 + (VDSOperationMutexCoordinator*)sharedCoordinator
 {
+    static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _sharedCoordinator = [[VDSOperationMutexCoordinator alloc] init];
     });
@@ -53,6 +50,7 @@ static dispatch_once_t onceToken;
 
 - (instancetype)init {
     id __block internalSelf = self;
+    static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         internalSelf = [super init];
         if (internalSelf != nil) {
@@ -130,12 +128,7 @@ static dispatch_once_t onceToken;
                             operationDidFinish:op];
             }
         }];
-        
-        if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:willAddOperation:)]) {
-            [self.delegate operationQueue:self
-                         willAddOperation:operation];
-        }
-        
+                
     } else {
         // This is exclusively for VDSOperation and its subclasses.
         VDSOperation* vdsOperation = (VDSOperation*)operation;

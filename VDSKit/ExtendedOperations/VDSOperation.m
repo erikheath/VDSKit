@@ -362,10 +362,12 @@
 {
     // It is a programmer error to pass a nil operation.
     NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
-
+    
     for (id<VDSOperationObserver> observer in _observers) {
-        [observer operation:self
-        didProduceOperation:operation];
+        if ([observer respondsToSelector:@selector(operation:didProduceOperation:)]) {
+            [observer operation:self
+            didProduceOperation:operation];
+        }
     }
     
     [self.delegate operation:self
@@ -394,7 +396,9 @@
         self.state = VDSOperationExecuting;
         
         for (id<VDSOperationObserver>observer in self.observers) {
-            [observer operationDidStart:self];
+            if ([observer respondsToSelector:@selector(operationDidStart:)]) {
+                [observer operationDidStart:self];
+            }
         }
         [self execute];
     } else {
@@ -421,6 +425,10 @@
     [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObjectsFromArray:errors];
     
     [self finishing];
+    
+    if ([_delegate respondsToSelector:@selector(operationDidFinish:)]) {
+        [_delegate operationDidFinish:self];
+    }
     
     for (id<VDSOperationObserver> observer in _observers) {
         [observer operationDidFinish:self];

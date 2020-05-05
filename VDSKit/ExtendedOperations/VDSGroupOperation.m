@@ -8,6 +8,14 @@
 
 #import "VDSGroupOperation.h"
 
+@interface VDSGroupOperation ()
+
+@property(strong, readonly, nonnull) NSOperation* startOperation;
+
+@property(strong, readonly, nonnull) NSOperation* finishOperation;
+
+@end
+
 @implementation VDSGroupOperation
 
 + (instancetype _Nullable)initWithOperations:(NSOperation* _Nullable)operation, ...
@@ -28,6 +36,16 @@
 
 - (instancetype _Nullable)initWithOperations:(NSArray<NSOperation*>* _Nullable)operations
 {
+    self = [self init];
+    if (self != nil) {
+        for (NSOperation* operation in operations) {
+            [_internalQueue addOperation:operation];
+        }
+    }
+    return self;
+}
+
+- (instancetype _Nullable)init {
     self = [super init];
     if (self != nil) {
         _startOperation = [NSBlockOperation blockOperationWithBlock:^{ }];
@@ -36,11 +54,7 @@
         [_internalQueue setSuspended:YES];
         _internalQueue.delegate = self;
         [_internalQueue addOperation:_startOperation];
-        for (NSOperation* operation in operations) {
-            [_internalQueue addOperation:operation];
-        }
     }
-    
     return self;
 }
 
@@ -70,26 +84,43 @@
     
 }
 
+- (void)cancel
+{
+    [_internalQueue cancelAllOperations];
+    [super cancel];
+}
 
-- (void)operationQueue:(VDSOperationQueue * _Nonnull)queue
-       didAddOperation:(NSOperation * _Nonnull)operation {
+- (void)execute
+{
+    [_internalQueue setSuspended:NO];
+    [_internalQueue addOperation:_finishOperation];
+}
+
+- (void)operationDidFinish:(NSOperation *)operation {
     return;
 }
 
 - (void)operationQueue:(VDSOperationQueue * _Nonnull)queue
     operationDidFinish:(NSOperation * _Nonnull)operation {
+    if ([operation isKindOfClass:[VDSOperation class]] == YES) {
+        [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObjectsFromArray:((VDSOperation*)operation).errors];
+    }
+    if (operation == _finishOperation) {
+        [_internalQueue setSuspended:YES];
+        [self finish:nil];
+    } else if (operation != _startOperation) {
+        [self operationDidFinish:operation];
+    }
     return;
 }
 
 - (BOOL)operationQueue:(VDSOperationQueue * _Nonnull)queue
     shouldAddOperation:(NSOperation * _Nonnull)operation {
-    BOOL success = YES;
     
     // Once the finish operation begins, no additional operations
     // can be added.
-    success = !_finishOperation.isFinished && !_finishOperation.isExecuting;
+    return !_finishOperation.isFinished && !_finishOperation.isExecuting;
     
-    return success;
 }
 
 - (void)operationQueue:(VDSOperationQueue * _Nonnull)queue
