@@ -30,7 +30,6 @@
 		033B1A70246345D400E5589B /* VDSOperationMutexCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 033B1A6E246345D400E5589B /* VDSOperationMutexCoordinator.h */; };
 		033B1A71246345D400E5589B /* VDSOperationMutexCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 033B1A6F246345D400E5589B /* VDSOperationMutexCoordinator.m */; };
 		036C333524491D640021346C /* VDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C332B24491D640021346C /* VDSKit.framework */; };
-		036C333A24491D640021346C /* VDSKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C333924491D640021346C /* VDSKitTests.m */; };
 		036C333C24491D640021346C /* VDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C332E24491D640021346C /* VDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		036C334724491E570021346C /* VDSDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C334524491E570021346C /* VDSDatabase.h */; };
 		036C334824491E570021346C /* VDSDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334624491E570021346C /* VDSDatabase.m */; };
@@ -95,7 +94,6 @@
 		036C332E24491D640021346C /* VDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSKit.h; sourceTree = "<group>"; };
 		036C332F24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		036C333424491D640021346C /* VDSKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VDSKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		036C333924491D640021346C /* VDSKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSKitTests.m; sourceTree = "<group>"; };
 		036C333B24491D640021346C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		036C334524491E570021346C /* VDSDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabase.h; sourceTree = "<group>"; };
 		036C334624491E570021346C /* VDSDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabase.m; sourceTree = "<group>"; };
@@ -172,6 +170,21 @@
 			path = Database;
 			sourceTree = "<group>";
 		};
+		033B1A722463651400E5589B /* OperationTests */ = {
+			isa = PBXGroup;
+			children = (
+				032ADF41245DD8F7008186D3 /* VDSOperationTests.m */,
+				032ADF43245DD90C008186D3 /* VDSOperationQueueTests.m */,
+				032ADF45245DD920008186D3 /* VDSBlockObserverTests.m */,
+				032ADF47245DD936008186D3 /* VDSBlockOperationTests.m */,
+				032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */,
+				032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */,
+				032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */,
+				033B1A5B246220F200E5589B /* VDSOperationConditionTests.m */,
+			);
+			path = OperationTests;
+			sourceTree = "<group>";
+		};
 		036C332124491D640021346C = {
 			isa = PBXGroup;
 			children = (
@@ -209,16 +222,8 @@
 		036C333824491D640021346C /* VDSKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				036C333924491D640021346C /* VDSKitTests.m */,
 				036C333B24491D640021346C /* Info.plist */,
-				032ADF41245DD8F7008186D3 /* VDSOperationTests.m */,
-				032ADF43245DD90C008186D3 /* VDSOperationQueueTests.m */,
-				032ADF45245DD920008186D3 /* VDSBlockObserverTests.m */,
-				032ADF47245DD936008186D3 /* VDSBlockOperationTests.m */,
-				032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */,
-				032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */,
-				032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */,
-				033B1A5B246220F200E5589B /* VDSOperationConditionTests.m */,
+				033B1A722463651400E5589B /* OperationTests */,
 			);
 			path = VDSKitTests;
 			sourceTree = "<group>";
@@ -402,7 +407,6 @@
 				032ADF4A245DD952008186D3 /* VDSGroupOperationTests.m in Sources */,
 				032ADF48245DD936008186D3 /* VDSBlockOperationTests.m in Sources */,
 				032ADF46245DD920008186D3 /* VDSBlockObserverTests.m in Sources */,
-				036C333A24491D640021346C /* VDSKitTests.m in Sources */,
 				032ADF4E245F4377008186D3 /* VDSOperationIntegrationTests.m in Sources */,
 				033B1A5C246220F200E5589B /* VDSOperationConditionTests.m in Sources */,
 				032ADF42245DD8F7008186D3 /* VDSOperationTests.m in Sources */,

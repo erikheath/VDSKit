@@ -32,6 +32,13 @@
     return self;
 }
 
+- (instancetype _Nullable)initWithConfiguration:(NSDictionary* _Nonnull)configuration
+error:(NSError* __autoreleasing _Nullable * _Nullable)error
+{
+    
+}
+
+
 #pragma mark - Utility Behavior
 
 - (NSUInteger)hash {
@@ -144,6 +151,20 @@
     }
     
     return success;
+}
+
+
+- (BOOL)incrementUsageCount:(id _Nonnull)key
+error:(NSError* __autoreleasing _Nullable * _Nullable)error
+{
+    
+}
+
+
+- (BOOL)decrementUsageCount:(id _Nonnull)key
+error:(NSError* __autoreleasing _Nullable * _Nullable)error
+{
+    
 }
 
 

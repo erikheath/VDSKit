@@ -169,7 +169,7 @@
 
 #pragma mark Cache Storage
 
-/// The main storage for the cache. Objects are store using a globally unique (for the cache) key
+/// The main storage for the cache. Objects are stored using a globally unique (for the cache) key
 /// that is used throughout the cache tracking system to refer to the object.
 ///
 /// @discussion It is possible to add cache objects directly without using the tracking system,
