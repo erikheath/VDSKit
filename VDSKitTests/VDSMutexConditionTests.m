@@ -42,18 +42,18 @@
 
     [queue addOperations:@[operation1, operation2, operation3]];
 
-    XCTKVOExpectation* expectOp1 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation1 expectedValue:@(VDSOperationExecuting)];
-    XCTKVOExpectation* expectOp2 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation2 expectedValue:@(VDSOperationExecuting)];
-    XCTKVOExpectation* expectOp3 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation3 expectedValue:@(VDSOperationExecuting)];
+    XCTKVOExpectation* expectOp1 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isExecuting)) object:operation1 expectedValue:@(YES)];
+    XCTKVOExpectation* expectOp2 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isExecuting)) object:operation2 expectedValue:@(YES)];
+    XCTKVOExpectation* expectOp3 = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isExecuting)) object:operation3 expectedValue:@(YES)];
 
-    XCTKVOExpectation* expectOp1Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation1 expectedValue:@(VDSOperationFinished)];
-    XCTKVOExpectation* expectOp2Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation2 expectedValue:@(VDSOperationFinished)];
-    XCTKVOExpectation* expectOp3Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(state)) object:operation3 expectedValue:@(VDSOperationFinished)];
+    XCTKVOExpectation* expectOp1Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isFinished)) object:operation1 expectedValue:@(YES)];
+    XCTKVOExpectation* expectOp2Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isFinished)) object:operation2 expectedValue:@(YES)];
+    XCTKVOExpectation* expectOp3Fin = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isFinished)) object:operation3 expectedValue:@(YES)];
 
     
     XCTWaiter* waiter = [[XCTWaiter alloc] initWithDelegate:self];
     [queue setSuspended:NO];
-    [waiter waitForExpectations:@[expectOp1, expectOp1Fin, expectOp2, expectOp2Fin, expectOp3, expectOp3Fin] timeout:5 enforceOrder:YES];
+    [waiter waitForExpectations:@[expectOp1, expectOp1Fin, expectOp2, expectOp2Fin, expectOp3, expectOp3Fin] timeout:5 enforceOrder:NO];
     
 }
 

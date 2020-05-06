@@ -18,38 +18,13 @@
 
 #import <Foundation/Foundation.h>
 #import "VDSOperation.h"
+#import "VDSOperationDelegate.h"
+
 
 @class VDSOperationQueue;
+@class VDSOperationMutexCoordinator;
 
 
-#pragma mark - VDSOperationMutexCoordinator -
-
-
-/// The VDSOperationMutexCoordinator provides a singleton that ensure
-/// only one of a VDSOperation instance type may execute at a time. This
-/// exclusivity occurs across VDSOperationQueues.
-@interface VDSOperationMutexCoordinator : NSObject
-
-/// The shared instance that should be used by the app.
-@property(class, strong, readonly, nonnull) VDSOperationMutexCoordinator* sharedCoordinator;
-
-/// Adding an operation to the VDSOperationMutexCoordinator makes its exectuion
-/// mutually exclusive across all VDSOperationQueue.
-/// @param operation The object that will be made mutally exclusive.
-/// @param conditionTypes The conditions that require mutual exclusivity before this operation
-/// can execute.
-- (void)addOperation:(VDSOperation* _Nonnull)operation
-  forConditionsTypes:(NSArray<NSString*>* _Nonnull)conditionTypes;
-
-/// Removing an operation from the VDSOperationMutexCoordinator removes its
-/// execution from being mutually exclusive for the specified condition types.
-/// @param operation The operation that should no longer be mutually exclusive.
-/// @param conditionTypes The mutually exclusive conditions that the operation
-/// will no longer require for execution.
-- (void)removeOperation:(VDSOperation* _Nonnull)operation
-      forConditionTypes:(NSArray<NSString*>* _Nonnull)conditionTypes;
-
-@end
 
 @protocol VDSOperationQueueDelegate <NSObject>
 
@@ -57,7 +32,7 @@
 /// example, if a queue only accepts a certain number of a type of operation,
 /// this method can be used to prevent more than a certain number of an
 /// operation type from being added to a queue at any one time. As an
-/// alternative, operations can be capture and coalesced so that
+/// alternative, operations can be captured and coalesced so that
 /// only the most recent is executed at any time.
 /// @param queue The queue to which the operation is to be added.
 /// @param operation The operation to be added to the queue.

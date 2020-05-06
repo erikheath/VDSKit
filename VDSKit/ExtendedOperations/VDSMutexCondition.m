@@ -7,6 +7,7 @@
 //
 
 #import "VDSMutexCondition.h"
+#import "VDSOperation.h"
 
 @implementation VDSMutexCondition
 

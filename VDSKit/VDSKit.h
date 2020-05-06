@@ -22,6 +22,9 @@ FOUNDATION_EXPORT const unsigned char VDSKitVersionString[];
 #import "ExtendedOperations/VDSBlockOperation.h"
 #import "ExtendedOperations/VDSGroupOperation.h"
 #import "ExtendedOperations/VDSMutexCondition.h"
+#import "ExtendedOperations/VDSOperationCondition.h"
+#import "ExtendedOperations/VDSOperationObserver.h"
+#import "ExtendedOperations/VDSOperationDelegate.h"
 
 #import "VDSConstants.h"
 #import "VDSErrorConstants.h"

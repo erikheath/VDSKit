@@ -20,76 +20,9 @@
 #import "VDSOperationQueue.h"
 #import "VDSBlockObserver.h"
 #import "../VDSErrorConstants.h"
-
-
-#pragma mark - VDSOperationMutexCoordinator -
-
-@interface VDSOperationMutexCoordinator ()
-
-@property(strong, readonly, nonnull) dispatch_queue_t serializer;
-
-@property(strong, readonly, nonnull) NSMutableDictionary* mutexOperations;
-
-@end
-
-@implementation VDSOperationMutexCoordinator
-
-static VDSOperationMutexCoordinator* _sharedCoordinator;
-
-@synthesize serializer = _serializer;
-@synthesize mutexOperations = _mutexOperations;
-
-+ (VDSOperationMutexCoordinator*)sharedCoordinator
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _sharedCoordinator = [[VDSOperationMutexCoordinator alloc] init];
-    });
-    return _sharedCoordinator;
-}
-
-- (instancetype)init {
-    id __block internalSelf = self;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        internalSelf = [super init];
-        if (internalSelf != nil) {
-            _serializer = dispatch_queue_create("VDSOperationMutexCoordinator", DISPATCH_QUEUE_SERIAL);
-            _mutexOperations = [NSMutableDictionary new];
-            _sharedCoordinator = internalSelf;
-        }
-    });
-    return _sharedCoordinator;
-}
-
-- (void)addOperation:(VDSOperation *)operation
-  forConditionsTypes:(NSArray<NSString*> *)conditionTypes {
-    dispatch_sync(_serializer, ^{
-        for (NSString* conditionType in conditionTypes) {
-            NSMutableArray* operationsForConditionType = self->_mutexOperations[conditionType];
-            if (operationsForConditionType == nil) {
-                operationsForConditionType = [NSMutableArray new];
-                [_mutexOperations setObject:operationsForConditionType
-                                     forKey:conditionType];
-            }
-            VDSOperation* lastOperation = operationsForConditionType.lastObject;
-            if (lastOperation != nil) { [operation addDependency:lastOperation]; }
-            [operationsForConditionType addObject:operation];
-        }
-    });
-}
-
-- (void)removeOperation:(VDSOperation *)operation
-      forConditionTypes:(NSArray<Class> *)conditionTypes {
-    dispatch_async(_serializer, ^{
-        for (NSString* conditionType in conditionTypes) {
-            NSMutableArray* operationsForConditionType = self->_mutexOperations[conditionType];
-            [operationsForConditionType removeObject:operation];
-        }
-    });
-}
-
-@end
+#import "VDSOperationCondition.h"
+#import "VDSOperationDelegate.h"
+#import "VDSOperationMutexCoordinator.h"
 
 
 #pragma mark - VDSOperationQueue -
@@ -98,7 +31,7 @@ static VDSOperationMutexCoordinator* _sharedCoordinator;
 
 - (void)addOperation:(NSOperation*)operation
 {
-    // It is a programmer error to pass a nil condition.
+    // It is a programmer error to pass a nil operation.
     NSAssert(operation != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
     
     // The operation must be a NSOperation or subclass.
@@ -111,30 +44,29 @@ static VDSOperationMutexCoordinator* _sharedCoordinator;
         return;
     }
 
-    // Enable adding operations to the queue as part of the overall add operation
-    // process. This lets NSOperation and other subclasses be interleaved with
-    // VDSOperation and its subclasses.
+    // Let NSOperation and other subclasses be interleaved with
+    // VDSOperation and its subclasses. The queue is always the
+    // delegate of operations.
     if ([operation isKindOfClass:[VDSOperation class]] == NO) {
         
-        // To enable delegate notification when the operation finishes,
+        // To enable notification when the operation finishes,
         // a completion block is added or appended to with a delegate
         // notification.
         VDSOperationQueue* __weak queue = self;
         NSOperation* __weak op = operation;
         [operation addCompletionBlock:^{
-            if (queue.delegate != nil &&
-                [queue.delegate respondsToSelector:@selector(operationQueue:operationDidFinish:)]) {
-                [queue.delegate operationQueue:queue
-                            operationDidFinish:op];
+            if (queue != nil &&
+                [queue respondsToSelector:@selector(operationDidFinish:)]) {
+                [queue operationDidFinish:op];
             }
         }];
                 
     } else {
         // This is exclusively for VDSOperation and its subclasses.
         VDSOperation* vdsOperation = (VDSOperation*)operation;
+        
         VDSBlockObserver* observer = nil;
         NSMutableArray* mutexConditions = [NSMutableArray new];
-        
         
         // If any of the conditions require mutual exclusivity, add them to the shared Mutex
         // coordinator. Also, the operation must be removed from the mutex coordinator once
@@ -147,7 +79,6 @@ static VDSOperationMutexCoordinator* _sharedCoordinator;
         
         if (mutexConditions.count > 0) {
             observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:nil
-                                                       produceOperationHandler:nil
                                                         finishOperationHandler:^(VDSOperation * _Nonnull finishOperation) {
                 [VDSOperationMutexCoordinator.sharedCoordinator removeOperation:vdsOperation
                                                               forConditionTypes:mutexConditions];
@@ -169,12 +100,10 @@ static VDSOperationMutexCoordinator* _sharedCoordinator;
                 [self addOperation:dependency];
             }
         }
+        
+        [vdsOperation willEnqueue];
     }
-    
-
-    // Message the operation that it is being enqueued.
-    if ([operation respondsToSelector:@selector(willEnqueue:)]) { [(VDSOperation*)operation willEnqueue:self]; }
-    
+        
     // Finally, notify delegates and add the operation to the queue.
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(operationQueue:willAddOperation:)]) {

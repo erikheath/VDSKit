@@ -6,8 +6,7 @@
 //  Copyright © 2020 Erikheath Thomas. All rights reserved.
 //
 
-#import "VDSOperation.h"
-
+#import "VDSOperationCondition.h"
 
 @interface VDSMutexCondition : VDSOperationCondition
 
