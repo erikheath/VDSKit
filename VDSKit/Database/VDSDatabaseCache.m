@@ -66,7 +66,7 @@
     
     if (object == nil) { success = NO; }
     
-    if (success == YES && _doesNotEvictObjectsInUse == YES && [_usageList countForObject:object] > 0) {
+    if (success == YES && _evictsObjectsInUse == YES && [_usageList countForObject:object] > 0) {
         success = NO;
         if (error != NULL) {
             *error = [NSError errorWithDomain: VDSKitErrorDomain

@@ -41,9 +41,9 @@
 /// objects that can be encoded and decoded, or use the previously mentioned untracked objects enumeration
 /// method to create a set of untracked object keys, converting it to an array and then using it as the input
 /// to the removeObjectsForKeys: method on a mutable copy of the cachedObjects dictionary. The result of
-/// either technique is a mutable dictionary that can be encoded. When decoding in the init method, make sure
-/// to use the addTrackedObject method to add the objects to the cachedObjects mutable dictionary. Otherwise
-/// the objects will become untracked.
+/// either technique is a mutable dictionary that can be encoded. When decoding in the initWithCoder: method,
+/// make sure to use the addTrackedObject method to add the objects to the cachedObjects mutable dictionary.
+/// Otherwise the objects will become untracked.
 ///
 /// @note Archiving tracked objects can become complicated when expiration is determined by an external
 /// source, such as a remote store or web service. In these instances, it is genrally a good idea to rerequest
@@ -59,7 +59,7 @@
 
 #pragma mark Cache Storage
 
-/// The main storage for the cache. Objects are stored using a globally unique (for the cache) key
+/// The main storage for the cache. Objects are stored using a unique (for the cache) key
 /// that is used throughout the cache tracking system to refer to the object.
 ///
 /// @discussion It is possible to add cache objects directly without using the tracking system,
@@ -72,6 +72,7 @@
 /// Typical uses of untracked objects include permanent or semi-permanent lookup tables (e.g. zip codes,
 /// state abbreviations, flight numbers, etc.), data loaded from local sources, or reference data for tracked
 /// objects that should only be evicted when the tracked object is evicted.
+///
 @property(strong, readonly, nonnull) NSMutableDictionary* cacheObjects;
 
 
@@ -81,55 +82,74 @@
 /// cotains a timestamp representing when an object in the cache should expire and
 /// the object's associated key. Setting expiresObjects to YES will initialize the
 /// expirationTable, otherwise the default value is nil.
+///
 @property(strong, readonly, nullable) NSMutableArray<VDSExpirableObject*>* expirationTable;
+
 
 /// Maintains a list of keys for objects in the cache and each object's number of uses.
 /// Setting tracksObjectUsage to YES will initialize the usageList, otherwise the default
 /// value is nil.
+///
 @property(strong, readonly, nullable) NSCountedSet* usageList;
+
 
 /// Maintains a list of keys for objects in the cache in the order in which they were added.
 /// The most recent addition is at the highest index and the oldest addition is at index 0.
+///
 @property(strong, readonly, nonnull) NSMutableArray* evictionPolicyKeyList;
+
 
 /// @summary An expression that must evaluate to one of the keys used in the expirationTimingMap.
 /// The expression is evaluated against an incoming key and with a NSMutableDictionary as
-/// a context object that contains a the incoming object associated with VDSEntrySnapshotKey.
+/// a context object that contains the incoming object associated with VDSEntrySnapshotKey.
 /// Setting expiresObjects to YES will initialize the expirationTable, otherwise the default value is nil.
+///
 @property(strong, readonly, nullable) NSExpression* expirationTimingMapKey;
+
 
 /// @summary A map of expressions that evaluate to an expriation date for incoming objects
 /// with keys that must be determinable using the expirationTimingMapKey expression. Each
 /// expression is evaluated against an incoming key and with a NSMutableDictionary as
 /// a context object that contains a the incoming object associated with VDSEntrySnapshotKey.
 /// Setting expiresObjects to YES will initialize the expirationTable, otherwise the default value is nil.
+///
 @property(strong, readonly, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
+
 
 /// @summary A dispatch queue used to coordinate cache tracking reads and writes. Subclasses should
 /// use the syncQueue and/or lock objects, barriers, etc. to create facades that ensure reading of
 /// and writing to the cache is thread safe.
+///
 @property(strong, readonly, nonnull) dispatch_queue_t syncQueue;
+
 
 /// @summary A recursive lock used to coordinate cache tracking reads and writes. Subclasses should
 /// use the coordinatorLock, synchQueue, barriers, etc. to create facades that ensure reading of
 /// and writing to the cache is thread safe.
+///
 @property(strong, readonly, nonnull) NSRecursiveLock* coordinatorLock;
+
 
 /// @summary An timer used as a repeating loop to add eviction operations to the evictionQueue.
 /// If the queue is suspended when the timer fires, the eviction loop timer will skip
 /// adding an eviction operation to the queue but will continue to check the queue
 /// at its designated intervals. Once the timer determines the queue has been unsuspended,
 /// it will wait until a subsequent loop to add an eviction operation to the eviction queue.
+///
 @property(strong, readonly, nonnull) NSTimer* evictionLoop;
+
 
 /// @summary The operation queue used by the cache to process eviction operations against its
 /// cached objects. The queue may be suspended and /or its operations canceled to
 /// prevent or pause evictions as needed.
+///
 @property(strong, readonly, nonnull) VDSOperationQueue* evictionQueue;
+
 
 /// @summary The eviction operation used by the cache to process object evictions. Use the
 /// VDSCacheEvictionOperationClassNameKey when initializing the class in the metadata
 /// dictionary to specify a subclass of VDSEvictionOperation.
+///
 @property(strong, readonly, nonnull) VDSEvictionOperation* evictionOperation;
 
 
@@ -137,6 +157,7 @@
 
 /// @summary A delegate object that conforms to VDSDatabaseCacheDelegate. Use the delegate to
 /// control when/if evictions take place and which objects will be evicted.
+///
 @property(weak, readwrite, nullable) id<VDSDatabaseCacheDelegate> delegate;
 
 
@@ -144,52 +165,73 @@
 
 /// @summary Determines whether the cache records an expiration date for an object that
 /// is added to the cache via the addTrackedObject method. The default is NO.
+///
 @property(readonly) BOOL expiresObjects;
 
 /// @summary Indicates the preferred maximum number of objects the cache should hold.
 /// This is a target amount, not a fixed ceiling. The cache will attempt to keep the number
 /// of objects near this amount whenever possible while satifying other configuration
 /// constraints.
-/// @discussion Setting a value of 0 indicates there is no maximum. The default is 0.
 ///
-/// Setting a value
-/// less than 0 indicates that the cache should evict objects as soon as possible. When setting
-/// the value to less than 0, the cache must be set to expire objects and object usage must be tracked
+/// @discussion Setting a value of 0 indicates there is no maximum. The default is 0.
+/// Setting a value less than 0 indicates that the cache should evict objects as soon as possible. When setting
+/// the value to less than 0, the cache will be set to expire objects and object usage will be tracked
 /// to prevent the cache from prematurely evicting objects after they have been added.
+///
 @property(readonly) NSInteger preferredMaxObjectCount;
 
 /// @summary Determines whether objects will be selected for eviction in LIFO (last in, first out)
 /// or FIFO (first in, first out) order when being processed for eviction based on
 /// cache size preferences. The default is VDSLIFOPolicy.
+///
 @property(readonly) VDSEvictionPolicy evictionPolicy;
 
 /// @summary Determines whether the cache will dispatch an eviction operation when a low memory notification
 /// is received. The default is NO.
+///
 @property(readonly) BOOL evictsOnLowMemory;
 
 /// @summary Determines whether the cache tracks objects that are in use by setting up
-/// a usage list. When tracks Usage is enabled, added objects automatically receive
+/// a usage list.
+///
+/// @discussion When tracks Usage is enabled, added objects automatically receive
 /// a usage count of one. When the object expires, that usage count is decremented
 /// by one. If objects are not tracked for expiration, they must be removed using the
 /// evictTrackedObject: method. The default is NO.
+///
 @property(readonly) BOOL tracksObjectUsage;
 
 /// @summary Determines whether the cache will evict objects that have a usage value of one (1)
 /// or higher. The default is NO.
-@property(readonly) BOOL doesNotEvictObjectsInUse;
+///
+@property(readonly) BOOL evictsObjectsInUse;
 
 /// @summary Determines whether an object will be replaced or have its current values merged
-/// with new values from an object added using the same key. The default is YES.
+/// with new values from an object added using the same key. The default is YES indicating that
+/// objects will be replaced.
+///
+/// @discussion Merging is only supported for objects with KVC compliant properties and with
+/// properties that are determinable using -(NSArray*)allKeys, -(id)keyEnumerator, or the Objective-C
+/// runtime property inspection methods or that conform to VDSMergableObject protocol (preferred).
+///
+/// Conforming to the VDSMergableObject protocol enables implementors to have granular
+/// control over what values are merged, replaced, or skipped. Objects that do not conform
+/// to the protocol (but whose keys are determinable) will have their values replaced.
+///
 @property(readonly) BOOL replacesObjectsOnUpdate;
 
-/// @summary The dispatch interval, in seconds, between eviction operations. The default interval is 300 seconds.
+/// @summary The dispatch interval, in seconds, between eviction operations.
+/// The default interval is 300 seconds.
+///
 @property(readonly) NSTimeInterval evictionInterval;
 
-/// Determines whether the cache will archive untracked objects when encoding itself. The default is NO.
+/// Determines whether the cache will archive untracked objects when encoding itself.
+/// The default is NO.
+///
 @property(readonly) BOOL archivesUntrackedObjects;
 
 
-#pragma mark Main Public Behaviors
+#pragma mark Object Lifecycle
 
 /// @summary Creates a new database cache using the configuration specified by the keys
 /// and values in the configuration dictionary. To create a cache with a default
@@ -204,6 +246,7 @@
 - (instancetype _Nullable)initWithConfiguration:(NSDictionary* _Nonnull)configuration
                                           error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
+#pragma mark Main Public Behaviors
 
 /// @summary Immediately attempts to launch the eviction process on the eviction queue. This
 /// method does not indicate that evictions were completed successfully, only that an eviction

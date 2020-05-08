@@ -29,6 +29,7 @@
 ///
 @interface VDSExpirableObject : NSObject
 
+#pragma mark Properties
 
 /// The date used to indicate when an associated object should expire.
 /// This property is not KVO compliant
@@ -53,6 +54,8 @@
 ///
 @property(readonly, getter=isExpired) BOOL expired;
 
+
+#pragma mark Object Lifecycle
 
 /// Creates a VDSExpirableObject that associates a expiration date with
 /// an object. Passing a nil expiration or nil object value will cause
@@ -102,6 +105,8 @@
 
 + (instancetype _Nonnull)initWithConfiguration:(NSDictionary* _Nonnull)configuration;
 
+
+#pragma mark Invalid Behaviors
 
 /// ################DO NOT USE FOR INITIALIZATION##############
 ///
