@@ -8,133 +8,23 @@
 
 #import <Foundation/Foundation.h>
 #import "VDSConstants.h"
+#import "../ExtendedOperations/VDSOperationQueue.h"
 
 @class VDSDatabaseCache;
 @class VDSEvictionOperation;
-
-#pragma mark - VDSDatabaseCacheDelegate -
-
-
-/// Objects that conform to the VDSDatabaseCacheDelegate protocol can receive messages
-/// from a VDSDatabaseCache when the cache engages in its eviction processing.
-///
-@protocol VDSDatabaseCacheDelegate <NSObject>
-
-@optional
-
-/// Allows the delegate to force the cache to skip the current scheduled eviction cycle.
-/// @returns Return YES to allow the cycle to proceed, NO to force the cache to skip the eviction cycle.
-- (BOOL)databaseCacheShouldBeginEvictionCycle;
-
-
-/// Notifies the delegate that an eviction cycle of type 'cycleKey' is about to begin.
-/// @param cache The database cache that will be evicting objects.
-/// @param cycleKey The type of eviction cycle that will be used to evict objects.
-- (void)databaseCache:(VDSDatabaseCache* _Nonnull)cache
-    willBeginEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
-
-
-/// Notifies the delegate that the eviction cycle of type 'cycleKey' has completed.
-/// @param cache The database cache that evicted objects
-/// @param cycleKey The type of eviction cycle that was used to evict objects.
-- (void)databaseCache:(VDSDatabaseCache* _Nonnull)cache
-    didCompleteEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
-
-
-/// Allows the delegate to determine if a specific object should be evicted from the database cache.
-/// @param cache The database cache that will be evicting objects.
-/// @param object The object from the database cache that will be evicted.
-/// @param cacheKey The used by the database cache to store the object.
-/// @param cycleKey The type of eviction cycle that is being used to evict the object.
-- (BOOL)databaseCache:(VDSDatabaseCache* _Nonnull)cache
-    shouldEvictObject:(id _Nonnull)object
-             usingKey:(id _Nonnull)cacheKey
-      inEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
-
-
-/// Notifies the delegate that a set of objects will be evicted from the database cache.
-/// @param cache The database cache that will be evicting objects.
-/// @param objects The objects from the database cache that will be evicted.
-/// @param cacheKeys The keys used by the database cache to store the objects.
-/// @param cycleKey The type of eviction cycle that is being used to evict the objects.
-- (void)databaseCache:(VDSDatabaseCache* _Nonnull)cache
-     willEvictObjects:(NSArray* _Nonnull)objects
-            usingKeys:(NSArray* _Nonnull)cacheKeys
-      inEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
-
-
-/// Notifies the delegate that a set of objects was evicted from the datbase cache.
-/// @param cache The database cache that evicted the objects.
-/// @param objects The objects that were evicted from the database cache.
-/// @param cacheKeys The keys used by the database cache to store the evicted objects.
-/// @param cycleKey The type of eviction cycle that is being used to evict the objects.
-- (void)databaseCache:(VDSDatabaseCache* _Nonnull)cache
-      didEvictObjects:(NSArray* _Nonnull)objects
-            usingKeys:(NSArray* _Nonnull)cacheKeys
-      inEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
-
-
-@end
-
-
-#pragma mark - VDSExpirableObject -
-
-
-/// A VDSExpirableObject associates a an expiration date with an object. Typically
-/// this is used as a convenient way to track and order objects for time-based
-/// processing.
-///
-/// @discussion For example, the VDSDatabaseCache uses expirable objects in a
-/// time sorted list to quickly determine which of its cached objects have expired
-/// and therefore are no longer valid when requested.
-///
-/// VDSExpirableObject overrides its hash method to enable searching for the
-/// object stored in its object property.
-///
-/// @note VDSExpirableObject does not support archiving as it would not make
-/// much sense to archive an object that would expire while stored.
-///
-@interface VDSExpirableObject : NSObject
-
-/// The date used to indicate when an associated object should expire.
-@property(strong, readonly, nonnull, nonatomic) NSDate* expiration;
-
-/// An object whose lifespan is associated with the expiration date.
-@property(strong, readonly, nonnull, nonatomic) id object;
-
-/// Creates a VDSExpirableObject that associates a expiration date with
-/// an object. Passing a nil expiration or object values will cause
-/// initialization to fail.
-/// @param expiration The date that associated object is set to expire.
-/// @param object An object whose lifespan is associated with the expiration date.
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of nil will always produce an error object.
-///
-/// @returns An instance of VDSExpirableObject if successful, otherwise nil.
-- (instancetype _Nullable )initWithExpiration:(NSDate* _Nonnull)expiration
-                                       object:(id _Nonnull)object
-                                        error:(NSError* __autoreleasing _Nonnull * _Nonnull)error;
-@end
-
-
-#pragma mark - VDSEvictionOperation -
-
-
-@interface VDSEvictionOperation : NSOperation
-
-@end
+@class VDSExpirableObject;
+@protocol VDSDatabaseCacheDelegate;
 
 
 #pragma mark - VDSDatabaseCache -
-
 
 
 /// @summary VDSDatabaseCache provides a subclassable, enumerable, and archivable object caching system.
 /// The class provides object tracking using expiration, usage, and/or max object counts and supports
 /// mixing of tracked and untracked objects for maximum caching flexibility. Adding and evicting methods
 /// are thread safe, as are all cache configuration properties. The class may be used as is, may be
-/// safely subclassed, or may be used as a backing class for a fascade that limits direct cache storage
-/// manipulation to fascade internals.
+/// safely subclassed, or may be used as a backing class for a facade that limits direct cache storage
+/// manipulation to facade internals.
 ///
 /// @discussion VDSDatabaseCache supports fast enumeration over the contents contained in its cachedObjects
 /// property. To enumerate only those items that are tracked, obtain the keys from the evictionPolicyKeyList
@@ -163,7 +53,7 @@
 /// updated. This process enables you to have data immediately available, while only updating objects where data
 /// has actually changed.
 ///
-@interface VDSDatabaseCache : NSObject <NSFastEnumeration, NSSecureCoding> {
+@interface VDSDatabaseCache : NSObject <NSFastEnumeration, NSSecureCoding, VDSOperationQueueDelegate> {
     
 }
 
@@ -183,6 +73,7 @@
 /// state abbreviations, flight numbers, etc.), data loaded from local sources, or reference data for tracked
 /// objects that should only be evicted when the tracked object is evicted.
 @property(strong, readonly, nonnull) NSMutableDictionary* cacheObjects;
+
 
 #pragma mark Cache Tracking
 
@@ -215,12 +106,12 @@
 @property(strong, readonly, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
 
 /// @summary A dispatch queue used to coordinate cache tracking reads and writes. Subclasses should
-/// use the syncQueue and/or lock objects, barriers, etc. to create fascades that ensure reading of
+/// use the syncQueue and/or lock objects, barriers, etc. to create facades that ensure reading of
 /// and writing to the cache is thread safe.
 @property(strong, readonly, nonnull) dispatch_queue_t syncQueue;
 
 /// @summary A recursive lock used to coordinate cache tracking reads and writes. Subclasses should
-/// use the coordinatorLock, synchQueue, barriers, etc. to create fascades that ensure reading of
+/// use the coordinatorLock, synchQueue, barriers, etc. to create facades that ensure reading of
 /// and writing to the cache is thread safe.
 @property(strong, readonly, nonnull) NSRecursiveLock* coordinatorLock;
 
@@ -234,7 +125,7 @@
 /// @summary The operation queue used by the cache to process eviction operations against its
 /// cached objects. The queue may be suspended and /or its operations canceled to
 /// prevent or pause evictions as needed.
-@property(strong, readonly, nonnull) NSOperationQueue* evictionQueue;
+@property(strong, readonly, nonnull) VDSOperationQueue* evictionQueue;
 
 /// @summary The eviction operation used by the cache to process object evictions. Use the
 /// VDSCacheEvictionOperationClassNameKey when initializing the class in the metadata
@@ -297,8 +188,8 @@
 /// Determines whether the cache will archive untracked objects when encoding itself. The default is NO.
 @property(readonly) BOOL archivesUntrackedObjects;
 
-#pragma mark Main Public Behaviors
 
+#pragma mark Main Public Behaviors
 
 /// @summary Creates a new database cache using the configuration specified by the keys
 /// and values in the configuration dictionary. To create a cache with a default

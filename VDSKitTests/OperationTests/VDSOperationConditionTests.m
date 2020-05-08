@@ -7,7 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "../VDSKit/VDSKit.h"
+#import "../../VDSKit/VDSKit.h"
+
 
 @interface VDSOperationConditionTests : XCTestCase
 

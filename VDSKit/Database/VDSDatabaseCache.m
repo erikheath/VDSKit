@@ -8,44 +8,10 @@
 
 #import "VDSDatabaseCache.h"
 #import "VDSErrorConstants.h"
+#import "VDSExpirableObject.h"
 
 
-@implementation VDSExpirableObject
 
-#pragma mark - Object Lifecycle
-
-- (instancetype)init
-{
-    return nil;
-}
-
-- (instancetype _Nullable)initWithExpiration:(NSDate* _Nonnull)expiration
-                                      object:(id _Nonnull)object
-{
-    self = [super init];
-    if (self != nil && expiration != nil && object != nil) {
-        _expiration = expiration;
-        _object = object;
-    } else {
-        self = nil;
-    }
-    return self;
-}
-
-- (instancetype _Nullable)initWithConfiguration:(NSDictionary* _Nonnull)configuration
-error:(NSError* __autoreleasing _Nullable * _Nullable)error
-{
-    
-}
-
-
-#pragma mark - Utility Behavior
-
-- (NSUInteger)hash {
-    return [_object hash];
-}
-
-@end
 
 @implementation VDSDatabaseCache
 
@@ -157,14 +123,14 @@ error:(NSError* __autoreleasing _Nullable * _Nullable)error
 - (BOOL)incrementUsageCount:(id _Nonnull)key
 error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
-    
+    return YES;
 }
 
 
 - (BOOL)decrementUsageCount:(id _Nonnull)key
 error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
-    
+    return YES;
 }
 
 

@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "../../VDSKit/VDSKit.h"
 
 @interface VDSOperationIntegrationTests : XCTestCase
 
