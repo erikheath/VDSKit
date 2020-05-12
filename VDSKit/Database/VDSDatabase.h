@@ -6,7 +6,8 @@
 //  Copyright © 2020 Erikheath Thomas. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
 #import "VDSQueryCache.h"
 #import "VDSSnapshotCache.h"
 #import "VDSEntityCache.h"
@@ -19,7 +20,7 @@
     VDSQueryCache* _queryCache;
     VDSSnapshotCache* _snapshots;
     VDSEntityCache* _entityCache;
-    
+        
 }
 
 - (NSDictionary * _Nullable)cacheEntryForQueryReference:(NSString * _Nonnull)queryReference

@@ -12,13 +12,132 @@
 
 
 
+@interface VDSDatabaseCache ()
+
+
+#pragma mark Cache Storage
+
+
+/// The main storage for the cache. Objects are stored using a unique (for the cache) key
+/// that is used throughout the cache tracking system to refer to the object.
+///
+/// @discussion It is possible to add cache objects directly without using the tracking system,
+/// mixing both tracked and untracked objects. This use case is desirable when some objects should be
+/// tracked for removal, while other objects should effectively be persistent (at least for the life
+/// of the cache). This design can be more desirable, and simpler than constructing expressions to set
+/// expiration dates far into the future for a subset of objects in the cache. This also allows you to
+/// ignore usage rules for certain objects.
+///
+/// Typical uses of untracked objects include permanent or semi-permanent lookup tables (e.g. zip codes,
+/// state abbreviations, flight numbers, etc.), data loaded from local sources, or reference data for tracked
+/// objects that should only be evicted when the tracked object is evicted.
+///
+@property(strong, readonly, nonnull) NSMutableDictionary* cacheObjects;
+
+
+#pragma mark Cache Tracking
+
+
+/// Maintains a list, in temporal order, of expirable objects. An expirable object
+/// cotains a timestamp representing when an object in the cache should expire and
+/// the object's associated key. Setting expiresObjects to YES will initialize the
+/// expirationTable, otherwise the default value is nil.
+///
+@property(strong, readonly, nullable) NSMutableArray<VDSExpirableObject*>* expirationTable;
+
+
+/// Maintains a list of keys for objects in the cache and each object's number of uses.
+/// Setting tracksObjectUsage to YES will initialize the usageList, otherwise the default
+/// value is nil.
+///
+@property(strong, readonly, nullable) NSCountedSet* usageList;
+
+
+/// Maintains a list of keys for objects in the cache in the order in which they were added.
+/// The most recent addition is at the highest index and the oldest addition is at index 0.
+///
+@property(strong, readonly, nonnull) NSMutableArray* evictionPolicyKeyList;
+
+
+/// @summary An expression that must evaluate to one of the keys used in the expirationTimingMap.
+/// The expression is evaluated against an incoming key and with a NSMutableDictionary as
+/// a context object that contains the incoming object associated with VDSEntrySnapshotKey.
+/// Setting expiresObjects to YES will initialize the expirationTable, otherwise the default value is nil.
+///
+@property(strong, readonly, nullable) NSExpression* expirationTimingMapKey;
+
+
+/// @summary A map of expressions that evaluate to an expriation date for incoming objects
+/// with keys that must be determinable using the expirationTimingMapKey expression. Each
+/// expression is evaluated against an incoming key and with a NSMutableDictionary as
+/// a context object that contains a the incoming object associated with VDSEntrySnapshotKey.
+/// Setting expiresObjects to YES will initialize the expirationTable, otherwise the default value is nil.
+///
+@property(strong, readonly, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
+
+
+/// @summary A dispatch queue used to coordinate cache tracking reads and writes. Subclasses should
+/// use the syncQueue and/or lock objects, barriers, etc. to create facades that ensure reading of
+/// and writing to the cache is thread safe.
+///
+@property(strong, readonly, nonnull) dispatch_queue_t syncQueue;
+
+
+/// @summary A recursive lock used to coordinate cache tracking reads and writes. Subclasses should
+/// use the coordinatorLock, synchQueue, barriers, etc. to create facades that ensure reading of
+/// and writing to the cache is thread safe.
+///
+@property(strong, readonly, nonnull) NSRecursiveLock* coordinatorLock;
+
+
+/// @summary An timer used as a repeating loop to add eviction operations to the evictionQueue.
+/// If the queue is suspended when the timer fires, the eviction loop timer will skip
+/// adding an eviction operation to the queue but will continue to check the queue
+/// at its designated intervals. Once the timer determines the queue has been unsuspended,
+/// it will wait until a subsequent loop to add an eviction operation to the eviction queue.
+///
+@property(strong, readonly, nonnull) NSTimer* evictionLoop;
+
+
+/// @summary The operation queue used by the cache to process eviction operations against its
+/// cached objects. The queue may be suspended and /or its operations canceled to
+/// prevent or pause evictions as needed.
+///
+@property(strong, readonly, nonnull) VDSOperationQueue* evictionQueue;
+
+
+/// @summary The eviction operation used by the cache to process object evictions. Use the
+/// VDSCacheEvictionOperationClassNameKey when initializing the class in the metadata
+/// dictionary to specify a subclass of VDSEvictionOperation.
+///
+@property(strong, readonly, nonnull) VDSEvictionOperation* evictionOperation;
+
+
+@end
+
 
 @implementation VDSDatabaseCache
 
 
-#pragma mark - Object Lifecycle
+#pragma mark Properties
+
 
 +(BOOL)supportsSecureCoding { return YES; }
+
+
+#pragma mark Object Lifecycle
+
+- (instancetype _Nonnull)init
+{
+    return nil;
+}
+
+
+- (instancetype _Nonnull)initWithConfiguration:(NSDictionary* _Nonnull)configuration
+{
+    return nil;
+}
+
 
 - (void)encodeWithCoder:(nonnull NSCoder *)coder
 {
@@ -34,6 +153,7 @@
                forKey:NSStringFromSelector(@selector(tracksObjectUsage))];
 }
 
+
 - (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
 {
     self = [super init];
@@ -46,6 +166,23 @@
     }
     return self;
 }
+
+
+
+#pragma mark Operation Queue Delegate Behaviors
+
+- (void)operationQueue:(VDSOperationQueue * _Nonnull)queue operationDidFinish:(NSOperation * _Nonnull)operation {
+    
+}
+
+- (BOOL)operationQueue:(VDSOperationQueue * _Nonnull)queue shouldAddOperation:(NSOperation * _Nonnull)operation {
+    return NO;
+}
+
+- (void)operationQueue:(VDSOperationQueue * _Nonnull)queue willAddOperation:(NSOperation * _Nonnull)operation {
+    
+}
+
 
 
 #pragma mark - Main Public Behaviors

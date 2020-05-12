@@ -6,7 +6,7 @@
 //  Copyright © 2020 Erikheath Thomas. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 #pragma mark - VDSExpirableObject -
 

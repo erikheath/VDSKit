@@ -6,7 +6,8 @@
 //  Copyright © 2020 Erikheath Thomas. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
 #import "VDSOperation.h"
 #import "VDSOperationObserver.h"
 

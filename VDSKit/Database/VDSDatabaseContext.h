@@ -6,7 +6,7 @@
 //  Copyright © 2020 Erikheath Thomas. All rights reserved.
 //
 
-#import <CoreData/CoreData.h>
+@import CoreData;
 
 NS_ASSUME_NONNULL_BEGIN
 

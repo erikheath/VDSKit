@@ -16,7 +16,8 @@
 //
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
 #import "VDSOperation.h"
 #import "VDSOperationDelegate.h"
 
