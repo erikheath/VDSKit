@@ -7,7 +7,8 @@
 //
 
 #import "VDSDatabaseCache.h"
-#import "VDSErrorConstants.h"
+#import "../../VDSConstants.h"
+#import "../../VDSErrorConstants.h"
 #import "VDSExpirableObject.h"
 
 
@@ -110,7 +111,7 @@
 /// VDSCacheEvictionOperationClassNameKey when initializing the class in the metadata
 /// dictionary to specify a subclass of VDSEvictionOperation.
 ///
-@property(strong, readonly, nonnull) VDSEvictionOperation* evictionOperation;
+@property(strong, readonly, nonnull) Class evictionOperation;
 
 
 @end
@@ -121,6 +122,28 @@
 
 #pragma mark Properties
 
+@synthesize expiresObjects = _expiresObjects;
+@synthesize preferredMaxObjectCount = _preferredMaxObjectCount;
+@synthesize evictionPolicy = _evictionPolicy;
+@synthesize evictsOnLowMemory = _evictsOnLowMemory;
+@synthesize tracksObjectUsage = _tracksObjectUsage;
+@synthesize evictsObjectsInUse = _evictsObjectsInUse;
+@synthesize replacesObjectsOnUpdate = _replacesObjectsOnUpdate;
+@synthesize evictionInterval = _evictionInterval;
+@synthesize archivesUntrackedObjects = _archivesUntrackedObjects;
+
+@synthesize cacheObjects = _cacheObjects;
+@synthesize expirationTable = _expirationTable;
+@synthesize usageList = _usageList;
+@synthesize evictionPolicyKeyList = _evictionPolicyKeyList;
+@synthesize expirationTimingMapKey = _expirationTimingMapKey;
+@synthesize expirationTimingMap = _expirationTimingMap;
+@synthesize syncQueue = _syncQueue;
+@synthesize coordinatorLock = _coordinatorLock;
+@synthesize evictionLoop = _evictionLoop;
+@synthesize evictionQueue = _evictionQueue;
+@synthesize evictionOperation = _evictionOperation;
+
 
 +(BOOL)supportsSecureCoding { return YES; }
 
@@ -129,13 +152,46 @@
 
 - (instancetype _Nonnull)init
 {
-    return nil;
+    return [self initWithConfiguration:@{}];
 }
 
 
 - (instancetype _Nonnull)initWithConfiguration:(NSDictionary* _Nonnull)configuration
 {
-    return nil;
+    self = [super init];
+    if (self != nil) {
+        
+    }
+    
+    return self;
+}
+
+
+//VDSCacheConfigurationKey VDSCacheExpiresObjectsKey = @"expiresObjects";
+//VDSCacheConfigurationKey VDSCachePreferredMaxObjectCountKey = @"preferredMaxObjectCount";
+//VDSCacheConfigurationKey VDSCacheEvictionPolicyKey = @"evictionPolicy";
+//VDSCacheConfigurationKey VDSCacheEvictsOnLowMemoryKey = @"evictsOnLowMemory";
+//VDSCacheConfigurationKey VDSCacheTracksObjectUsageKey = @"tracksObjectUsage";
+//VDSCacheConfigurationKey VDSCacheEvictsObjectsInUseKey = @"evictsObjectsInUse";
+//VDSCacheConfigurationKey VDSCacheReplacesObjectsOnUpdateKey = @"replacesObjectsOnUpdate";
+//VDSCacheConfigurationKey VDSCacheEvictionIntervalKey = @"evictionInterval";
+//VDSCacheConfigurationKey VDSCacheArchivesUntrackedObjectsKey = @"archivesUntrackedObjects";
+//VDSCacheConfigurationKey VDSCacheExpirationTimingMapExpressionKey = @"expirationTimingMapKey";
+//VDSCacheConfigurationKey VDSCacheExpirationTimingMapKey = @"expirationTimingMap";
+//VDSCacheConfigurationKey VDSCacheEvictionOperationClassNameKey = @"evictionOperationClassName";
+
+
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
+{
+    NSMutableDictionary* configuration = [NSMutableDictionary new];
+    
+//        _expiresObjects = [coder decodeBoolForKey:NSStringFromSelector(@selector(expiresObjects))];
+//        _evictsOnLowMemory = [coder decodeBoolForKey:NSStringFromSelector(@selector(evictsOnLowMemory))];
+//        _evictionPolicy = [coder decodeIntegerForKey:NSStringFromSelector(@selector(evictionPolicy))];
+//        _preferredMaxObjectCount = [coder decodeIntegerForKey:NSStringFromSelector(@selector(preferredMaxObjectCount))];
+//        _tracksObjectUsage = [coder decodeBoolForKey:NSStringFromSelector(@selector(tracksObjectUsage))];
+
+    return [self initWithConfiguration:configuration];
 }
 
 
@@ -152,21 +208,6 @@
     [coder encodeBool:_tracksObjectUsage
                forKey:NSStringFromSelector(@selector(tracksObjectUsage))];
 }
-
-
-- (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
-{
-    self = [super init];
-    if (self != nil) {
-        _expiresObjects = [coder decodeBoolForKey:NSStringFromSelector(@selector(expiresObjects))];
-        _evictsOnLowMemory = [coder decodeBoolForKey:NSStringFromSelector(@selector(evictsOnLowMemory))];
-        _evictionPolicy = [coder decodeIntegerForKey:NSStringFromSelector(@selector(evictionPolicy))];
-        _preferredMaxObjectCount = [coder decodeIntegerForKey:NSStringFromSelector(@selector(preferredMaxObjectCount))];
-        _tracksObjectUsage = [coder decodeBoolForKey:NSStringFromSelector(@selector(tracksObjectUsage))];
-    }
-    return self;
-}
-
 
 
 #pragma mark Operation Queue Delegate Behaviors
@@ -191,34 +232,6 @@
 {
     BOOL success = YES;
 
-    return success;
-}
-
-- (BOOL)evictTrackedObject:(id _Nonnull)key
-                   error:(NSError *__autoreleasing  _Nullable * _Nullable)error
-{
-    BOOL success = YES;
-    
-    id object = [_cacheObjects objectForKey:key];
-    
-    if (object == nil) { success = NO; }
-    
-    if (success == YES && _evictsObjectsInUse == YES && [_usageList countForObject:object] > 0) {
-        success = NO;
-        if (error != NULL) {
-            *error = [NSError errorWithDomain: VDSKitErrorDomain
-                                         code:VDSUnableToRemoveObject
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
-        }
-    }
-    
-    if (success == YES) {
-        [_evictionPolicyKeyList removeObject:object];
-        if (_expiresObjects == YES) {
-            [_expirationTable removeObject:object];
-        }
-    }
-    
     return success;
 }
 
@@ -256,6 +269,11 @@
     return success;
 }
 
+- (BOOL)evictObject:(id _Nonnull)key
+              error:(NSError* __autoreleasing _Nullable * _Nullable)error
+{
+    return NO;
+}
 
 - (BOOL)incrementUsageCount:(id _Nonnull)key
 error:(NSError* __autoreleasing _Nullable * _Nullable)error
@@ -273,6 +291,75 @@ error:(NSError* __autoreleasing _Nullable * _Nullable)error
 
 #pragma mark - Supporting Behaviors
 
+- (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key
+{
+    
+}
+
+- (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key tracked:(BOOL)tracked
+{
+    
+}
+
+- (void)removeObjectForKey:(id _Nonnull)key
+{
+    
+}
+
+- (void)removeAllObjects
+{
+    
+}
+
+- (id _Nullable)objectForKey:(id _Nonnull)key
+{
+    return nil;
+}
+
+- (NSArray*)allObjects
+{
+    return nil;
+}
+
+- (NSArray* _Nonnull)trackedObjects
+{
+    return nil;
+}
+
+- (NSArray* _Nonnull)untrackedObjects
+{
+    return nil;
+}
+
+- (NSArray*)allKeys
+{
+    return nil;
+}
+
+- (NSArray* _Nonnull)trackedKeys
+{
+    return nil;
+}
+
+- (NSArray* _Nonnull)untrackedKeys
+{
+    return nil;
+}
+
+- (NSDictionary*)allObjectsAndKeys
+{
+    return nil;
+}
+
+- (NSDictionary* _Nonnull)trackedObjectsAndKeys
+{
+    return nil;
+}
+
+- (NSDictionary* _Nonnull)untrackedObjectsAndKeys
+{
+    return nil;
+}
 
 
 #pragma mark - Utility Behaviors
@@ -284,5 +371,35 @@ error:(NSError* __autoreleasing _Nullable * _Nullable)error
                                                  count:len];
 }
 
+
+#pragma mark - Private Behaviors
+
+- (BOOL)evictTrackedObject:(id _Nonnull)key
+                   error:(NSError *__autoreleasing  _Nullable * _Nullable)error
+{
+    BOOL success = YES;
+    
+    id object = [_cacheObjects objectForKey:key];
+    
+    if (object == nil) { success = NO; }
+    
+    if (success == YES && _evictsObjectsInUse == YES && [_usageList countForObject:object] > 0) {
+        success = NO;
+        if (error != NULL) {
+            *error = [NSError errorWithDomain: VDSKitErrorDomain
+                                         code:VDSUnableToRemoveObject
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
+        }
+    }
+    
+    if (success == YES) {
+        [_evictionPolicyKeyList removeObject:object];
+        if (_expiresObjects == YES) {
+            [_expirationTable removeObject:object];
+        }
+    }
+    
+    return success;
+}
 
 @end

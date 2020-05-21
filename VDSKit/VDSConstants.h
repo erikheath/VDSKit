@@ -11,17 +11,32 @@
 
 #pragma mark - VDSKit Cache Constants -
 
-typedef NSString* const VDSCacheKey;
-FOUNDATION_EXPORT VDSCacheKey VDSEntryTimestampKey;
-FOUNDATION_EXPORT VDSCacheKey VDSEntryUUIDKey;
-FOUNDATION_EXPORT VDSCacheKey VDSEntryEntityNameKey;
-FOUNDATION_EXPORT VDSCacheKey VDSEntrySnapshotKey;
+typedef NSString* const VDSCacheEntryKey;
+FOUNDATION_EXPORT VDSCacheEntryKey VDSEntryTimestampKey;
+FOUNDATION_EXPORT VDSCacheEntryKey VDSEntryUUIDKey;
+FOUNDATION_EXPORT VDSCacheEntryKey VDSEntryEntityNameKey;
+FOUNDATION_EXPORT VDSCacheEntryKey VDSEntrySnapshotKey;
 
 typedef NSString* const VDSEvictionCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSExpirationCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSFIFOPolicyCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSLIFOPolicyCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSUnknownCycleKey;
+
+typedef NSString* const VDSCacheConfigurationKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheExpiresObjectsKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCachePreferredMaxObjectCountKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheEvictionPolicyKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheEvictsOnLowMemoryKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheTracksObjectUsageKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheEvictsObjectsInUseKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheReplacesObjectsOnUpdateKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheEvictionIntervalKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheArchivesUntrackedObjectsKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheExpirationTimingMapExpressionKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheExpirationTimingMapKey;
+FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheEvictionOperationClassNameKey;
+
 
 
 /// The VDSEvictionPolicy indicates how objects should be removed from a cache.
