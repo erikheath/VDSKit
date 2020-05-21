@@ -9,7 +9,7 @@
 @import Foundation;
 
 #import "VDSConstants.h"
-#import "../ExtendedOperations/VDSOperationQueue.h"
+#import "../../ExtendedOperations/VDSOperationQueue.h"
 
 @class VDSDatabaseCache;
 @class VDSEvictionOperation;
