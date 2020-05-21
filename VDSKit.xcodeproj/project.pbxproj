@@ -174,20 +174,7 @@
 				036C334A24491E790021346C /* VDSDatabaseContext.m */,
 				036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */,
 				036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */,
-				036C3351244A230A0021346C /* VDSSnapshotCache.h */,
-				036C3352244A230A0021346C /* VDSSnapshotCache.m */,
-				036C3355244A23230021346C /* VDSQueryCache.h */,
-				036C3356244A23230021346C /* VDSQueryCache.m */,
-				036C3359244A233E0021346C /* VDSEntityCache.h */,
-				036C335A244A233E0021346C /* VDSEntityCache.m */,
-				033B1A7E2464994200E5589B /* VDSEvictionOperation.h */,
-				033B1A7F2464994200E5589B /* VDSEvictionOperation.m */,
-				033B1A782464971C00E5589B /* VDSExpirableObject.h */,
-				033B1A792464971C00E5589B /* VDSExpirableObject.m */,
-				033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */,
-				033B1A822465F50E00E5589B /* VDSMergableObject.h */,
-				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
-				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
+				0388E186247605E300356965 /* DatabaseCache */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -258,6 +245,27 @@
 				033B1A722463651400E5589B /* OperationTests */,
 			);
 			path = VDSKitTests;
+			sourceTree = "<group>";
+		};
+		0388E186247605E300356965 /* DatabaseCache */ = {
+			isa = PBXGroup;
+			children = (
+				036C3351244A230A0021346C /* VDSSnapshotCache.h */,
+				036C3352244A230A0021346C /* VDSSnapshotCache.m */,
+				036C3355244A23230021346C /* VDSQueryCache.h */,
+				036C3356244A23230021346C /* VDSQueryCache.m */,
+				036C3359244A233E0021346C /* VDSEntityCache.h */,
+				036C335A244A233E0021346C /* VDSEntityCache.m */,
+				033B1A7E2464994200E5589B /* VDSEvictionOperation.h */,
+				033B1A7F2464994200E5589B /* VDSEvictionOperation.m */,
+				033B1A782464971C00E5589B /* VDSExpirableObject.h */,
+				033B1A792464971C00E5589B /* VDSExpirableObject.m */,
+				033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */,
+				033B1A822465F50E00E5589B /* VDSMergableObject.h */,
+				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
+				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
+			);
+			path = DatabaseCache;
 			sourceTree = "<group>";
 		};
 		03AF92DE2450FCAA00E38623 /* ExtendedOperations */ = {
