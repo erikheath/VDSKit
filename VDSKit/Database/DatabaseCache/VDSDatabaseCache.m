@@ -78,13 +78,6 @@
 @property(strong, readonly, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
 
 
-/// @summary A dispatch queue used to coordinate cache tracking reads and writes. Subclasses should
-/// use the syncQueue and/or lock objects, barriers, etc. to create facades that ensure reading of
-/// and writing to the cache is thread safe.
-///
-@property(strong, readonly, nonnull) dispatch_queue_t syncQueue;
-
-
 /// @summary A recursive lock used to coordinate cache tracking reads and writes. Subclasses should
 /// use the coordinatorLock, synchQueue, barriers, etc. to create facades that ensure reading of
 /// and writing to the cache is thread safe.
@@ -129,7 +122,6 @@
 @synthesize evictionPolicyKeyList = _evictionPolicyKeyList;
 @synthesize expirationTimingMapKey = _expirationTimingMapKey;
 @synthesize expirationTimingMap = _expirationTimingMap;
-@synthesize syncQueue = _syncQueue;
 @synthesize coordinatorLock = _coordinatorLock;
 @synthesize evictionLoop = _evictionLoop;
 @synthesize evictionQueue = _evictionQueue;
@@ -153,7 +145,6 @@
     if (self != nil) {
         _configuration = [configuration copy];
         _cacheObjects = [NSMutableDictionary new];
-        _syncQueue = dispatch_queue_create("VDSDatabaseCacheSyncQueue", DISPATCH_QUEUE_SERIAL);
         _coordinatorLock = [NSRecursiveLock new];
         if (_configuration.expiresObjects) {
             [self configureExpirationSystem];
@@ -198,7 +189,13 @@
 - (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
 {
     VDSDatabaseCacheConfiguration* configuration = [coder decodeObjectOfClass:[VDSDatabaseCacheConfiguration class] forKey:NSStringFromSelector(@selector(configuration))];
-    return [self initWithConfiguration:configuration];
+    self = [self initWithConfiguration:configuration];
+    NSDictionary* untrackedObjectsAndKeys = [coder decodeObjectOfClass:[NSDictionary class]
+                                                                forKey:NSStringFromSelector(@selector(untrackedObjectsAndKeys))];
+    if (untrackedObjectsAndKeys) {
+        [_cacheObjects addEntriesFromDictionary:untrackedObjectsAndKeys];
+    }
+    return self;
 }
 
 
