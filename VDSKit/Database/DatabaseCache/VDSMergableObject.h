@@ -21,12 +21,13 @@
 /// Once keys are acquired, (void)mergeValue:forKey: is called
 /// on the cached object for each key, retrieving the value from the update
 /// object. If the key in the update object corresponds to a nil value, the
-/// cached object will remove the value (if a dictionary), or set the value
-/// to nil. To keep keys in a dictionary but indicate a null value, use
+/// cached object will remove the value (if dictionary like behavior is supported),
+/// or set the value to nil. To keep keys in a dictionary but indicate a null value, use
 /// NSNull as the value.
 ///
 @protocol VDSMergableObject <NSObject>
 
+@required
 
 /// Merges the value for the key into receiver.
 ///

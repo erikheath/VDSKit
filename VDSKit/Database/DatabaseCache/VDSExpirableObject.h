@@ -24,7 +24,7 @@
 /// isEquals where either the receiver or comparison object can be the object
 /// property instead of a VDSExpriableObject.
 ///
-/// @note VDSExpirableObject does not support archiving objects can expire while
+/// @note VDSExpirableObject does not support archiving as objects can expire while
 /// archived, leading to VDSExpirableObject instances entering an inconsistent state.
 ///
 @interface VDSExpirableObject : NSObject

@@ -11,6 +11,7 @@
 #import "../../VDSErrorConstants.h"
 #import "VDSExpirableObject.h"
 #import "VDSDatabaseCacheConfiguration.h"
+#import "VDSMergableObject.h"
 
 
 @interface VDSDatabaseCache ()
@@ -154,10 +155,11 @@
         _cacheObjects = [NSMutableDictionary new];
         _syncQueue = dispatch_queue_create("VDSDatabaseCacheSyncQueue", DISPATCH_QUEUE_SERIAL);
         _coordinatorLock = [NSRecursiveLock new];
-        if (_expiresObjects) {
+        if (_configuration.expiresObjects) {
             [self configureExpirationSystem];
             [self configureEvictionSystem];
             if (_configuration.tracksObjectUsage) { [self configureObjectTrackingSystem]; }
+            [[NSRunLoop mainRunLoop] addTimer:_evictionLoop forMode:NSDefaultRunLoopMode];
         }
     }
     return self;
@@ -167,11 +169,11 @@
 - (void)configureEvictionSystem
 {
     _evictionPolicyKeyList = [NSMutableArray new];
-    _evictionLoop = [NSTimer timerWithTimeInterval:_evictionInterval
+    _evictionLoop = [NSTimer timerWithTimeInterval:_configuration.evictionInterval
                                             target:self
                                           selector:@selector(processEvictions:)
                                           userInfo:nil
-                                           repeats:NO];
+                                           repeats:YES];
     _evictionQueue = [VDSOperationQueue new];
     _evictionOperationClass = NSClassFromString(_configuration.evictionOperationClassName);
 }
@@ -203,6 +205,9 @@
 - (void)encodeWithCoder:(nonnull NSCoder *)coder
 {
     [coder encodeObject:_configuration forKey:NSStringFromSelector(@selector(configuration))];
+    if (_configuration.archivesUntrackedObjects) {
+        [coder encodeObject:[self untrackedObjectsAndKeys] forKey:NSStringFromSelector(@selector(untrackedObjectsAndKeys))];
+    }
 }
 
 
@@ -213,7 +218,7 @@
 }
 
 - (BOOL)operationQueue:(VDSOperationQueue * _Nonnull)queue shouldAddOperation:(NSOperation * _Nonnull)operation {
-    return NO;
+    return YES;
 }
 
 - (void)operationQueue:(VDSOperationQueue * _Nonnull)queue willAddOperation:(NSOperation * _Nonnull)operation {
@@ -226,60 +231,70 @@
 
 - (void)processEvictions:(NSTimer* _Nonnull)timer
 {
+    /// Launches the eviction operation unless one exists on the queue.
+    if (self.evictionQueue.operationCount == 0) {
+        id evictionOperation = [_evictionOperationClass new];
+        [_evictionQueue addOperation:evictionOperation];
+    }
     return;
 }
 
-- (BOOL)addTrackedObject:(id _Nonnull)object
-               usingKey:(id _Nonnull)key
-{
-    BOOL success = YES;
-    
-    [_cacheObjects setObject:object forKey:key];
-    
-    // To keep the eviction policy list (FIFO or LIFO) accurate,
-    // it's necessary to remove the last instance of the key
-    // that was added to the list before adding the new entry.
-    [_evictionPolicyKeyList removeObject:key];
-    [_evictionPolicyKeyList addObject:key];
-    
-    // If expiration is supported, the timing must be calculated (even if it's just
-    // read in from a value in object or key). As with the  eviction policy list,
-    // the expirable object must be removed and a new one created. Expirable object
-    // overrides hash so that equality (and therefore searching) is a function of the
-    // object value in expirable, not the timestamp which is used as a sorting key to
-    // speed up eviction.
-    if (_expiresObjects == YES) {
-        [_expirationTable removeObject:object];
-        id timingKey = [_expirationTimingMapKey expressionValueWithObject:key
-                                                                context:[NSMutableDictionary dictionaryWithObject:object forKey:@""]];
-        NSDate* expiration = [_expirationTimingMap[timingKey] expressionValueWithObject:key
-                                                                              context:[NSMutableDictionary dictionaryWithObject:object forKey:VDSEntrySnapshotKey]];
-        VDSExpirableObject* expirable = [[VDSExpirableObject alloc] initWithExpiration:expiration object:object];
-        [_expirationTable addObject:expirable];
-        [_expirationTable sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"expiration"
-                                                                               ascending:YES]]];
-    }
-    
-    return success;
-}
 
 - (BOOL)evictObject:(id _Nonnull)key
               error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
-    return NO;
+    BOOL success = NO;
+    
+    [_coordinatorLock lock];
+    /// Object eviction depends on whether usage will prevent eviction.
+    NSUInteger usageCount = [_usageList countForObject:key];
+    
+    if (_configuration.evictsObjectsInUse == NO && usageCount > 0) {
+        if (error != NULL) {
+            id object = [_cacheObjects objectForKey:key];
+            *error = [NSError errorWithDomain:VDSKitErrorDomain
+                                         code:VDSCacheObjectInUse
+                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
+        }
+        success = NO;
+    } else {
+        // Evict the object
+        [self removeObjectForKey:key];
+        success = YES;
+    }
+    [_coordinatorLock unlock];
+    
+    return success;
 }
 
+
 - (BOOL)incrementUsageCount:(id _Nonnull)key
-error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
-    return YES;
+    BOOL success = NO;
+    /// You can not increment the usage count of a key that
+    /// is not already in the usage list.
+    [_coordinatorLock lock];
+    if ([_usageList countForObject:key] > 0) {
+        [_usageList addObject:key];
+        success = YES;
+    }
+    [_coordinatorLock unlock];
+    return success;
 }
 
 
 - (BOOL)decrementUsageCount:(id _Nonnull)key
-error:(NSError* __autoreleasing _Nullable * _Nullable)error
 {
-    return YES;
+    BOOL success = NO;
+    /// You can not decrement the usage count of a key that
+    /// is not already in the usage list.
+    [_coordinatorLock lock];
+    if ([_usageList countForObject:key] > 0) {
+        [_usageList removeObject:key];
+        success = YES;
+    }
+    [_coordinatorLock unlock];
+    return success;
 }
 
 
@@ -287,76 +302,186 @@ error:(NSError* __autoreleasing _Nullable * _Nullable)error
 
 - (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key
 {
-    
+    [_coordinatorLock lock];
+    [self setObject:object forKey:key tracked:NO];
+    [_coordinatorLock unlock];
 }
+
 
 - (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key tracked:(BOOL)tracked
 {
+    /// When setting an object, its important to lock down the various parts of the
+    /// cache that support the state of the object as the change needs to be 'atomic'.
+    [_coordinatorLock lock];
     
+    /// If the object contained in the cache is mergable, then the object
+    /// needs to be extracted, merged, and then reset. If the object is
+    /// not mergable, then it needs to be replaced.
+    id cachedObject = [_cacheObjects objectForKey:key];
+    if (cachedObject != nil &&
+        _configuration.replacesObjectsOnUpdate == NO &&
+        [object conformsToProtocol:@protocol(VDSMergableObject)] &&
+        [cachedObject conformsToProtocol:@protocol(VDSMergableObject)]) {
+        id mergableObject = (id<VDSMergableObject>)object;
+        for (id key in [mergableObject mergableKeys]) {
+            id value = [mergableObject valueForKey:key];
+            [cachedObject mergeValue:value forKey:key];
+        }
+    } else {
+        [_cacheObjects setObject:object forKey:key];
+    }
+    
+    if (_configuration.expiresObjects) {
+        /// To keep the eviction policy list (FIFO or LIFO) accurate,
+        /// it's necessary to remove the last instance of the key
+        /// that was added to the list before adding the new entry.
+        [_evictionPolicyKeyList removeObject:key];
+        [_evictionPolicyKeyList addObject:key];
+    
+        /// If expiration is supported, the timing must be calculated (even if it's just
+        /// read in from a value in object or key). As with the  eviction policy list,
+        /// the expirable object must be removed and a new one created. Expirable object
+        /// overrides hash so that equality (and therefore searching) is a function of the
+        /// object value in expirable, not the timestamp which is used as a sorting key to
+        /// speed up eviction.
+        [_expirationTable removeObject:key];
+        id timingKey = [_expirationTimingMapKey expressionValueWithObject:key
+                                                                context:[NSMutableDictionary dictionaryWithObject:[_cacheObjects objectForKey:key] forKey:VDSEntrySnapshotKey]];
+        NSDate* expiration = [_expirationTimingMap[timingKey] expressionValueWithObject:key
+                                                                              context:[NSMutableDictionary dictionaryWithObject:[_cacheObjects objectForKey:key] forKey:VDSEntrySnapshotKey]];
+        VDSExpirableObject* expirable = [[VDSExpirableObject alloc] initWithExpiration:expiration object:key];
+        [_expirationTable addObject:expirable];
+        [_expirationTable sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"expiration"
+                                                                               ascending:YES]]];
+    
+        /// Usage Tracking
+        if (_configuration.tracksObjectUsage) { [_usageList addObject:key]; }
+    }
+    /// Once all of the changes have been made, unlock the coordinator.
+    [_coordinatorLock unlock];
 }
 
 - (void)removeObjectForKey:(id _Nonnull)key
 {
-    
+    /// Removal mechanics depends on whether an object is tracked.
+    [_coordinatorLock lock];
+    [_cacheObjects removeObjectForKey:key];
+    if (!_configuration.expiresObjects || [_evictionPolicyKeyList containsObject:key] == NO) {
+        [_evictionPolicyKeyList removeObject:key];
+        NSUInteger index = [_expirationTable indexOfObject:key];
+        [_expirationTable removeObjectAtIndex:index];
+        if (_configuration.tracksObjectUsage) {
+            for (NSInteger count = [_usageList countForObject:key]; count > 0; count--) {
+                [_usageList removeObject:key];
+            }
+        }
+    }
+    [_coordinatorLock unlock];
 }
 
 - (void)removeAllObjects
 {
-    
+    /// This method empties the cache and all associated tracking data
+    /// effectively taking the cache back to a clean initialization state.
+    [_coordinatorLock lock];
+    [_cacheObjects removeAllObjects];
+    [_evictionPolicyKeyList removeAllObjects];
+    [_expirationTable removeAllObjects];
+    [_usageList removeAllObjects];
+    [_coordinatorLock unlock];
 }
 
 - (id _Nullable)objectForKey:(id _Nonnull)key
 {
-    return nil;
+    [_coordinatorLock lock];
+    id object = [_cacheObjects objectForKey:key];
+    [_coordinatorLock unlock];
+    return object;
 }
 
 - (NSArray*)allObjects
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* objects = [_cacheObjects allValues];
+    [_coordinatorLock unlock];
+    return objects;
 }
 
 - (NSArray* _Nonnull)trackedObjects
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* trackedKeys = [self trackedKeys];
+    NSArray* objects = [_cacheObjects objectsForKeys:trackedKeys notFoundMarker:[NSNull null]];
+    [_coordinatorLock unlock];
+    return objects;
 }
 
 - (NSArray* _Nonnull)untrackedObjects
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* untrackedKeys = [self untrackedKeys];
+    NSArray* objects = [_cacheObjects objectsForKeys:untrackedKeys notFoundMarker:[NSNull null]];
+    [_coordinatorLock unlock];
+    return objects;
 }
 
 - (NSArray*)allKeys
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* keys = [_cacheObjects allKeys];
+    [_coordinatorLock unlock];
+    return keys;
 }
 
 - (NSArray* _Nonnull)trackedKeys
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* keys = [_evictionPolicyKeyList copy];
+    [_coordinatorLock unlock];
+    return keys;
 }
 
 - (NSArray* _Nonnull)untrackedKeys
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSSet* trackedKeys = [NSSet setWithArray:[self trackedKeys]];
+    NSMutableSet* untrackedKeys = [NSMutableSet setWithArray:[_cacheObjects allKeys]];
+    [untrackedKeys minusSet:trackedKeys];
+    [_coordinatorLock unlock];
+    return untrackedKeys.allObjects;
 }
+
 
 - (NSDictionary*)allObjectsAndKeys
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSDictionary* objectsAndKeys = [_cacheObjects copy];
+    [_coordinatorLock unlock];
+    return objectsAndKeys;
 }
 
 - (NSDictionary* _Nonnull)trackedObjectsAndKeys
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* trackedKeys = [self trackedKeys];
+    NSMutableDictionary* trackedObjectsAndKeys = [_cacheObjects copy];
+    [trackedObjectsAndKeys removeObjectsForKeys:trackedKeys];
+    [_coordinatorLock unlock];
+    return trackedObjectsAndKeys;
 }
 
 - (NSDictionary* _Nonnull)untrackedObjectsAndKeys
 {
-    return nil;
+    [_coordinatorLock lock];
+    NSArray* untrackedKeys = [self untrackedKeys];
+    NSMutableDictionary* untrackedObjectsAndKeys = [_cacheObjects copy];
+    [untrackedObjectsAndKeys removeObjectsForKeys:untrackedKeys];
+    [_coordinatorLock unlock];
+    return untrackedObjectsAndKeys;
 }
 
 
-#pragma mark - Utility Behaviors
+#pragma mark - Fast Enumeration Behaviors
 
 - (NSUInteger)countByEnumeratingWithState:(nonnull NSFastEnumerationState *)state objects:(__unsafe_unretained id  _Nullable * _Nonnull)buffer count:(NSUInteger)len
 {
@@ -377,7 +502,7 @@ error:(NSError* __autoreleasing _Nullable * _Nullable)error
     
     if (object == nil) { success = NO; }
     
-    if (success == YES && _evictsObjectsInUse == YES && [_usageList countForObject:object] > 0) {
+    if (success == YES && _configuration.evictsObjectsInUse == YES && [_usageList countForObject:object] > 0) {
         success = NO;
         if (error != NULL) {
             *error = [NSError errorWithDomain: VDSKitErrorDomain
@@ -388,7 +513,7 @@ error:(NSError* __autoreleasing _Nullable * _Nullable)error
     
     if (success == YES) {
         [_evictionPolicyKeyList removeObject:object];
-        if (_expiresObjects == YES) {
+        if (_configuration.expiresObjects == YES) {
             [_expirationTable removeObject:object];
         }
     }

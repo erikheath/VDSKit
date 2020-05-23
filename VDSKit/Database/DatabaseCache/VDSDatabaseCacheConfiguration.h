@@ -133,7 +133,7 @@
 /// to process object evictions. Use the VDSCacheEvictionOperationClassNameKey when initializing the
 /// class in the metadata dictionary to specify VDSEvictionOperation or a subclass.
 ///
-@property(strong, readonly, nonnull) NSString* evictionOperationClassName;
+@property(strong, readonly, nullable) NSString* evictionOperationClassName;
 
 
 #pragma mark Object Lifecycle

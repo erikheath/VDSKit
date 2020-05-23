@@ -72,100 +72,6 @@
 @property(strong, readonly, nonnull, nonatomic) VDSDatabaseCacheConfiguration* configuration;
 
 
-/// @summary Determines whether the cache records an expiration date for an object that
-/// is added to the cache via the addTrackedObject method. The default is NO.
-///
-/// Corresponds to the VDSExpiresObjectKey.
-///
-@property(readonly) BOOL expiresObjects;
-
-
-/// @summary Indicates the preferred maximum number of objects the cache should hold.
-/// This is a target amount, not a fixed ceiling. The cache will attempt to keep the number
-/// of objects near this amount whenever possible while satifying other configuration
-/// constraints.
-///
-/// @discussion Setting a value of 0 indicates there is no maximum. The default is 0.
-/// Setting a value less than 0 indicates that the cache should evict objects as soon as possible. When setting
-/// the value to less than 0, the cache will be set to expire objects and object usage will be tracked
-/// to prevent the cache from prematurely evicting objects after they have been added.
-///
-/// Corresponds to the VDSPreferredMaxObjectCountKey.
-///
-@property(readonly) NSInteger preferredMaxObjectCount;
-
-
-/// @summary Determines whether objects will be selected for eviction in LIFO (last in, first out)
-/// or FIFO (first in, first out) order when being processed for eviction based on
-/// cache size preferences. The default is VDSLIFOPolicy.
-///
-/// Corresponds to the VDSEvictionPolicyKey.
-///
-@property(readonly) VDSEvictionPolicy evictionPolicy;
-
-
-/// @summary Determines whether the cache will dispatch an eviction operation when a low memory notification
-/// is received. The default is NO.
-///
-/// Corresponds to the VDSEvictsOnLowMemoryKey.
-///
-@property(readonly) BOOL evictsOnLowMemory;
-
-
-/// @summary Determines whether the cache tracks objects that are in use by setting up
-/// a usage list.
-///
-/// @discussion When tracks Usage is enabled, added objects automatically receive
-/// a usage count of one. When the object expires, that usage count is decremented
-/// by one. If objects are not tracked for expiration, they must be removed using the
-/// evictTrackedObject: method. The default is NO.
-///
-/// Corresponds to the VDSTracksObjectUsageKey.
-///
-@property(readonly) BOOL tracksObjectUsage;
-
-
-/// @summary Determines whether the cache will evict objects that have a usage value of one (1)
-/// or higher. The default is NO.
-///
-/// Corresponds to the VDSEvictsObjectsInUseKey.
-///
-@property(readonly) BOOL evictsObjectsInUse;
-
-
-/// @summary Determines whether an object will be replaced or have its current values merged
-/// with new values from an object added using the same key. The default is YES indicating that
-/// objects will be replaced.
-///
-/// @discussion Merging is only supported for objects with KVC compliant properties and with
-/// properties that are determinable using -(NSArray*)allKeys, -(id)keyEnumerator, or the Objective-C
-/// runtime property inspection methods or that conform to VDSMergableObject protocol (preferred).
-///
-/// Conforming to the VDSMergableObject protocol enables implementors to have granular
-/// control over what values are merged, replaced, or skipped. Objects that do not conform
-/// to the protocol (but whose keys are determinable) will have their values replaced.
-///
-/// Corresponds to the VDSReplacesObjectsOnUpdateKey.
-///
-@property(readonly) BOOL replacesObjectsOnUpdate;
-
-
-/// @summary The dispatch interval, in seconds, between eviction operations.
-/// The default interval is 300 seconds.
-///
-/// Corresponds to the VDSEvictionIntervalKey.
-///
-@property(readonly) NSTimeInterval evictionInterval;
-
-
-/// Determines whether the cache will archive untracked objects when encoding itself.
-/// The default is NO.
-///
-/// Corresponds to the VDSArchivesUntrackedObjectsKey.
-///
-@property(readonly) BOOL archivesUntrackedObjects;
-
-
 #pragma mark Object Lifecycle
 
 /// @summary Creates a new database cache using the default configuration.
@@ -231,26 +137,18 @@
 ///
 /// @param key The unique identifier used to store the object in the cache.
 ///
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
-///
 /// @returns YES if the usage counter was incremented successfully, NO otherwise.
 ///
-- (BOOL)incrementUsageCount:(id _Nonnull)key
-                      error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (BOOL)incrementUsageCount:(id _Nonnull)key;
 
 
 /// Decrements the usage counter for the object associated with the key.
 ///
 /// @param key The unique identifier used to store the object in the cache.
 ///
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
-///
 /// @returns YES if the usage counter was decremented successfully, NO otherwise.
 ///
-- (BOOL)decrementUsageCount:(id _Nonnull)key
-                      error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (BOOL)decrementUsageCount:(id _Nonnull)key;
 
 
 #pragma mark Object Storage Behaviors
@@ -318,12 +216,18 @@
 
 /// Returns all cached objects that are tracked.
 ///
+/// @warning If the returned array contains an NSNull instance, it means that an error has
+/// occurred in caching an object associated with one or more of the keys.
+///
 /// @returns A NSArray containing any tracked cached objects. If no tracked cached objects
 /// exist, the array is empty.
 - (NSArray* _Nonnull)trackedObjects;
 
 
 /// Returns all untracked cached objects.
+///
+/// @warning If the returned array contains one or more NSNull instances, it means that an error has
+/// occurred in caching an object associated with one or more of the keys.
 ///
 /// @returns A NSArray containing any untracked cached objects. If no untracked cached objects
 /// exist, the array is empty.
