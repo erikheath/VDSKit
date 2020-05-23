@@ -488,34 +488,5 @@
 }
 
 
-#pragma mark - Private Behaviors
-
-- (BOOL)evictTrackedObject:(id _Nonnull)key
-                   error:(NSError *__autoreleasing  _Nullable * _Nullable)error
-{
-    BOOL success = YES;
-    
-    id object = [_cacheObjects objectForKey:key];
-    
-    if (object == nil) { success = NO; }
-    
-    if (success == YES && _configuration.evictsObjectsInUse == YES && [_usageList countForObject:object] > 0) {
-        success = NO;
-        if (error != NULL) {
-            *error = [NSError errorWithDomain: VDSKitErrorDomain
-                                         code:VDSUnableToRemoveObject
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
-        }
-    }
-    
-    if (success == YES) {
-        [_evictionPolicyKeyList removeObject:object];
-        if (_configuration.expiresObjects == YES) {
-            [_expirationTable removeObject:object];
-        }
-    }
-    
-    return success;
-}
 
 @end
