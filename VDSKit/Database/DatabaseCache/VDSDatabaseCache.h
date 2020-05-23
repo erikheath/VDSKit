@@ -13,9 +13,11 @@
 
 @class VDSDatabaseCache;
 @class VDSEvictionOperation;
+@class VDSDatabaseCacheConfiguration;
 @class VDSExpirableObject;
 @protocol VDSDatabaseCacheDelegate;
 @protocol VDSMergableObject;
+
 
 
 #pragma mark - VDSDatabaseCache -
@@ -63,6 +65,12 @@
 
 
 #pragma mark Cache Configuration
+
+/// The configuration object used by the cache to configure itself. The cache makes a copy
+/// of any configuration object passed to it during initialization. This copy is the object
+/// that is returned from this property.
+@property(strong, readonly, nonnull, nonatomic) VDSDatabaseCacheConfiguration* configuration;
+
 
 /// @summary Determines whether the cache records an expiration date for an object that
 /// is added to the cache via the addTrackedObject method. The default is NO.
@@ -170,23 +178,21 @@
 - (instancetype _Nonnull)init;
 
 
-/// @summary Creates a new database cache using the configuration specified by the keys
-/// and values in the configuration dictionary. To create a cache with a default
-/// configuration, use init.
+/// @summary Creates a new database cache using the configuration specified by the configuration.
+/// To create a cache with a default configuration, use init.
 ///
-/// @param configuration A dictionary with keys and values corresponding to the Cache
-/// Configuration properties.
+/// @param configuration A VDSDatabaseCacheConfiguration.
 ///
 /// @returns An instance of the cache using the provided configuration.
 ///
-- (instancetype _Nonnull)initWithConfiguration:(NSDictionary* _Nonnull)configuration NS_DESIGNATED_INITIALIZER;
+- (instancetype _Nonnull)initWithConfiguration:(VDSDatabaseCacheConfiguration* _Nullable)configuration NS_DESIGNATED_INITIALIZER;
 
 
 #pragma mark Eviction Behaviors
 
 /// @summary Immediately attempts to launch the eviction process on the eviction queue. This
 /// method does not indicate that evictions were completed successfully, only that an eviction
-/// operation has been created and accepted on the eviction queue.
+/// operation has been created and placed on the eviction queue.
 ///
 /// @discussion Evictions are performed in a series cancellable operations: one for expired objects, one
 /// for cache size maintainance, and one for usage. Subclasses can add eviction operations
@@ -194,12 +200,12 @@
 /// process works. For more information, refer to the class documentation for
 /// VDSEvictionOperation.
 ///
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
+/// This method is triggered by the evictionLoop timer periodically according to the evictionInterval
+/// property.
 ///
-/// @returns YES if the eviction operation was created and accepted by the eviction queue, NO otherwise.
+/// @param timer The timer that triggered the execution of the method.
 ///
-- (BOOL)processEvictions:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (void)processEvictions:(NSTimer* _Nonnull)timer;
 
 
 /// @summary Attempts to evict an object from the cache, eviction policy list and expiration list when

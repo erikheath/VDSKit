@@ -10,7 +10,7 @@
 #import "../../VDSConstants.h"
 #import "../../VDSErrorConstants.h"
 #import "VDSExpirableObject.h"
-
+#import "VDSDatabaseCacheConfiguration.h"
 
 
 @interface VDSDatabaseCache ()
@@ -107,11 +107,9 @@
 @property(strong, readonly, nonnull) VDSOperationQueue* evictionQueue;
 
 
-/// @summary The eviction operation used by the cache to process object evictions. Use the
-/// VDSCacheEvictionOperationClassNameKey when initializing the class in the metadata
-/// dictionary to specify a subclass of VDSEvictionOperation.
+/// @summary The eviction operation class used by the cache to process object evictions.
 ///
-@property(strong, readonly, nonnull) Class evictionOperation;
+@property(strong, readonly, nonnull) Class evictionOperationClass;
 
 
 @end
@@ -122,15 +120,7 @@
 
 #pragma mark Properties
 
-@synthesize expiresObjects = _expiresObjects;
-@synthesize preferredMaxObjectCount = _preferredMaxObjectCount;
-@synthesize evictionPolicy = _evictionPolicy;
-@synthesize evictsOnLowMemory = _evictsOnLowMemory;
-@synthesize tracksObjectUsage = _tracksObjectUsage;
-@synthesize evictsObjectsInUse = _evictsObjectsInUse;
-@synthesize replacesObjectsOnUpdate = _replacesObjectsOnUpdate;
-@synthesize evictionInterval = _evictionInterval;
-@synthesize archivesUntrackedObjects = _archivesUntrackedObjects;
+@synthesize configuration = _configuration;
 
 @synthesize cacheObjects = _cacheObjects;
 @synthesize expirationTable = _expirationTable;
@@ -142,7 +132,7 @@
 @synthesize coordinatorLock = _coordinatorLock;
 @synthesize evictionLoop = _evictionLoop;
 @synthesize evictionQueue = _evictionQueue;
-@synthesize evictionOperation = _evictionOperation;
+@synthesize evictionOperationClass = _evictionOperationClass;
 
 
 +(BOOL)supportsSecureCoding { return YES; }
@@ -152,61 +142,67 @@
 
 - (instancetype _Nonnull)init
 {
-    return [self initWithConfiguration:@{}];
+    return [self initWithConfiguration:[[VDSDatabaseCacheConfiguration alloc] init]];
 }
 
 
-- (instancetype _Nonnull)initWithConfiguration:(NSDictionary* _Nonnull)configuration
+- (instancetype _Nonnull)initWithConfiguration:(VDSDatabaseCacheConfiguration* _Nullable)configuration
 {
     self = [super init];
     if (self != nil) {
-        
+        _configuration = [configuration copy];
+        _cacheObjects = [NSMutableDictionary new];
+        _syncQueue = dispatch_queue_create("VDSDatabaseCacheSyncQueue", DISPATCH_QUEUE_SERIAL);
+        _coordinatorLock = [NSRecursiveLock new];
+        if (_expiresObjects) {
+            [self configureExpirationSystem];
+            [self configureEvictionSystem];
+            if (_configuration.tracksObjectUsage) { [self configureObjectTrackingSystem]; }
+        }
     }
-    
     return self;
 }
 
 
-//VDSCacheConfigurationKey VDSCacheExpiresObjectsKey = @"expiresObjects";
-//VDSCacheConfigurationKey VDSCachePreferredMaxObjectCountKey = @"preferredMaxObjectCount";
-//VDSCacheConfigurationKey VDSCacheEvictionPolicyKey = @"evictionPolicy";
-//VDSCacheConfigurationKey VDSCacheEvictsOnLowMemoryKey = @"evictsOnLowMemory";
-//VDSCacheConfigurationKey VDSCacheTracksObjectUsageKey = @"tracksObjectUsage";
-//VDSCacheConfigurationKey VDSCacheEvictsObjectsInUseKey = @"evictsObjectsInUse";
-//VDSCacheConfigurationKey VDSCacheReplacesObjectsOnUpdateKey = @"replacesObjectsOnUpdate";
-//VDSCacheConfigurationKey VDSCacheEvictionIntervalKey = @"evictionInterval";
-//VDSCacheConfigurationKey VDSCacheArchivesUntrackedObjectsKey = @"archivesUntrackedObjects";
-//VDSCacheConfigurationKey VDSCacheExpirationTimingMapExpressionKey = @"expirationTimingMapKey";
-//VDSCacheConfigurationKey VDSCacheExpirationTimingMapKey = @"expirationTimingMap";
-//VDSCacheConfigurationKey VDSCacheEvictionOperationClassNameKey = @"evictionOperationClassName";
+- (void)configureEvictionSystem
+{
+    _evictionPolicyKeyList = [NSMutableArray new];
+    _evictionLoop = [NSTimer timerWithTimeInterval:_evictionInterval
+                                            target:self
+                                          selector:@selector(processEvictions:)
+                                          userInfo:nil
+                                           repeats:NO];
+    _evictionQueue = [VDSOperationQueue new];
+    _evictionOperationClass = NSClassFromString(_configuration.evictionOperationClassName);
+}
 
+
+- (void)configureObjectTrackingSystem
+{
+    _usageList = _configuration.tracksObjectUsage ? [NSCountedSet new] : nil;
+}
+
+
+- (void)configureExpirationSystem
+{
+    _expirationTable = _configuration.expiresObjects ? [NSMutableArray new] : nil;
+    _expirationTimingMap = [_configuration.expirationTimingMap copy];
+    _expirationTimingMapKey = [_configuration.expirationTimingMapKey copy];
+}
+
+
+#pragma mark Coder Support
 
 - (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
 {
-    NSMutableDictionary* configuration = [NSMutableDictionary new];
-    
-//        _expiresObjects = [coder decodeBoolForKey:NSStringFromSelector(@selector(expiresObjects))];
-//        _evictsOnLowMemory = [coder decodeBoolForKey:NSStringFromSelector(@selector(evictsOnLowMemory))];
-//        _evictionPolicy = [coder decodeIntegerForKey:NSStringFromSelector(@selector(evictionPolicy))];
-//        _preferredMaxObjectCount = [coder decodeIntegerForKey:NSStringFromSelector(@selector(preferredMaxObjectCount))];
-//        _tracksObjectUsage = [coder decodeBoolForKey:NSStringFromSelector(@selector(tracksObjectUsage))];
-
+    VDSDatabaseCacheConfiguration* configuration = [coder decodeObjectOfClass:[VDSDatabaseCacheConfiguration class] forKey:NSStringFromSelector(@selector(configuration))];
     return [self initWithConfiguration:configuration];
 }
 
 
 - (void)encodeWithCoder:(nonnull NSCoder *)coder
 {
-    [coder encodeBool:_expiresObjects
-               forKey:NSStringFromSelector(@selector(expiresObjects))];
-    [coder encodeBool:_evictsOnLowMemory
-               forKey:NSStringFromSelector(@selector(evictsOnLowMemory))];
-    [coder encodeInteger:_evictionPolicy
-                  forKey:NSStringFromSelector(@selector(evictionPolicy))];
-    [coder encodeInteger:_preferredMaxObjectCount
-                  forKey:NSStringFromSelector(@selector(preferredMaxObjectCount))];
-    [coder encodeBool:_tracksObjectUsage
-               forKey:NSStringFromSelector(@selector(tracksObjectUsage))];
+    [coder encodeObject:_configuration forKey:NSStringFromSelector(@selector(configuration))];
 }
 
 
@@ -228,11 +224,9 @@
 
 #pragma mark - Main Public Behaviors
 
-- (BOOL)processEvictions:(NSError *__autoreleasing  _Nullable *)error
+- (void)processEvictions:(NSTimer* _Nonnull)timer
 {
-    BOOL success = YES;
-
-    return success;
+    return;
 }
 
 - (BOOL)addTrackedObject:(id _Nonnull)object
