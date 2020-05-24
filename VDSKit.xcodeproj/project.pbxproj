@@ -38,8 +38,6 @@
 		033B1A7A2464971C00E5589B /* VDSExpirableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 033B1A782464971C00E5589B /* VDSExpirableObject.h */; };
 		033B1A7B2464971C00E5589B /* VDSExpirableObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 033B1A792464971C00E5589B /* VDSExpirableObject.m */; };
 		033B1A7D2464983E00E5589B /* VDSDatabaseCacheDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */; };
-		033B1A802464994200E5589B /* VDSEvictionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 033B1A7E2464994200E5589B /* VDSEvictionOperation.h */; };
-		033B1A812464994200E5589B /* VDSEvictionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 033B1A7F2464994200E5589B /* VDSEvictionOperation.m */; };
 		033B1A832465F50E00E5589B /* VDSMergableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 033B1A822465F50E00E5589B /* VDSMergableObject.h */; };
 		036C333524491D640021346C /* VDSKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036C332B24491D640021346C /* VDSKit.framework */; };
 		036C333C24491D640021346C /* VDSKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C332E24491D640021346C /* VDSKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -111,8 +109,6 @@
 		033B1A782464971C00E5589B /* VDSExpirableObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSExpirableObject.h; sourceTree = "<group>"; };
 		033B1A792464971C00E5589B /* VDSExpirableObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSExpirableObject.m; sourceTree = "<group>"; };
 		033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseCacheDelegate.h; sourceTree = "<group>"; };
-		033B1A7E2464994200E5589B /* VDSEvictionOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSEvictionOperation.h; sourceTree = "<group>"; };
-		033B1A7F2464994200E5589B /* VDSEvictionOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSEvictionOperation.m; sourceTree = "<group>"; };
 		033B1A822465F50E00E5589B /* VDSMergableObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSMergableObject.h; sourceTree = "<group>"; };
 		036C332B24491D640021346C /* VDSKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VDSKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		036C332E24491D640021346C /* VDSKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSKit.h; sourceTree = "<group>"; };
@@ -264,8 +260,6 @@
 				036C3356244A23230021346C /* VDSQueryCache.m */,
 				036C3359244A233E0021346C /* VDSEntityCache.h */,
 				036C335A244A233E0021346C /* VDSEntityCache.m */,
-				033B1A7E2464994200E5589B /* VDSEvictionOperation.h */,
-				033B1A7F2464994200E5589B /* VDSEvictionOperation.m */,
 				033B1A782464971C00E5589B /* VDSExpirableObject.h */,
 				033B1A792464971C00E5589B /* VDSExpirableObject.m */,
 				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
@@ -312,7 +306,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				033B1A802464994200E5589B /* VDSEvictionOperation.h in Headers */,
 				033B1A7A2464971C00E5589B /* VDSExpirableObject.h in Headers */,
 				032ADF3D245BB7B1008186D3 /* VDSMutexCondition.h in Headers */,
 				033A2D1D24774BD900D52453 /* VDSDatabaseCacheConfiguration.h in Headers */,
@@ -455,7 +448,6 @@
 				033B1A6D246332F500E5589B /* VDSOperation.m in Sources */,
 				036C335024491EA90021346C /* VDSDatabaseOperationManager.m in Sources */,
 				032ADF36245A6989008186D3 /* VDSBlockOperation.m in Sources */,
-				033B1A812464994200E5589B /* VDSEvictionOperation.m in Sources */,
 				033B1A7B2464971C00E5589B /* VDSExpirableObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

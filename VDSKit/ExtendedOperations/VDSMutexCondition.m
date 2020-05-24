@@ -27,7 +27,7 @@
 }
 
 - (BOOL)evaluateForOperation:(VDSOperation *)operation
-                       error:(NSError *__autoreleasing  _Nullable *)error
+                       error:(NSError *__autoreleasing  _Nullable * _Nullable)error
 {
     return [super evaluateForOperation:operation
                                  error:error];

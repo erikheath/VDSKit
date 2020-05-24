@@ -94,17 +94,7 @@
 @property(strong, readonly, nonnull) NSTimer* evictionLoop;
 
 
-/// @summary The operation queue used by the cache to process eviction operations against its
-/// cached objects. The queue may be suspended and /or its operations canceled to
-/// prevent or pause evictions as needed.
-///
-@property(strong, readonly, nonnull) VDSOperationQueue* evictionQueue;
-
-
-/// @summary The eviction operation class used by the cache to process object evictions.
-///
-@property(strong, readonly, nonnull) Class evictionOperationClass;
-
+@property(strong, readwrite, nullable) NSDate* priorEvictionTime;
 
 @end
 
@@ -124,8 +114,7 @@
 @synthesize expirationTimingMap = _expirationTimingMap;
 @synthesize coordinatorLock = _coordinatorLock;
 @synthesize evictionLoop = _evictionLoop;
-@synthesize evictionQueue = _evictionQueue;
-@synthesize evictionOperationClass = _evictionOperationClass;
+@synthesize priorEvictionTime = _priorEvictionTime;
 
 
 +(BOOL)supportsSecureCoding { return YES; }
@@ -157,6 +146,9 @@
 }
 
 
+/// The configure methods are provided so that subclassers can make more granular adjustments
+/// to the behavior of the class rather than needing to do a complete override.
+
 - (void)configureEvictionSystem
 {
     _evictionPolicyKeyList = [NSMutableArray new];
@@ -165,8 +157,7 @@
                                           selector:@selector(processEvictions:)
                                           userInfo:nil
                                            repeats:YES];
-    _evictionQueue = [VDSOperationQueue new];
-    _evictionOperationClass = NSClassFromString(_configuration.evictionOperationClassName);
+    _priorEvictionTime = [NSDate distantPast];
 }
 
 
@@ -208,60 +199,101 @@
 }
 
 
-#pragma mark Operation Queue Delegate Behaviors
-
-- (void)operationQueue:(VDSOperationQueue * _Nonnull)queue operationDidFinish:(NSOperation * _Nonnull)operation {
-    
-}
-
-- (BOOL)operationQueue:(VDSOperationQueue * _Nonnull)queue shouldAddOperation:(NSOperation * _Nonnull)operation {
-    return YES;
-}
-
-- (void)operationQueue:(VDSOperationQueue * _Nonnull)queue willAddOperation:(NSOperation * _Nonnull)operation {
-    
-}
-
-
-
-#pragma mark - Main Public Behaviors
+#pragma mark - Eviction Behaviors
 
 - (void)processEvictions:(NSTimer* _Nonnull)timer
 {
     /// Launches the eviction operation unless one exists on the queue.
-    if (self.evictionQueue.operationCount == 0) {
-        id evictionOperation = [_evictionOperationClass new];
-        [_evictionQueue addOperation:evictionOperation];
-    }
-    return;
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+        [self processCacheEvictions];
+    });
 }
 
-
-- (BOOL)evictObject:(id _Nonnull)key
-              error:(NSError* __autoreleasing _Nullable * _Nullable)error
+- (void)processCacheEvictions
 {
-    BOOL success = NO;
-    
     [_coordinatorLock lock];
-    /// Object eviction depends on whether usage will prevent eviction.
-    NSUInteger usageCount = [_usageList countForObject:key];
+
+    ///
+    /// The cache takes an aggressive approach, removing objects that are
+    /// unused and expired, according to the eviction policy, regardless of the max object count.
+    ///
+    /// The database cache will decrement the object count for any object that has expired.
+    /// If the cache is configured to track uses and the object has no additional uses,
+    /// then the object will be removed.
+    ///
+    /// If cache is configured to remove items that have expired regardless of use,
+    /// then the expired object will be removed. Otherwise, it will be left in the cache.
+    ///
+    /// If the object has not expired but has no users, then the object will be removed if
+    /// the cache exceeds the max object count. Otherwise, the object will be left in the cache.
+    ///
     
-    if (_configuration.evictsObjectsInUse == NO && usageCount > 0) {
-        if (error != NULL) {
-            id object = [_cacheObjects objectForKey:key];
-            *error = [NSError errorWithDomain:VDSKitErrorDomain
-                                         code:VDSCacheObjectInUse
-                                     userInfo:@{NSDebugDescriptionErrorKey: VDS_OBJECT_IN_USE_MESSAGE(object, key)}];
+    /// expiredKeys is used as a bin that can be enumerated without mutation when removing items.
+    NSMutableArray* expiredKeys = [NSMutableArray new];
+    /// removableKeys is used as a bin for keys that can be removed but do not have to be if space
+    /// permits.
+    NSMutableArray* removableKeys = [NSMutableArray new];
+
+    /// Step 1. Update the usage count for tracked objects if appropriate.
+    if (_configuration.tracksObjectUsage) {
+        for (VDSExpirableObject* object in _expirationTable) {
+            if (object.isExpired &&
+                [object.expiration compare:_priorEvictionTime] == NSOrderedAscending &&
+                [object.expiration compare:_priorEvictionTime] == NSOrderedSame) {
+                /// This is the first eviction cycle where the object is expired. Decrement its usage count
+                /// to account for initial use increment when the object was added to the object cache.
+                [self decrementUsageCount:object.object];
+                if ([_usageList countForObject:object.object] == 0) {
+                    [expiredKeys addObject:object.object];
+                } else if (_configuration.evictsObjectsInUse) {
+                    [removableKeys addObject:object.object];
+                }
+            } else if (object.isExpired == NO) {
+                /// This will be the first object in the ordered array that is not expired in the current
+                /// eviction cycle. It's date will be used to set the priorEvictionTime and the loop
+                /// will be broken to continue the eviction process.
+                _priorEvictionTime = object.expiration;
+                break;
+            }
         }
-        success = NO;
-    } else {
-        // Evict the object
-        [self removeObjectForKey:key];
-        success = YES;
     }
-    [_coordinatorLock unlock];
     
-    return success;
+    /// Step 2. Remove Objects that are expired and unused.
+    for (id key in expiredKeys) {
+        [self removeObjectForKey:key];
+    }
+    
+    /// Step 3. If the cache exceeds the preferred max object count, remove in LIFO or FIFO
+    /// order using the removableKeys array. In this implementation, it's an all or nothing affair.
+    if (_configuration.preferredMaxObjectCount < _expirationTable.count) {
+        if (_configuration.evictionPolicy == VDSFIFOPolicy) {
+            NSArray* enumeratedObjects = _configuration.evictionPolicy == VDSFIFOPolicy ? removableKeys.objectEnumerator.allObjects : removableKeys.reverseObjectEnumerator.allObjects;
+            for (id key in enumeratedObjects) {
+                [self removeObjectForKey:key];
+            }
+        }
+    }
+    
+    /// Step 4. If the cache still exceeds the preferred max object count, remove in LIFO or FIFO
+    /// order all unused objects until the cache meets the preferred max object count. In the cache,
+    /// unused objects that have not expried have a usage count of 1. At this point, no cache object
+    /// that is unexpired will have a usage count of 1 unless it is not being used.
+    if (_configuration.preferredMaxObjectCount < _expirationTable.count) {
+        NSArray* enumeratedObjects = _configuration.evictionPolicy == VDSFIFOPolicy ? _evictionPolicyKeyList.objectEnumerator.allObjects : _evictionPolicyKeyList.reverseObjectEnumerator.allObjects;
+        for (id key in enumeratedObjects) {
+            /// If the object is before the priorEvictionTime, it is in use and should be skipped.
+            if ([((NSDate*)[_expirationTable objectAtIndex:[_expirationTable indexOfObject:key]]) compare:_priorEvictionTime] == NSOrderedDescending) { continue; }
+            /// If the object has a usage count of 1, it should be removed until we hit preferred
+            /// max object count.
+            if ([_usageList countForObject:key] == 1) { [self removeObjectForKey:key]; }
+            /// When the count is at the object count, break to stop removing objects.
+            if (_configuration.preferredMaxObjectCount == _expirationTable.count) {
+                break;
+            }
+        }
+    }
+    
+    [_coordinatorLock unlock];
 }
 
 

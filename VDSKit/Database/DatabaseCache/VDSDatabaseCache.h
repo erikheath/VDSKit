@@ -9,10 +9,8 @@
 @import Foundation;
 
 #import "VDSConstants.h"
-#import "../../ExtendedOperations/VDSOperationQueue.h"
 
 @class VDSDatabaseCache;
-@class VDSEvictionOperation;
 @class VDSDatabaseCacheConfiguration;
 @class VDSExpirableObject;
 @protocol VDSDatabaseCacheDelegate;
@@ -51,7 +49,7 @@
 /// updated. This process enables you to have data immediately available, while only updating objects where data
 /// has actually changed.
 ///
-@interface VDSDatabaseCache : NSObject <NSFastEnumeration, NSSecureCoding, VDSOperationQueueDelegate> {
+@interface VDSDatabaseCache : NSObject <NSFastEnumeration, NSSecureCoding> {
     
 }
 
@@ -114,21 +112,23 @@
 - (void)processEvictions:(NSTimer* _Nonnull)timer;
 
 
-/// @summary Attempts to evict an object from the cache, eviction policy list and expiration list when
-/// in use by the cache, triggering delegate methods and notifications as needed.
+/// @summary Attempts to evict objects from the cache that meet the eviction criteria
+/// specified in the configuration.
 ///
-/// @discussion This method attempts to evict an object following the rules set by the
-/// cache configuration. To forcibly remove an object from the cache, use removeObjectForKey:.
+/// @discussion The cache takes an aggressive approach, removing objects that are
+/// unused and expired, according to the eviction policy, regardless of the max object count.
 ///
-/// @param key The unique identifier used to store the object in the cache.
+/// The database cache will decrement the object count for any object that has expired.
+/// If the cache is configured to track uses and the object has no additional uses,
+/// then the object will be removed.
 ///
-/// @param error An error object describing the error. Use the return value to know when
-/// to check for an error object. A return value of NO will always produce an error object.
+/// If cache is configured to remove items that have expired regardless of use,
+/// then the expired object will be removed. Otherwise, it will be left in the cache.
 ///
-/// @returns YES if the object was evicted successfully, NO otherwise.
+/// If the object has not expired but has no users, then the object will be removed if
+/// the cache exceeds the max object count. Otherwise, the object will be left in the cache.
 ///
-- (BOOL)evictObject:(id _Nonnull)key
-              error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+- (void)processCacheEvictions;
 
 
 #pragma mark Usage Count Behaviors
