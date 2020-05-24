@@ -33,3 +33,10 @@ FOUNDATION_EXPORT const unsigned char VDSKitVersionString[];
 #import "VDSConstants.h"
 #import "VDSErrorConstants.h"
 
+#import "Database/DatabaseCache/VDSDatabaseCache.h"
+#import "Database/DatabaseCache/VDSDatabaseCacheDelegate.h"
+#import "Database/DatabaseCache/VDSDatabaseCacheConfiguration.h"
+#import "Database/DatabaseCache/VDSMutableDatabaseCacheConfiguration.h"
+#import "Database/DatabaseCache/VDSExpirableObject.h"
+#import "Database/DatabaseCache/VDSMergableObject.h"
+

@@ -8,18 +8,8 @@
 
 @import Foundation;
 
-#import "VDSQueryCache.h"
-#import "VDSSnapshotCache.h"
-#import "VDSEntityCache.h"
-
 
 @interface VDSDatabase : NSObject {
-    
-    // For subclass reference only
-    @private
-    VDSQueryCache* _queryCache;
-    VDSSnapshotCache* _snapshots;
-    VDSEntityCache* _entityCache;
         
 }
 
