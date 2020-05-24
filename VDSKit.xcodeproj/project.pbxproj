@@ -47,12 +47,6 @@
 		036C334C24491E790021346C /* VDSDatabaseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334A24491E790021346C /* VDSDatabaseContext.m */; };
 		036C334F24491EA90021346C /* VDSDatabaseOperationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */; };
 		036C335024491EA90021346C /* VDSDatabaseOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */; };
-		036C3353244A230A0021346C /* VDSSnapshotCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C3351244A230A0021346C /* VDSSnapshotCache.h */; };
-		036C3354244A230A0021346C /* VDSSnapshotCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3352244A230A0021346C /* VDSSnapshotCache.m */; };
-		036C3357244A23230021346C /* VDSQueryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C3355244A23230021346C /* VDSQueryCache.h */; };
-		036C3358244A23230021346C /* VDSQueryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3356244A23230021346C /* VDSQueryCache.m */; };
-		036C335B244A233E0021346C /* VDSEntityCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 036C3359244A233E0021346C /* VDSEntityCache.h */; };
-		036C335C244A233E0021346C /* VDSEntityCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C335A244A233E0021346C /* VDSEntityCache.m */; };
 		036C3360244A2AF80021346C /* VDSErrorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C335F244A2AF80021346C /* VDSErrorConstants.m */; };
 		036C3362244A3D760021346C /* VDSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3361244A3D760021346C /* VDSConstants.m */; };
 		03AF92DC244E5DD400E38623 /* VDSDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */; };
@@ -121,12 +115,6 @@
 		036C334A24491E790021346C /* VDSDatabaseContext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseContext.m; sourceTree = "<group>"; };
 		036C334D24491EA90021346C /* VDSDatabaseOperationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseOperationManager.h; sourceTree = "<group>"; };
 		036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseOperationManager.m; sourceTree = "<group>"; };
-		036C3351244A230A0021346C /* VDSSnapshotCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSSnapshotCache.h; sourceTree = "<group>"; };
-		036C3352244A230A0021346C /* VDSSnapshotCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSSnapshotCache.m; sourceTree = "<group>"; };
-		036C3355244A23230021346C /* VDSQueryCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSQueryCache.h; sourceTree = "<group>"; };
-		036C3356244A23230021346C /* VDSQueryCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSQueryCache.m; sourceTree = "<group>"; };
-		036C3359244A233E0021346C /* VDSEntityCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSEntityCache.h; sourceTree = "<group>"; };
-		036C335A244A233E0021346C /* VDSEntityCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSEntityCache.m; sourceTree = "<group>"; };
 		036C335D244A28520021346C /* VDSConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSConstants.h; sourceTree = "<group>"; };
 		036C335E244A28960021346C /* VDSErrorConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSErrorConstants.h; sourceTree = "<group>"; };
 		036C335F244A2AF80021346C /* VDSErrorConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSErrorConstants.m; sourceTree = "<group>"; };
@@ -254,21 +242,15 @@
 		0388E186247605E300356965 /* DatabaseCache */ = {
 			isa = PBXGroup;
 			children = (
-				036C3351244A230A0021346C /* VDSSnapshotCache.h */,
-				036C3352244A230A0021346C /* VDSSnapshotCache.m */,
-				036C3355244A23230021346C /* VDSQueryCache.h */,
-				036C3356244A23230021346C /* VDSQueryCache.m */,
-				036C3359244A233E0021346C /* VDSEntityCache.h */,
-				036C335A244A233E0021346C /* VDSEntityCache.m */,
-				033B1A782464971C00E5589B /* VDSExpirableObject.h */,
-				033B1A792464971C00E5589B /* VDSExpirableObject.m */,
 				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
 				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
+				033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */,
 				033A2D1B24774BD900D52453 /* VDSDatabaseCacheConfiguration.h */,
 				033A2D1C24774BD900D52453 /* VDSDatabaseCacheConfiguration.m */,
 				033A2D1F24774BF200D52453 /* VDSMutableDatabaseCacheConfiguration.h */,
 				033A2D2024774BF200D52453 /* VDSMutableDatabaseCacheConfiguration.m */,
-				033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */,
+				033B1A782464971C00E5589B /* VDSExpirableObject.h */,
+				033B1A792464971C00E5589B /* VDSExpirableObject.m */,
 				033B1A822465F50E00E5589B /* VDSMergableObject.h */,
 			);
 			path = DatabaseCache;
@@ -320,13 +302,10 @@
 				032ADF39245B5038008186D3 /* VDSGroupOperation.h in Headers */,
 				036C334B24491E790021346C /* VDSDatabaseContext.h in Headers */,
 				033B1A70246345D400E5589B /* VDSOperationMutexCoordinator.h in Headers */,
-				036C335B244A233E0021346C /* VDSEntityCache.h in Headers */,
 				033B1A832465F50E00E5589B /* VDSMergableObject.h in Headers */,
-				036C3353244A230A0021346C /* VDSSnapshotCache.h in Headers */,
 				033B1A652463286F00E5589B /* VDSOperationDelegate.h in Headers */,
 				033B1A6C246332F500E5589B /* VDSOperation.h in Headers */,
 				03AF92E92453515300E38623 /* VDSBlockObserver.h in Headers */,
-				036C3357244A23230021346C /* VDSQueryCache.h in Headers */,
 				033B1A60246327E000E5589B /* VDSOperationCondition.h in Headers */,
 				036C334724491E570021346C /* VDSDatabase.h in Headers */,
 			);
@@ -435,12 +414,9 @@
 				036C334824491E570021346C /* VDSDatabase.m in Sources */,
 				032ADF3E245BB7B1008186D3 /* VDSMutexCondition.m in Sources */,
 				033A2D2224774BF200D52453 /* VDSMutableDatabaseCacheConfiguration.m in Sources */,
-				036C3358244A23230021346C /* VDSQueryCache.m in Sources */,
 				036C3362244A3D760021346C /* VDSConstants.m in Sources */,
-				036C335C244A233E0021346C /* VDSEntityCache.m in Sources */,
 				033A2D1E24774BD900D52453 /* VDSDatabaseCacheConfiguration.m in Sources */,
 				033B1A61246327E000E5589B /* VDSOperationCondition.m in Sources */,
-				036C3354244A230A0021346C /* VDSSnapshotCache.m in Sources */,
 				036C3360244A2AF80021346C /* VDSErrorConstants.m in Sources */,
 				032ADF3A245B5038008186D3 /* VDSGroupOperation.m in Sources */,
 				03AF92E62451489700E38623 /* VDSOperationQueue.m in Sources */,
