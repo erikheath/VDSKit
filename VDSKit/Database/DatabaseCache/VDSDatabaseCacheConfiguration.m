@@ -29,7 +29,6 @@
 @synthesize archivesUntrackedObjects = _archivesUntrackedObjects;
 @synthesize expirationTimingMapKey = _expirationTimingMapKey;
 @synthesize expirationTimingMap = _expirationTimingMap;
-@synthesize evictionOperationClassName = _evictionOperationClassName;
 
 
 #pragma mark Object Lifecycle
@@ -54,7 +53,6 @@
         _archivesUntrackedObjects = [dictionary[VDSCacheArchivesUntrackedObjectsKey] boolValue];
         _expirationTimingMapKey = [dictionary[VDSCacheExpirationTimingMapExpressionKey] copy];
         _expirationTimingMap = [dictionary[VDSCacheExpirationTimingMapKey] copy];
-        _evictionOperationClassName = dictionary[VDSCacheEvictionOperationClassNameKey];
     }
     return self;
 }
@@ -81,7 +79,6 @@
         _archivesUntrackedObjects = [coder decodeBoolForKey:NSStringFromSelector(@selector(archivesUntrackedObjects))];
         _expirationTimingMapKey = [coder decodeObjectOfClass:[NSExpression class] forKey:NSStringFromSelector(@selector(expirationTimingMapKey))];
         _expirationTimingMap = [coder decodeObjectOfClass:[NSDictionary class] forKey:NSStringFromSelector(@selector(expirationTimingMap))];
-        _evictionOperationClassName = [coder decodeObjectOfClass:[NSString class] forKey:NSStringFromSelector(@selector(evictionOperationClassName))];
     }
     return self;
 }
@@ -98,7 +95,6 @@
     [coder encodeBool:_archivesUntrackedObjects forKey:NSStringFromSelector(@selector(archivesUntrackedObjects))];
     [coder encodeObject:_expirationTimingMapKey forKey:NSStringFromSelector(@selector(expirationTimingMapKey))];
     [coder encodeObject:_expirationTimingMap forKey:NSStringFromSelector(@selector(expirationTimingMap))];
-    [coder encodeObject:_evictionOperationClassName forKey:NSStringFromSelector(@selector(evictionOperationClassName))];
 }
 
 
@@ -118,7 +114,6 @@
     dictionary[VDSCacheArchivesUntrackedObjectsKey] = @(_archivesUntrackedObjects);
     dictionary[VDSCacheExpirationTimingMapExpressionKey] = [_expirationTimingMapKey copy];
     dictionary[VDSCacheExpirationTimingMapKey] = [_expirationTimingMap copy];
-    dictionary[VDSCacheEvictionOperationClassNameKey] = [_evictionOperationClassName copy];
     
     return [[VDSDatabaseCacheConfiguration alloc] initWithDictionary:dictionary];
 }

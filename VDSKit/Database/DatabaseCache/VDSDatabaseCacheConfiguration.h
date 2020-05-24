@@ -129,13 +129,6 @@
 @property(strong, readonly, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
 
 
-/// @summary The eviction operation class name used by the cache to create the eviction operation used
-/// to process object evictions. Use the VDSCacheEvictionOperationClassNameKey when initializing the
-/// class in the metadata dictionary to specify VDSEvictionOperation or a subclass.
-///
-@property(strong, readonly, nullable) NSString* evictionOperationClassName;
-
-
 #pragma mark Object Lifecycle
 
 - (instancetype _Nullable)init;
