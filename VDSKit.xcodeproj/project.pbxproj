@@ -119,6 +119,8 @@
 		036C335E244A28960021346C /* VDSErrorConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSErrorConstants.h; sourceTree = "<group>"; };
 		036C335F244A2AF80021346C /* VDSErrorConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSErrorConstants.m; sourceTree = "<group>"; };
 		036C3361244A3D760021346C /* VDSConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSConstants.m; sourceTree = "<group>"; };
+		0387E07F247AF596002519CE /* VDSExtendedOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSExtendedOperations.h; sourceTree = "<group>"; };
+		0387E080247AF6B7002519CE /* VDSCachingSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSCachingSupport.h; sourceTree = "<group>"; };
 		03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseCache.h; sourceTree = "<group>"; };
 		03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseCache.m; sourceTree = "<group>"; };
 		03AF92E32451489700E38623 /* VDSOperationQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSOperationQueue.h; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 		0388E186247605E300356965 /* DatabaseCache */ = {
 			isa = PBXGroup;
 			children = (
+				0387E080247AF6B7002519CE /* VDSCachingSupport.h */,
 				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
 				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
 				033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */,
@@ -259,6 +262,7 @@
 		03AF92DE2450FCAA00E38623 /* ExtendedOperations */ = {
 			isa = PBXGroup;
 			children = (
+				0387E07F247AF596002519CE /* VDSExtendedOperations.h */,
 				033B1A6A246332F500E5589B /* VDSOperation.h */,
 				033B1A6B246332F500E5589B /* VDSOperation.m */,
 				033B1A642463286F00E5589B /* VDSOperationDelegate.h */,

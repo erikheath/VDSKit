@@ -17,26 +17,11 @@ FOUNDATION_EXPORT const unsigned char VDSKitVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <VDSKit/PublicHeader.h>
 
 
-#import "Database/DatabaseCache/VDSExpirableObject.h"
-
-
-#import "ExtendedOperations/VDSOperation.h"
-#import "ExtendedOperations/VDSOperationQueue.h"
-#import "ExtendedOperations/VDSBlockObserver.h"
-#import "ExtendedOperations/VDSBlockOperation.h"
-#import "ExtendedOperations/VDSGroupOperation.h"
-#import "ExtendedOperations/VDSMutexCondition.h"
-#import "ExtendedOperations/VDSOperationCondition.h"
-#import "ExtendedOperations/VDSOperationObserver.h"
-#import "ExtendedOperations/VDSOperationDelegate.h"
 
 #import "VDSConstants.h"
 #import "VDSErrorConstants.h"
 
-#import "Database/DatabaseCache/VDSDatabaseCache.h"
-#import "Database/DatabaseCache/VDSDatabaseCacheDelegate.h"
-#import "Database/DatabaseCache/VDSDatabaseCacheConfiguration.h"
-#import "Database/DatabaseCache/VDSMutableDatabaseCacheConfiguration.h"
-#import "Database/DatabaseCache/VDSExpirableObject.h"
-#import "Database/DatabaseCache/VDSMergableObject.h"
+#import "ExtendedOperations/VDSExtendedOperations.h"
+
+#import "Database/DatabaseCache/VDSCachingSupport.h"
 

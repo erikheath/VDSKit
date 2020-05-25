@@ -17,8 +17,16 @@
 @protocol VDSOperationDelegate;
 
 
+
+
+
 #pragma mark - NSOperation+VDSOperation -
 
+/// The VDSOperation category on NSOperation adds a single method, -(void)addCompletionBlock:
+/// that can be used by any NSOperation to add additional completion blocks. For
+/// VDSOperationQueue, the method is used to add a notification to observers that the
+/// operation has completed if the opertion is not a subclass of VDSOperation.
+///
 @interface NSOperation (VDSOperation)
 
 
@@ -38,11 +46,31 @@
 @end
 
 
+
+
+
+#pragma mark - VDSOperation -
+
+/// @summary VDSOperation is the base class for extended operation support in VDSKit.
+///
+/// @discussion VDSOperation provides significant functionality including the ability to conditionalize
+/// execution, to maintain and notify a list of observers when specific events happen before,
+/// during, and after execution, to keep track of errors during execution, and to enable behavior
+/// cutomization using a delegate. In addition, it enables subclasses to customize both
+/// exeuction behavior and finishing behavior which enables a more granular approach to
+/// desinging an operation.
+///
+/// @note VDSOperation is designed to be used only on a VDSOperationQueue as certain aspects of its
+/// execution require set up provided by the that specific type of operation queue.
+///
 @interface VDSOperation : NSOperation
 
 
-/// Indicates that the operation has received a message that it is now added
+#pragma mark Properties
+
+/// Indicates that the operation has received a message that it has been added
 /// to a queue and should not accept additional conditions or observers.
+///
 @property(readonly) BOOL enqueued;
  
 
@@ -53,28 +81,20 @@
 
 /// @summary The observers that have registed for a subset of delegate notifications.
 ///
-/// @discussion Typically observers are constrained to other operations that need to monitor
-/// the execution state of the current operation.
-///
-/// Anonymous observers can be added using a VDSBlockObserver instance. These objects
-/// enable you to add functionality to the operation without having to subclass
-/// it. Block observers are the right option when the additional functionality
-/// is limited and subclassing would result in an object with little change
-/// which for operations is a very common scenario.
-///
 @property(strong, readonly, nonnull) NSArray<id<VDSOperationObserver>>* observers;
 
 
 /// @summary Upon completion, contains the errors, if any, reported during execution of the
-/// operation. During execution, the array is updated as errors occur. This property
-/// is Key-Value Observable.
+/// operation. During execution, the array is updated as errors occur.
+///
+/// This property is Key-Value Observable.
 ///
 @property(strong, readonly, nonnull) NSArray<NSError*>* errors;
 
 
 /// @summary An object conforming to the VDSOperationDelegate protocol. The operation
-/// delegate has the opportunity to both monitor and prevent the operation
-/// from taking certain actions before and during execution.
+/// delegate has the opportunity to both monitor, alter, and prevent the operation
+/// from taking certain actions before, during, and after execution.
 ///
 @property(weak, readwrite, nullable) id<VDSOperationDelegate> delegate;
 
@@ -97,6 +117,12 @@
 
 /// @summary Adds an observer, typically another operation, to the receiver.
 ///
+/// @note Anonymous observers can be added using a VDSBlockObserver instance. These objects
+/// enable you to add functionality to the operation without having to subclass
+/// it. Block observers are the right option when the additional functionality
+/// is limited and subclassing would result in an object with little change or
+/// that will only be used in a sigle scenario.
+///
 /// @param observer An object conforming to the VDSOperationObserver protocol.
 ///
 /// @warning It is an error to attempt adding an observer once an operation is
@@ -116,9 +142,16 @@
 - (void)willEnqueue;
 
 
-#pragma mark - Execution Behaviors
+#pragma mark Execution Behaviors
 
 /// @summary Primary override point for subclasses to specialize a VDSOperation.
+///
+/// @discussion Subclasses must call -(void)finishWithErrors: once the
+/// operation's task is done. This can be done in this method by calling the super
+/// implementation of execute at the end of the execute method, by calling -(void)finishWithErrors:
+/// directly in the subclass implementation of the execute method, or by calling
+/// -(void)finishWithErrors: from some other method when the operation's task is complete.
+///
 - (void)execute;
 
 
@@ -132,9 +165,7 @@
 /// and any interested parties that the main task of the operation has completed and the
 /// operation is now in a finishing state.
 ///
-/// @discussion This method calls finishing, the subclass
-/// override point. At the beginning of this method, the operation state is VDSOperationFinishing.
-/// At its conclusion, the operation state is VDSOperationFinished.
+/// @discussion This method calls finishing, the subclass override point.
 ///
 /// @param errors An array containing error objects to be added to the operationErrors array.
 - (void)finishWithErrors:(NSArray<NSError*>* _Nullable)errors;
