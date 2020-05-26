@@ -31,7 +31,7 @@ VDSKit includes a set of extended operations modeled on the WWDC 2015 Example Sw
 
 #### Status: Available, 0.1a
 
-Extended Operations are available for use and include tests demonstrating how to use them as well as extensive header documentation.
+Extended Operations are available for use and include tests demonstrating how to use them as well as extensive header documentation and implementation notes.
 
 ## Components: Database Cache
 
