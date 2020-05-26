@@ -9,8 +9,24 @@
 @import Foundation;
 
 
+
+
+
 #pragma mark - VDSOperationDelegate -
 
+/// @summary VDSOperationDelegate provides an interface for customizing
+/// the execution behavior of an operation.
+///
+/// @discussion VDSOperationDelegate provides behavior customization 
+/// control points prior to execution, at the beginning of execution,
+/// at the end of execution (pre-finishing), and before the
+/// operation triggers its completion handlers. When used with
+/// with a concrete VDSOperation subclass like VDSBlockOperation,
+/// the delegate provides a way to create significant customization
+/// without the need to create subclasses of VDSOpertion. In many cases
+/// this is a better design strategy than creating numerous one-off
+/// subclasses.
+///
 @protocol VDSOperationDelegate <NSObject>
 
 @optional
@@ -25,6 +41,7 @@
 /// possible prior to the main or execute method being called.
 ///
 /// @param operation The operation that will begin execution.
+///
 - (void)operationWillStart:(VDSOperation* _Nonnull)operation;
 
 
@@ -38,6 +55,7 @@
 /// method being called.
 ///
 /// @param operation The operation that began execution.
+///
 - (void)operationDidStart:(VDSOperation* _Nonnull)operation;
 
 
@@ -49,6 +67,7 @@
 /// any other action is taken such as calling the -(void)finishing method.
 ///
 /// @param operation The operation that will finish executing.
+///
 - (void)operationWillFinish:(VDSOperation* _Nonnull)operation;
 
 
@@ -59,6 +78,7 @@
 /// called.
 ///
 /// @param operation The operation that has finished executing.
+///
 - (void)operationDidFinish:(NSOperation* _Nonnull)operation;
 
 
