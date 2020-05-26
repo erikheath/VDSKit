@@ -187,6 +187,9 @@
 /// has been canceled before the start method is called.
 ///
 - (void)start {
+    if ([_delegate respondsToSelector:@selector(operationWillStart:)]) {
+        [_delegate operationWillStart:self];
+    }
     [self evaluateConditions];
     [super start];
     if (self.isCancelled == YES) {
@@ -205,6 +208,9 @@
 ///
 - (void)main
 {
+    if ([_delegate respondsToSelector:@selector(operationDidStart:)]) {
+        [_delegate operationDidStart:self];
+    }
     if (self.errors.count == 0 && self.isCancelled == NO) {
         for (id<VDSOperationObserver>observer in self.observers) {
             if ([observer respondsToSelector:@selector(operationDidStart:)]) {
@@ -253,6 +259,10 @@
 - (void)finishWithErrors:(NSArray<NSError *> *)errors
 {
     [[self mutableArrayValueForKey:NSStringFromSelector(@selector(errors))] addObjectsFromArray:errors];
+    
+    if ([_delegate respondsToSelector:@selector(operationWillFinish:)]) {
+        [_delegate operationWillFinish:self];
+    }
     
     [self finishing];
     
