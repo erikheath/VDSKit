@@ -123,7 +123,7 @@
     
 }
 
-- (void)operationQueue:(VDSOperationQueue * _Nonnull)queue
+- (NSOperation* _Nonnull)operationQueue:(VDSOperationQueue * _Nonnull)queue
       willAddOperation:(NSOperation* _Nonnull)operation {
     
     // All operations should be added as a dependency of the
@@ -139,7 +139,7 @@
         [operation addDependency:_startOperation];
     }
 
-    return;
+    return operation;
 }
 
 

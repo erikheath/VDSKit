@@ -67,19 +67,66 @@
     shouldAddOperation:(NSOperation* _Nonnull)operation;
 
 
-/// Notifies the delegate that the operation queue will add
-/// an operation. Use this method for any additional configuration
-/// of the operation.
+/// @summary Notifies the delegate that the operation queue will add
+/// an operation.
+///
+/// @discussion Use this method for any additional configuration
+/// of the operation or to provide a replacement operation.
+///
+/// @note This method is only called if -(BOOL)operationQueue:shouldAddOperation:
+/// returned YES.
 ///
 /// @param queue The queue to which the operation will be added.
 ///
 /// @param operation The operation that will be added.
 ///
-- (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
+/// @return The operation that will be added. Either the original, or a
+/// substitution.
+///
+- (NSOperation* _Nonnull)operationQueue:(VDSOperationQueue* _Nonnull)queue
       willAddOperation:(NSOperation* _Nonnull)operation;
 
 
-/// Notifies the delegate that an operation on the queue finished.
+/// @summary Notifies the delegate that an operation on the queue is
+/// about to begin executing. This is a forwarding of the
+/// -(void)operationWillStart: VDSOperation delegate method.
+///
+/// @param queue The queue on which the operation executed.
+///
+/// @param operation The operation that finished.
+///
+- (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
+    operationWillStart:(NSOperation* _Nonnull)operation;
+
+
+/// @summary Notifies the delegate that an operation on the queue has
+/// begun executing. This is a forwarding of the
+/// -(void)operationDidStart: VDSOperation delegate method.
+///
+/// @param queue The queue on which the operation executed.
+///
+/// @param operation The operation that finished.
+///
+- (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
+    operationDidStart:(NSOperation* _Nonnull)operation;
+
+
+/// @summary Notifies the delegate that an operation on the queue is
+/// finishing its execution. This is a forwarding of the
+/// -(void)operationWillFinish: VDSOperation delegate method.
+///
+/// @param queue The queue on which the operation executed.
+///
+/// @param operation The operation that finished.
+///
+- (void)operationQueue:(VDSOperationQueue* _Nonnull)queue
+    operationWillFinish:(NSOperation* _Nonnull)operation;
+
+
+
+/// @summary Notifies the delegate that an operation on the queue has
+/// finished. This is a forwarding of the
+/// -(void)operationDidFinish: VDSOperation delegate method.
 ///
 /// @param queue The queue on which the operation executed.
 ///
