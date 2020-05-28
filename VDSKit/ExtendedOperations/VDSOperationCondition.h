@@ -10,6 +10,10 @@
 
 #import "VDSOperation.h"
 
+
+
+
+
 #pragma mark - VDSOperationCondition -
 
 @interface VDSOperationCondition : NSObject
@@ -32,16 +36,23 @@
                                  error:(NSError* __autoreleasing _Nullable * _Nullable)error;
 
 
-/// The name of the condition that will be used in error reporting.
+#pragma mark - Properties
+
+/// @summary The name of the condition that will be used in error reporting.
 ///
 @property(class, strong, readonly, nonnull) NSString* conditionName;
 
 
 /// @summary YES if multiple instances of an operation may execute concurrently, NO if only
-/// one instance of an operation may execute at any one time. This affects all
-/// VDSOperation instances that are added to any VDSOperationQueue.
+/// one instance of an operation may execute at any one time.
+///
+/// @note This affects all VDSOperation instances that are added to any VDSOperationQueue.
 ///
 @property(class, readonly) BOOL isMutuallyExclusive;
+
+
+
+#pragma mark - Main Behaviors
 
 /// @summary In many cases, a condition can be satisfied if a dependent operation is run
 /// before the conditional operation is run. To accomplish this, a condition can
@@ -71,7 +82,12 @@
 ///
 /// @returns YES if the condition was satisfied, otherwise NO.
 ///
+/// @throws If the NS_BLOCK_ASSERTIONS macro is not defined, will throw
+/// NSInternalInconsistency exception if operation is nil.
+///
 - (BOOL)evaluateForOperation:(VDSOperation* _Nonnull)operation
                        error:(NSError* __autoreleasing _Nullable * _Nullable)error;
+
+
 
 @end
