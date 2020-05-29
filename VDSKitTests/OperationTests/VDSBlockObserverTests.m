@@ -28,9 +28,8 @@
     XCTAssertThrowsSpecific([[VDSBlockObserver alloc] init], NSException);
 
     
-    observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:nil finishOperationHandler:nil];
-    XCTAssertNil(observer.didStartOperationHandler);
-    XCTAssertNil(observer.didFinishOperationHandler);
+    XCTAssertThrowsSpecific([[VDSBlockObserver alloc] initWithStartOperationHandler:nil finishOperationHandler:nil], NSException);
+    
     
 }
 

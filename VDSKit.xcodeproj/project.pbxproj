@@ -188,13 +188,13 @@
 			path = OperationTests;
 			sourceTree = "<group>";
 		};
-		033B1A732463656400E5589B /* DatabaseTests */ = {
+		033B1A732463656400E5589B /* DatabaseCacheTests */ = {
 			isa = PBXGroup;
 			children = (
 				033B1A742463658200E5589B /* VDSDatabaseCacheTests.m */,
 				033B1A76246365B900E5589B /* VDSExpirableObjectTests.m */,
 			);
-			path = DatabaseTests;
+			path = DatabaseCacheTests;
 			sourceTree = "<group>";
 		};
 		036C332124491D640021346C = {
@@ -234,7 +234,7 @@
 		036C333824491D640021346C /* VDSKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				033B1A732463656400E5589B /* DatabaseTests */,
+				033B1A732463656400E5589B /* DatabaseCacheTests */,
 				036C333B24491D640021346C /* Info.plist */,
 				033B1A722463651400E5589B /* OperationTests */,
 			);

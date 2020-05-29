@@ -78,7 +78,11 @@
     XCTAssertNotNil(operation.observers);
     XCTAssertEqual(operation.observers.count, 0);
     
-    VDSBlockObserver* observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:nil finishOperationHandler:nil];
+    VDSBlockObserver* observer = [[VDSBlockObserver alloc] initWithStartOperationHandler:^(VDSOperation * _Nonnull startOperation) {
+        return;
+    } finishOperationHandler:^(VDSOperation * _Nonnull finishOperation) {
+        return;
+    }];
     XCTAssertNotNil(observer);
     
     [operation addObserver:observer];
@@ -108,16 +112,13 @@
     XCTWaiter* waiter = [[XCTWaiter alloc] initWithDelegate:self];
     [queue addOperation:operation];
     [waiter waitForExpectations:@[expectation] timeout:10];
-    
-    XCTAssertThrowsSpecificNamed([operation addObserver:observer], NSException, NSInternalInconsistencyException);
-    
+        
     expectation = [[XCTKVOExpectation alloc] initWithKeyPath:NSStringFromSelector(@selector(isFinished)) object:operation expectedValue:@(YES)];
     waiter = [[XCTWaiter alloc] initWithDelegate:self];
     
     [queue setSuspended:NO];
     [waiter waitForExpectations:@[expectation] timeout:10];
     
-    XCTAssertThrowsSpecificNamed([operation addObserver:observer], NSException, NSInternalInconsistencyException);
 }
 
 - (void)testAddCompletionBlock {

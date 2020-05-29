@@ -139,16 +139,7 @@
     /// is only done once in the lifetime of the operation.
     ///
     NSAssert([observer conformsToProtocol:@protocol(VDSOperationObserver)], VDS_UNEXPECTED_ARGUMENT_TYPE_MESSAGE(observer, @"observer", _cmd, NSStringFromProtocol(@protocol(VDSOperationObserver))));
-    
-    /// The operation must not be enqueued to add an observer.
-    /// If it is, there is likely a race condition or other programmer error.
-    /// The reason for this requirement is that when the operation is being
-    /// enqueued, the VDSOperationQueue is coordinating the processing of the
-    /// observers. Once that processing has begun, a new observer is unlikely
-    /// to make it in to the set processed by the queue. Also, this processing
-    /// is only done once in the lifetime of the operation.
-    ///
-    NSAssert(!self.enqueued, VDS_OPERATION_COULD_NOT_ADD_OBSERVER_MESSAGE(self.name, observer));
+
 
     [[self mutableArrayValueForKey:NSStringFromSelector(@selector(observers))] addObject:observer];
 
