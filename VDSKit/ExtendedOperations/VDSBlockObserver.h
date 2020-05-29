@@ -50,10 +50,14 @@
 ///
 /// @param finishOperationHandler The block to execute when the operation finishes.
 ///
-/// @returns An instance of VDSBlockObserver.
+/// @returns An instance of VDSBlockObserver, or if both startOperationHandler and finishOperationHandler
+/// are nil, then the method returns nil.
 ///
-- (instancetype _Nonnull )initWithStartOperationHandler:(void(^_Nullable)(VDSOperation* _Nonnull startOperation))startOperationHandler
-                                 finishOperationHandler:(void(^_Nullable)(VDSOperation* _Nonnull finishOperation))finishOperationHandler;
+/// @throws If the NS_BLOCK_ASSERTIONS macro is not defined, will throw
+/// NSInternalInconsistency exception if both startOperationHandler and finishOpertionHandler are nil.
+///
+- (instancetype _Nullable )initWithStartOperationHandler:(void(^_Nullable)(VDSOperation* _Nonnull startOperation))startOperationHandler
+                                 finishOperationHandler:(void(^_Nullable)(VDSOperation* _Nonnull finishOperation))finishOperationHandler NS_DESIGNATED_INITIALIZER;
 
 
 @end

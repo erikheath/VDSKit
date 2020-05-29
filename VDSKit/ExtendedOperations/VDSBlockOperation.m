@@ -10,13 +10,23 @@
 
 @implementation VDSBlockOperation
 
+
+/// Init is overridden because all properties in this class are readonly
+/// and can only be set when initializing. Because of this, calling
+/// -(instancetype)init makes no sense, so an assertion is included
+/// in an override as a debug warning.
+///
 - (instancetype _Nullable)init
 {
     NSAssert(NO, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
-    return nil;
+    id block = nil;
+    return [self initWithBlock:block];
 }
 
-- (instancetype _Nullable)initWithBlock:(void (^_Nullable)(void(^ _Nonnull)(void)))block {
+
+/// Even if assertions are stripped, this will still return a nil.
+///
+- (instancetype _Nullable)initWithBlock:(void (^_Nonnull)(void(^ _Nonnull)(void)))block {
     NSAssert(block != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
     
     self = block != nil ? [super init] : nil;
@@ -26,7 +36,11 @@
     return self;
 }
 
-- (instancetype _Nullable)initWithMainQueueBlock:(void (^)(void))block {
+
+/// Even if assertions are stripped, this will still return a nil.
+///
+- (instancetype _Nullable)initWithMainQueueBlock:(void (^_Nonnull)(void))block {
+    
     NSAssert(block != nil, VDS_NIL_ARGUMENT_MESSAGE(nil, _cmd));
 
     self = block != nil ? [super init] : nil;
@@ -44,6 +58,7 @@
     }
     return self;
 }
+
 
 - (void)execute {
     if (_task == nil) {
