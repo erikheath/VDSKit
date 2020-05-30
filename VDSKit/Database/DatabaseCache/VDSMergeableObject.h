@@ -1,5 +1,5 @@
 //
-//  VDSMergableObject.h
+//  VDSMergeableObject.h
 //  VDSKit
 //
 //  Created by Erikheath Thomas on 5/8/20.
@@ -9,12 +9,12 @@
 @import Foundation;
 
 
-/// @summary The VDSMergableObject protocol provides a mechanism for objects
+/// @summary The VDSMergeableObject protocol provides a mechanism for objects
 /// stored in a VDSDatabaseCache to provide merging functionality when
 /// object updates occur.
 ///
 /// @discussion During an object update, keys are requested from the
-/// incoming object using the (NSArray*)mergableKeys method which should
+/// incoming object using the (NSArray*)mergeableKeys method which should
 /// provide a list of all keys in the updated data that will be applied to
 /// the existing cached object.
 ///
@@ -25,7 +25,7 @@
 /// or set the value to nil. To keep keys in a dictionary but indicate a null value, use
 /// NSNull as the value.
 ///
-@protocol VDSMergableObject <NSObject>
+@protocol VDSMergeableObject <NSObject>
 
 @required
 
@@ -42,7 +42,7 @@
 /// @summary The property keys that correspond to values that will be updated in
 /// an updatable object.
 ///
-- (NSArray* _Nonnull)mergableKeys;
+- (NSArray* _Nonnull)mergeableKeys;
  
 
 @end

@@ -11,7 +11,7 @@
 #import "../../VDSErrorConstants.h"
 #import "VDSExpirableObject.h"
 #import "VDSDatabaseCacheConfiguration.h"
-#import "VDSMergableObject.h"
+#import "VDSMergeableObject.h"
 
 
 @interface VDSDatabaseCache ()
@@ -349,10 +349,10 @@
     id cachedObject = [_cacheObjects objectForKey:key];
     if (cachedObject != nil &&
         _configuration.replacesObjectsOnUpdate == NO &&
-        [object conformsToProtocol:@protocol(VDSMergableObject)] &&
-        [cachedObject conformsToProtocol:@protocol(VDSMergableObject)]) {
+        [object conformsToProtocol:@protocol(VDSMergeableObject)] &&
+        [cachedObject conformsToProtocol:@protocol(VDSMergeableObject)]) {
         id mergableObject = (id<VDSMergableObject>)object;
-        for (id key in [mergableObject mergableKeys]) {
+        for (id key in [mergableObject mergeableKeys]) {
             id value = [mergableObject valueForKey:key];
             [cachedObject mergeValue:value forKey:key];
         }

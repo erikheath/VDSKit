@@ -8,13 +8,14 @@
 
 @import Foundation;
 
-#import "VDSConstants.h"
 
 @class VDSDatabaseCache;
 @class VDSDatabaseCacheConfiguration;
 @class VDSExpirableObject;
 @protocol VDSDatabaseCacheDelegate;
 @protocol VDSMergableObject;
+
+
 
 
 
