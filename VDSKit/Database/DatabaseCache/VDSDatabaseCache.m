@@ -238,8 +238,8 @@
     if (_configuration.tracksObjectUsage) {
         for (VDSExpirableObject* object in _expirationTable) {
             if (object.isExpired &&
-                [object.expiration compare:_priorEvictionTime] == NSOrderedAscending &&
-                [object.expiration compare:_priorEvictionTime] == NSOrderedSame) {
+                ([object.expiration compare:_priorEvictionTime] == NSOrderedAscending ||
+                [object.expiration compare:_priorEvictionTime] == NSOrderedSame)) {
                 /// This is the first eviction cycle where the object is expired. Decrement its usage count
                 /// to account for initial use increment when the object was added to the object cache.
                 [self decrementUsageCount:object.object];

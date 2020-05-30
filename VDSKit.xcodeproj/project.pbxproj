@@ -49,6 +49,8 @@
 		036C335024491EA90021346C /* VDSDatabaseOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C334E24491EA90021346C /* VDSDatabaseOperationManager.m */; };
 		036C3360244A2AF80021346C /* VDSErrorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C335F244A2AF80021346C /* VDSErrorConstants.m */; };
 		036C3362244A3D760021346C /* VDSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 036C3361244A3D760021346C /* VDSConstants.m */; };
+		038272942481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 038272932481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m */; };
+		038272962481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m in Sources */ = {isa = PBXBuildFile; fileRef = 038272952481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m */; };
 		03AF92DC244E5DD400E38623 /* VDSDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */; };
 		03AF92DD244E5DD400E38623 /* VDSDatabaseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */; };
 		03AF92E52451489700E38623 /* VDSOperationQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 03AF92E32451489700E38623 /* VDSOperationQueue.h */; };
@@ -119,6 +121,8 @@
 		036C335E244A28960021346C /* VDSErrorConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSErrorConstants.h; sourceTree = "<group>"; };
 		036C335F244A2AF80021346C /* VDSErrorConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSErrorConstants.m; sourceTree = "<group>"; };
 		036C3361244A3D760021346C /* VDSConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSConstants.m; sourceTree = "<group>"; };
+		038272932481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseCacheConfigurationTests.m; sourceTree = "<group>"; };
+		038272952481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSMutableDatabaseCacheConfigurtion.m; sourceTree = "<group>"; };
 		0387E07F247AF596002519CE /* VDSExtendedOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSExtendedOperations.h; sourceTree = "<group>"; };
 		0387E080247AF6B7002519CE /* VDSCachingSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSCachingSupport.h; sourceTree = "<group>"; };
 		03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseCache.h; sourceTree = "<group>"; };
@@ -193,6 +197,8 @@
 			children = (
 				033B1A742463658200E5589B /* VDSDatabaseCacheTests.m */,
 				033B1A76246365B900E5589B /* VDSExpirableObjectTests.m */,
+				038272932481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m */,
+				038272952481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m */,
 			);
 			path = DatabaseCacheTests;
 			sourceTree = "<group>";
@@ -438,6 +444,8 @@
 			files = (
 				032ADF44245DD90C008186D3 /* VDSOperationQueueTests.m in Sources */,
 				032ADF4C245DD968008186D3 /* VDSMutexConditionTests.m in Sources */,
+				038272942481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m in Sources */,
+				038272962481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m in Sources */,
 				032ADF4A245DD952008186D3 /* VDSGroupOperationTests.m in Sources */,
 				032ADF48245DD936008186D3 /* VDSBlockOperationTests.m in Sources */,
 				032ADF46245DD920008186D3 /* VDSBlockObserverTests.m in Sources */,

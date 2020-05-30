@@ -12,7 +12,6 @@
 
 @interface VDSDatabaseCacheConfiguration()
 
-
 @end
 
 
@@ -48,9 +47,9 @@
         _evictsOnLowMemory = [dictionary[VDSCacheEvictsOnLowMemoryKey] boolValue];
         _tracksObjectUsage = [dictionary[VDSCacheTracksObjectUsageKey] boolValue];
         _evictsObjectsInUse = [dictionary[VDSCacheEvictsObjectsInUseKey] boolValue];
-        _replacesObjectsOnUpdate = [dictionary[VDSCacheReplacesObjectsOnUpdateKey] boolValue];
+        _replacesObjectsOnUpdate = dictionary[VDSCacheReplacesObjectsOnUpdateKey] != nil ?  [dictionary[VDSCacheReplacesObjectsOnUpdateKey] boolValue] : YES;
         _evictionInterval = [dictionary[VDSCacheEvictionIntervalKey] doubleValue];
-        _archivesUntrackedObjects = [dictionary[VDSCacheArchivesUntrackedObjectsKey] boolValue];
+        _archivesUntrackedObjects = dictionary[VDSCacheArchivesUntrackedObjectsKey] != nil ? [dictionary[VDSCacheArchivesUntrackedObjectsKey] boolValue] : YES;
         _expirationTimingMapKey = [dictionary[VDSCacheExpirationTimingMapExpressionKey] copy];
         _expirationTimingMap = [dictionary[VDSCacheExpirationTimingMapKey] copy];
     }

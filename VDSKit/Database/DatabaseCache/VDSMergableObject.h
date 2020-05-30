@@ -29,7 +29,7 @@
 
 @required
 
-/// Merges the value for the key into receiver.
+/// @summary Merges the value for the key into receiver.
 ///
 /// @param value The value that should be merged into receiver.
 ///
@@ -39,7 +39,7 @@
 - (void)mergeValue:(id _Nullable)value forKey:(NSString* _Nonnull)key;
 
 
-/// The property keys that correspond to values that will be updated in
+/// @summary The property keys that correspond to values that will be updated in
 /// an updatable object.
 ///
 - (NSArray* _Nonnull)mergableKeys;

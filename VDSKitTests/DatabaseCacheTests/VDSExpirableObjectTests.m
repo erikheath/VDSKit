@@ -30,7 +30,7 @@
     object = nil;
     date = nil;
     XCTAssertThrowsSpecificNamed([[VDSExpirableObject alloc] initWithExpiration:date object:object], NSException, NSInternalInconsistencyException);
-
+    
     // Test wrong value type
     id nonDate = [NSObject new];
     object = [NSObject new];

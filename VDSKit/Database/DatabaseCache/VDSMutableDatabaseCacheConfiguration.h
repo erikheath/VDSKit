@@ -19,7 +19,7 @@
 ///
 /// Corresponds to the VDSExpiresObjectKey.
 ///
-@property(readwrite) BOOL expiresObjects;
+@property(readwrite, nonatomic) BOOL expiresObjects;
 
 
 /// @summary Indicates the preferred maximum number of objects the cache should hold.
@@ -34,7 +34,7 @@
 ///
 /// Corresponds to the VDSPreferredMaxObjectCountKey.
 ///
-@property(readwrite) NSInteger preferredMaxObjectCount;
+@property(readwrite, nonatomic) NSInteger preferredMaxObjectCount;
 
 
 /// @summary Determines whether objects will be selected for eviction in LIFO (last in, first out)
@@ -43,7 +43,7 @@
 ///
 /// Corresponds to the VDSEvictionPolicyKey.
 ///
-@property(readwrite) VDSEvictionPolicy evictionPolicy;
+@property(readwrite, nonatomic) VDSEvictionPolicy evictionPolicy;
 
 
 /// @summary Determines whether the cache will dispatch an eviction operation when a low memory notification
@@ -51,7 +51,7 @@
 ///
 /// Corresponds to the VDSEvictsOnLowMemoryKey.
 ///
-@property(readwrite) BOOL evictsOnLowMemory;
+@property(readwrite, nonatomic) BOOL evictsOnLowMemory;
 
 
 /// @summary Determines whether the cache tracks objects that are in use by setting up
@@ -64,7 +64,7 @@
 ///
 /// Corresponds to the VDSTracksObjectUsageKey.
 ///
-@property(readwrite) BOOL tracksObjectUsage;
+@property(readwrite, nonatomic) BOOL tracksObjectUsage;
 
 
 /// @summary Determines whether the cache will evict objects that have a usage value of one (1)
@@ -72,7 +72,7 @@
 ///
 /// Corresponds to the VDSEvictsObjectsInUseKey.
 ///
-@property(readwrite) BOOL evictsObjectsInUse;
+@property(readwrite, nonatomic) BOOL evictsObjectsInUse;
 
 
 /// @summary Determines whether an object will be replaced or have its current values merged
@@ -89,7 +89,7 @@
 ///
 /// Corresponds to the VDSReplacesObjectsOnUpdateKey.
 ///
-@property(readwrite) BOOL replacesObjectsOnUpdate;
+@property(readwrite, nonatomic) BOOL replacesObjectsOnUpdate;
 
 
 /// @summary The dispatch interval, in seconds, between eviction operations.
@@ -97,7 +97,7 @@
 ///
 /// Corresponds to the VDSEvictionIntervalKey.
 ///
-@property(readwrite) NSTimeInterval evictionInterval;
+@property(readwrite, nonatomic) NSTimeInterval evictionInterval;
 
 
 /// Determines whether the cache will archive untracked objects when encoding itself.
@@ -105,7 +105,7 @@
 ///
 /// Corresponds to the VDSArchivesUntrackedObjectsKey.
 ///
-@property(readwrite) BOOL archivesUntrackedObjects;
+@property(readwrite, nonatomic) BOOL archivesUntrackedObjects;
 
 
 /// @summary An expression that must evaluate to one of the keys used in the expirationTimingMap.
@@ -113,7 +113,7 @@
 /// a context object that contains the incoming object associated with VDSEntrySnapshotKey.
 /// Setting expiresObjects to YES will initialize the expirationTable, otherwise the default value is nil.
 ///
-@property(strong, readwrite, nullable) NSExpression* expirationTimingMapKey;
+@property(strong, readwrite, nullable, nonatomic) NSExpression* expirationTimingMapKey;
 
 
 /// @summary A map of expressions that evaluate to an expriation date for incoming objects
@@ -122,9 +122,7 @@
 /// a context object that contains a the incoming object associated with VDSEntrySnapshotKey.
 /// Setting expiresObjects to YES will initialize the expirationTable, otherwise the default value is nil.
 ///
-@property(strong, readwrite, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
-
-
+@property(strong, readwrite, nullable, nonatomic) NSDictionary<id, NSExpression*>* expirationTimingMap;
 
 @end
 

@@ -10,7 +10,20 @@
 #import "VDSConstants.h"
 
 
-@interface VDSDatabaseCacheConfiguration : NSObject <NSCopying, NSMutableCopying, NSSecureCoding>
+@interface VDSDatabaseCacheConfiguration : NSObject <NSCopying, NSMutableCopying, NSSecureCoding> {
+    @protected
+    BOOL _expiresObjects;
+    NSInteger _preferredMaxObjectCount;
+    VDSEvictionPolicy _evictionPolicy;
+    BOOL _evictsOnLowMemory;
+    BOOL _tracksObjectUsage;
+    BOOL _evictsObjectsInUse;
+    BOOL _replacesObjectsOnUpdate;
+    NSTimeInterval _evictionInterval;
+    BOOL _archivesUntrackedObjects;
+    NSExpression* _expirationTimingMapKey;
+    NSDictionary* _expirationTimingMap;
+}
 
 #pragma mark Cache Configuration Properties
 
@@ -19,7 +32,7 @@
 ///
 /// Corresponds to the VDSExpiresObjectKey.
 ///
-@property(readonly) BOOL expiresObjects;
+@property(readonly, nonatomic) BOOL expiresObjects;
 
 
 /// @summary Indicates the preferred maximum number of objects the cache should hold.
@@ -34,7 +47,7 @@
 ///
 /// Corresponds to the VDSPreferredMaxObjectCountKey.
 ///
-@property(readonly) NSInteger preferredMaxObjectCount;
+@property(readonly, nonatomic) NSInteger preferredMaxObjectCount;
 
 
 /// @summary Determines whether objects will be selected for eviction in LIFO (last in, first out)
@@ -43,7 +56,7 @@
 ///
 /// Corresponds to the VDSEvictionPolicyKey.
 ///
-@property(readonly) VDSEvictionPolicy evictionPolicy;
+@property(readonly, nonatomic) VDSEvictionPolicy evictionPolicy;
 
 
 /// @summary Determines whether the cache will dispatch an eviction operation when a low memory notification
@@ -51,7 +64,7 @@
 ///
 /// Corresponds to the VDSEvictsOnLowMemoryKey.
 ///
-@property(readonly) BOOL evictsOnLowMemory;
+@property(readonly, nonatomic) BOOL evictsOnLowMemory;
 
 
 /// @summary Determines whether the cache tracks objects that are in use by setting up
@@ -64,7 +77,7 @@
 ///
 /// Corresponds to the VDSTracksObjectUsageKey.
 ///
-@property(readonly) BOOL tracksObjectUsage;
+@property(readonly, nonatomic) BOOL tracksObjectUsage;
 
 
 /// @summary Determines whether the cache will evict objects that have a usage value of one (1)
@@ -72,7 +85,7 @@
 ///
 /// Corresponds to the VDSEvictsObjectsInUseKey.
 ///
-@property(readonly) BOOL evictsObjectsInUse;
+@property(readonly, nonatomic) BOOL evictsObjectsInUse;
 
 
 /// @summary Determines whether an object will be replaced or have its current values merged
@@ -89,7 +102,7 @@
 ///
 /// Corresponds to the VDSReplacesObjectsOnUpdateKey.
 ///
-@property(readonly) BOOL replacesObjectsOnUpdate;
+@property(readonly, nonatomic) BOOL replacesObjectsOnUpdate;
 
 
 /// @summary The dispatch interval, in seconds, between eviction operations.
@@ -97,7 +110,7 @@
 ///
 /// Corresponds to the VDSEvictionIntervalKey.
 ///
-@property(readonly) NSTimeInterval evictionInterval;
+@property(readonly, nonatomic) NSTimeInterval evictionInterval;
 
 
 /// Determines whether the cache will archive untracked objects when encoding itself.
@@ -105,7 +118,7 @@
 ///
 /// Corresponds to the VDSArchivesUntrackedObjectsKey.
 ///
-@property(readonly) BOOL archivesUntrackedObjects;
+@property(readonly, nonatomic) BOOL archivesUntrackedObjects;
 
 
 /// @summary An expression that must evaluate to one of the keys used in the expirationTimingMap.
@@ -115,7 +128,7 @@
 /// @note Setting expiresObjects to YES requires an expirationTimingMap and expriationTimingMapKey when
 /// configuring a VDSDatabaseCache, otherwise the default value is nil.
 ///
-@property(strong, readonly, nullable) NSExpression* expirationTimingMapKey;
+@property(strong, readonly, nullable, nonatomic) NSExpression* expirationTimingMapKey;
 
 
 /// @summary A map of expressions that evaluate to an expriation date for incoming objects
@@ -126,7 +139,7 @@
 /// @note Setting expiresObjects to YES requires an expirationTimingMap and expriationTimingMapKey when
 /// configuring a VDSDatabaseCache, otherwise the default value is nil.
 ///
-@property(strong, readonly, nullable) NSDictionary<id, NSExpression*>* expirationTimingMap;
+@property(strong, readonly, nullable, nonatomic) NSDictionary<id, NSExpression*>* expirationTimingMap;
 
 
 #pragma mark Object Lifecycle

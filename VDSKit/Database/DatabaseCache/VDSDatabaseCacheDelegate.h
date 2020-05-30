@@ -12,21 +12,21 @@
 #pragma mark - VDSDatabaseCacheDelegate -
 
 
-/// Objects that conform to the VDSDatabaseCacheDelegate protocol can receive messages
+/// @summary Objects that conform to the VDSDatabaseCacheDelegate protocol can receive messages
 /// from a VDSDatabaseCache when the cache engages in its eviction processing.
 ///
 @protocol VDSDatabaseCacheDelegate <NSCacheDelegate>
 
 @optional
 
-/// Allows the delegate to force the cache to skip the current scheduled eviction cycle.
+/// @summary Allows the delegate to force the cache to skip the current scheduled eviction cycle.
 ///
 /// @returns Return YES to allow the cycle to proceed, NO to force the cache to skip the eviction cycle.
 ///
 - (BOOL)databaseCacheShouldBeginEvictionCycle;
 
 
-/// Notifies the delegate that an eviction cycle of type 'cycleKey' is about to begin.
+/// @summary Notifies the delegate that an eviction cycle of type 'cycleKey' is about to begin.
 ///
 /// @param cache The database cache that will be evicting objects.
 ///
@@ -36,7 +36,7 @@
     willBeginEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
 
 
-/// Notifies the delegate that the eviction cycle of type 'cycleKey' has completed.
+/// @summary Notifies the delegate that the eviction cycle of type 'cycleKey' has completed.
 ///
 /// @param cache The database cache that evicted objects
 ///
@@ -46,7 +46,7 @@
     didCompleteEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
 
 
-/// Allows the delegate to determine if a specific object should be evicted from the database cache.
+/// @summary Allows the delegate to determine if a specific object should be evicted from the database cache.
 ///
 /// @param cache The database cache that will be evicting objects.
 ///
@@ -62,7 +62,7 @@
       inEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
 
 
-/// Notifies the delegate that a set of objects will be evicted from the database cache.
+/// @summary Notifies the delegate that a set of objects will be evicted from the database cache.
 ///
 /// @param cache The database cache that will be evicting objects.
 ///
@@ -78,7 +78,7 @@
       inEvictionCycle:(VDSEvictionCycleKey _Nonnull)cycleKey;
 
 
-/// Notifies the delegate that a set of objects was evicted from the datbase cache.
+/// @summary Notifies the delegate that a set of objects was evicted from the datbase cache.
 ///
 /// @param cache The database cache that evicted the objects.
 ///
