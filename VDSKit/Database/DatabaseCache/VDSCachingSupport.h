@@ -21,4 +21,4 @@ FOUNDATION_EXPORT const unsigned char VDSCachingSupportVersionString[];
 #import "VDSDatabaseCacheConfiguration.h"
 #import "VDSMutableDatabaseCacheConfiguration.h"
 #import "VDSExpirableObject.h"
-#import "VDSMergableObject.h"
+#import "VDSMergeableObject.h"

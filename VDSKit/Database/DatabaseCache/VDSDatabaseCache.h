@@ -6,7 +6,7 @@
 //  Copyright © 2020 Erikheath Thomas. All rights reserved.
 //
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 
 @class VDSDatabaseCache;
@@ -29,8 +29,8 @@
 /// manipulation to facade internals.
 ///
 /// @discussion VDSDatabaseCache supports fast enumeration over the contents contained in its cachedObjects
-/// To enumerate only those items that are tracked, use either trackedObjectsAndKeys or trackedObjects.
-/// To enumerate over the items that are not tracked, use untrackedObjectsAndKeys or untrackedObjects.
+/// To enumerate only those items that are tracked, use either trackedObjectsAndKeys, trackedKeys, or trackedObjects.
+/// To enumerate over the items that are not tracked, use untrackedObjectsAndKeys, untrackedKeys, or untrackedObjects.
 ///
 /// The cache also supports archiving of untracked objects when archivesUntrackedObjects is set to YES. To
 /// archive tracked objects, create a subclass of VDSDatabaseCache and override initWithCoder: and
@@ -41,6 +41,9 @@
 /// objects that can be encoded. When decoding in the initWithCoder: method,
 /// make sure to use the setObject:forKey:tracked method to add the objects to the cachedObjects internal
 /// tracking system. Otherwise the formerly tracked objects will become untracked.
+///
+/// The cache is designed to provide constant time adding and accessing of objects O(1). Removal of a cached object
+/// is accomplished in O(logN). The eviction cycle will take longer due to sorting O(N*logN).
 ///
 /// @note Archiving tracked objects can become complicated when expiration is determined by an external
 /// source, such as a remote store or web service. In these instances, it is genrally a good idea to rerequest
@@ -55,6 +58,7 @@
 }
 
 
+
 #pragma mark Delegation
 
 /// @summary A delegate object that conforms to VDSDatabaseCacheDelegate. Use the delegate to
@@ -63,12 +67,21 @@
 @property(weak, readwrite, nullable) id<VDSDatabaseCacheDelegate> delegate;
 
 
+
 #pragma mark Cache Configuration
 
-/// The configuration object used by the cache to configure itself. The cache makes a copy
+/// @summary The configuration object used by the cache to configure itself. The cache makes a copy
 /// of any configuration object passed to it during initialization. This copy is the object
 /// that is returned from this property.
 @property(strong, readonly, nonnull, nonatomic) VDSDatabaseCacheConfiguration* configuration;
+
+
+/// @summary Provides a default expiration interval for all objects added to the cache. This
+/// property is only used when the cache is set to expire objects but does not have
+/// a expiration map.
+///
+@property(readwrite, atomic) NSTimeInterval defaultExpirationInterval;
+
 
 
 #pragma mark Object Lifecycle
@@ -91,6 +104,7 @@
 /// @returns An instance of the cache using the provided configuration.
 ///
 - (instancetype _Nonnull)initWithConfiguration:(VDSDatabaseCacheConfiguration* _Nullable)configuration NS_DESIGNATED_INITIALIZER;
+
 
 
 #pragma mark Eviction Behaviors
@@ -143,7 +157,7 @@
 - (BOOL)incrementUsageCount:(id _Nonnull)key;
 
 
-/// Decrements the usage counter for the object associated with the key.
+/// @summary Decrements the usage counter for the object associated with the key.
 ///
 /// @param key The unique identifier used to store the object in the cache.
 ///
@@ -157,7 +171,7 @@
 /// @summary Adds an object to the cache without tracking, and if necessary evicts
 /// an existing object according to the cache configuration.
 ///
-/// @note This method calls setObject:forKey:tracked setting the tracked parameter
+/// @note This method calls setObject:forKey:tracked:expires: setting the tracked parameter
 /// argument to NO.
 ///
 /// @param object A nonnull object to be tracked by the cache.
@@ -173,6 +187,9 @@
 /// @summary Adds an object to the cache, optionally tracks, and if necessary evicts
 /// an existing object according to the cache configuration.
 ///
+/// @note This method calls setObject:forKey:tracked:expires: setting the expiration parameter
+/// argument to nil.
+///
 /// @param object A nonnull object to be tracked by the cache.
 ///
 /// @param key A nonnull unique key that should be associated with the object
@@ -185,21 +202,46 @@
 - (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key tracked:(BOOL)tracked;
 
 
-/// Removes an object from the cache.
+/// @summary Adds an object to the cache, optionally tracks, and if necessary evicts
+/// an existing object according to the cache configuration.
+///
+/// @note This method adds an object in constant time.
+///
+/// @param object A nonnull object to be tracked by the cache.
+///
+/// @param key A nonnull unique key that should be associated with the object
+/// being tracked. If the key already exists in the cache, the new object is treated as
+/// an update and the values of the new object are either merged with the existing object
+/// or the object is replaced by the new object according to the cache configuration.
+///
+/// @param tracked YES if the object should be tracked, NO otherwise.
+///
+/// @parma expiration An NSDate indicating when the object should be considered expired and
+/// made available for eviction.
+///
+- (void)setObject:(id _Nonnull)object
+           forKey:(id _Nonnull)key
+          tracked:(BOOL)tracked
+          expires:(NSDate* _Nullable)expiration;
+
+
+/// @summary Removes an object from the cache.
+///
+/// @note This method removes an object in constant time.
 ///
 /// @param key The unique key associated with the object in the cache.
 ///
 - (void)removeObjectForKey:(id _Nonnull)key;
 
 
-/// Clears all objects in the cache.
+/// @summary Clears all objects in the cache.
 ///
 - (void)removeAllObjects;
 
 
 #pragma mark Object Access Behaviors
 
-/// Retrieves an object from the cache if it exists. Returns nil otherwise.
+/// @summary Retrieves an object from the cache if it exists. Returns nil otherwise.
 ///
 /// @param key A key used to store an object in the cache.
 ///
@@ -208,14 +250,14 @@
 - (id _Nullable)objectForKey:(id _Nonnull)key;
 
 
-/// Returns all cached objects.
+/// @summary Returns all cached objects.
 ///
 /// @returns A NSArray containing any cached objects. If no cached objects
 /// exist, the array is empty.
 - (NSArray* _Nonnull)allObjects;
 
 
-/// Returns all cached objects that are tracked.
+/// @summary Returns all cached objects that are tracked.
 ///
 /// @warning If the returned array contains an NSNull instance, it means that an error has
 /// occurred in caching an object associated with one or more of the keys.
@@ -225,7 +267,7 @@
 - (NSArray* _Nonnull)trackedObjects;
 
 
-/// Returns all untracked cached objects.
+/// @summary Returns all untracked cached objects.
 ///
 /// @warning If the returned array contains one or more NSNull instances, it means that an error has
 /// occurred in caching an object associated with one or more of the keys.
@@ -235,35 +277,35 @@
 - (NSArray* _Nonnull)untrackedObjects;
 
 
-/// Returns all cached object keys.
+/// @summary Returns all cached object keys.
 ///
 /// @returns A NSArray containing any cached object keys. If no keys
 /// exist, the array is empty.
 - (NSArray* _Nonnull)allKeys;
 
 
-/// Returns all tracked cached object keys.
+/// @summary Returns all tracked cached object keys.
 ///
 /// @returns A NSArray containing any tracked cached object keys. If no keys
 /// exist, the array is empty.
 - (NSArray* _Nonnull)trackedKeys;
 
 
-/// Returns all untracked cached object keys.
+/// @summary Returns all untracked cached object keys.
 ///
 /// @returns A NSArray containing any untracked cached object keys. If no keys
 /// exist, the array is empty.
 - (NSArray* _Nonnull)untrackedKeys;
 
 
-/// Returns all cached objects and their keys.
+/// @summary Returns all cached objects and their keys.
 ///
 /// @returns A NSDictionary containing any cached objects associated with thier keys. If no objects
 /// exist, the array is empty.
 - (NSDictionary* _Nonnull)allObjectsAndKeys;
 
 
-/// Returns all tracked cached objects and their keys.
+/// @summary Returns all tracked cached objects and their keys.
 ///
 /// @returns A NSDictionary containing any tracked cached objects associated with thier keys. If no objects
 /// exist, the array is empty.

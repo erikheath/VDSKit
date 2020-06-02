@@ -49,7 +49,7 @@
         _evictsObjectsInUse = [dictionary[VDSCacheEvictsObjectsInUseKey] boolValue];
         _replacesObjectsOnUpdate = dictionary[VDSCacheReplacesObjectsOnUpdateKey] != nil ?  [dictionary[VDSCacheReplacesObjectsOnUpdateKey] boolValue] : YES;
         _evictionInterval = [dictionary[VDSCacheEvictionIntervalKey] doubleValue];
-        _archivesUntrackedObjects = dictionary[VDSCacheArchivesUntrackedObjectsKey] != nil ? [dictionary[VDSCacheArchivesUntrackedObjectsKey] boolValue] : YES;
+        _archivesUntrackedObjects = [dictionary[VDSCacheArchivesUntrackedObjectsKey] boolValue];
         _expirationTimingMapKey = [dictionary[VDSCacheExpirationTimingMapExpressionKey] copy];
         _expirationTimingMap = [dictionary[VDSCacheExpirationTimingMapKey] copy];
     }

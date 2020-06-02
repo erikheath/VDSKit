@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "VDSConstants.h"
+#import "../../VDSConstants.h"
 
 
 @interface VDSDatabaseCacheConfiguration : NSObject <NSCopying, NSMutableCopying, NSSecureCoding> {

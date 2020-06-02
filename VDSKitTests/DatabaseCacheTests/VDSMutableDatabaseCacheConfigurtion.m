@@ -24,7 +24,7 @@
     VDSMutableDatabaseCacheConfiguration* config = [[VDSMutableDatabaseCacheConfiguration alloc] init];
     XCTAssertNotNil(config);
     XCTAssertFalse(config.expiresObjects);
-    XCTAssertTrue(config.archivesUntrackedObjects);
+    XCTAssertFalse(config.archivesUntrackedObjects);
     XCTAssertFalse(config.evictsOnLowMemory);
     XCTAssertTrue(config.replacesObjectsOnUpdate);
     XCTAssertFalse(config.tracksObjectUsage);
@@ -39,7 +39,7 @@
     config = [VDSMutableDatabaseCacheConfiguration new];
     XCTAssertNotNil(config);
     XCTAssertFalse(config.expiresObjects);
-    XCTAssertTrue(config.archivesUntrackedObjects);
+    XCTAssertFalse(config.archivesUntrackedObjects);
     XCTAssertFalse(config.evictsOnLowMemory);
     XCTAssertTrue(config.replacesObjectsOnUpdate);
     XCTAssertFalse(config.tracksObjectUsage);

@@ -21,6 +21,7 @@ typedef NSString* const VDSEvictionCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSExpirationCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSFIFOPolicyCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSLIFOPolicyCycleKey;
+FOUNDATION_EXPORT VDSEvictionCycleKey VDSOATPolicyCycleKey;
 FOUNDATION_EXPORT VDSEvictionCycleKey VDSUnknownCycleKey;
 
 typedef NSString* const VDSCacheConfigurationKey;
@@ -45,6 +46,7 @@ FOUNDATION_EXPORT VDSCacheConfigurationKey VDSCacheEvictionOperationClassNameKey
 typedef NS_ENUM(NSUInteger, VDSEvictionPolicy) {
     VDSFIFOPolicy = 0,
     VDSLIFOPolicy = 1,
+    VDSOATPolicy = 2,
 };
 
 

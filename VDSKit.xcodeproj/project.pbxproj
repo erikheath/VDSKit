@@ -52,7 +52,7 @@
 		038272942481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 038272932481988200E15D7E /* VDSDatabaseCacheConfigurationTests.m */; };
 		038272962481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m in Sources */ = {isa = PBXBuildFile; fileRef = 038272952481DA3000E15D7E /* VDSMutableDatabaseCacheConfigurtion.m */; };
 		03AF92DC244E5DD400E38623 /* VDSDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */; };
-		03AF92DD244E5DD400E38623 /* VDSDatabaseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */; };
+		03AF92DD244E5DD400E38623 /* VDSDatabaseCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 03AF92DB244E5DD400E38623 /* VDSDatabaseCache.mm */; };
 		03AF92E52451489700E38623 /* VDSOperationQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 03AF92E32451489700E38623 /* VDSOperationQueue.h */; };
 		03AF92E62451489700E38623 /* VDSOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 03AF92E42451489700E38623 /* VDSOperationQueue.m */; };
 		03AF92E92453515300E38623 /* VDSBlockObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 03AF92E72453515300E38623 /* VDSBlockObserver.h */; };
@@ -126,7 +126,7 @@
 		0387E07F247AF596002519CE /* VDSExtendedOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSExtendedOperations.h; sourceTree = "<group>"; };
 		0387E080247AF6B7002519CE /* VDSCachingSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSCachingSupport.h; sourceTree = "<group>"; };
 		03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseCache.h; sourceTree = "<group>"; };
-		03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseCache.m; sourceTree = "<group>"; };
+		03AF92DB244E5DD400E38623 /* VDSDatabaseCache.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VDSDatabaseCache.mm; sourceTree = "<group>"; };
 		03AF92E32451489700E38623 /* VDSOperationQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSOperationQueue.h; sourceTree = "<group>"; };
 		03AF92E42451489700E38623 /* VDSOperationQueue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSOperationQueue.m; sourceTree = "<group>"; };
 		03AF92E72453515300E38623 /* VDSBlockObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSBlockObserver.h; sourceTree = "<group>"; };
@@ -252,7 +252,7 @@
 			children = (
 				0387E080247AF6B7002519CE /* VDSCachingSupport.h */,
 				03AF92DA244E5DD400E38623 /* VDSDatabaseCache.h */,
-				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.m */,
+				03AF92DB244E5DD400E38623 /* VDSDatabaseCache.mm */,
 				033B1A7C2464983E00E5589B /* VDSDatabaseCacheDelegate.h */,
 				033A2D1B24774BD900D52453 /* VDSDatabaseCacheConfiguration.h */,
 				033A2D1C24774BD900D52453 /* VDSDatabaseCacheConfiguration.m */,
@@ -418,7 +418,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03AF92DD244E5DD400E38623 /* VDSDatabaseCache.m in Sources */,
+				03AF92DD244E5DD400E38623 /* VDSDatabaseCache.mm in Sources */,
 				033B1A71246345D400E5589B /* VDSOperationMutexCoordinator.m in Sources */,
 				036C334C24491E790021346C /* VDSDatabaseContext.m in Sources */,
 				036C334824491E570021346C /* VDSDatabase.m in Sources */,
