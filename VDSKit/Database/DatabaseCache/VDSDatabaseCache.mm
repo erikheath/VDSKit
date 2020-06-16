@@ -660,7 +660,7 @@ bool compare_expirations (const void* first, const void* second)
 - (NSArray* _Nonnull)trackedKeys
 {
     [_coordinatorLock lock];
-    NSArray* keys = [_evictionPolicyKeyMap copy];
+    NSArray* keys = NSAllMapTableKeys(_evictionPolicyKeyMap);
     [_coordinatorLock unlock];
     return keys;
 }
@@ -689,9 +689,9 @@ bool compare_expirations (const void* first, const void* second)
 - (NSDictionary* _Nonnull)trackedObjectsAndKeys
 {
     [_coordinatorLock lock];
-    NSArray* trackedKeys = [self trackedKeys];
-    NSMutableDictionary* trackedObjectsAndKeys = [_cacheObjects copy];
-    [trackedObjectsAndKeys removeObjectsForKeys:trackedKeys];
+    NSArray* untrackedKeys = [self untrackedKeys];
+    NSMutableDictionary* trackedObjectsAndKeys = [_cacheObjects mutableCopy];
+    [trackedObjectsAndKeys removeObjectsForKeys:untrackedKeys];
     [_coordinatorLock unlock];
     return trackedObjectsAndKeys;
 }
@@ -700,9 +700,9 @@ bool compare_expirations (const void* first, const void* second)
 - (NSDictionary* _Nonnull)untrackedObjectsAndKeys
 {
     [_coordinatorLock lock];
-    NSArray* untrackedKeys = [self untrackedKeys];
-    NSMutableDictionary* untrackedObjectsAndKeys = [_cacheObjects copy];
-    [untrackedObjectsAndKeys removeObjectsForKeys:untrackedKeys];
+    NSArray* trackedKeys = [self trackedKeys];
+    NSMutableDictionary* untrackedObjectsAndKeys = [_cacheObjects mutableCopy];
+    [untrackedObjectsAndKeys removeObjectsForKeys:trackedKeys];
     [_coordinatorLock unlock];
     return untrackedObjectsAndKeys;
 }
