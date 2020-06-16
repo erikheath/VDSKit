@@ -19,7 +19,6 @@
 		032ADF48245DD936008186D3 /* VDSBlockOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF47245DD936008186D3 /* VDSBlockOperationTests.m */; };
 		032ADF4A245DD952008186D3 /* VDSGroupOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */; };
 		032ADF4C245DD968008186D3 /* VDSMutexConditionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */; };
-		032ADF4E245F4377008186D3 /* VDSOperationIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */; };
 		033A2D1D24774BD900D52453 /* VDSDatabaseCacheConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 033A2D1B24774BD900D52453 /* VDSDatabaseCacheConfiguration.h */; };
 		033A2D1E24774BD900D52453 /* VDSDatabaseCacheConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 033A2D1C24774BD900D52453 /* VDSDatabaseCacheConfiguration.m */; };
 		033A2D2124774BF200D52453 /* VDSMutableDatabaseCacheConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 033A2D1F24774BF200D52453 /* VDSMutableDatabaseCacheConfiguration.h */; };
@@ -82,7 +81,6 @@
 		032ADF47245DD936008186D3 /* VDSBlockOperationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSBlockOperationTests.m; sourceTree = "<group>"; };
 		032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSGroupOperationTests.m; sourceTree = "<group>"; };
 		032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSMutexConditionTests.m; sourceTree = "<group>"; };
-		032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSOperationIntegrationTests.m; sourceTree = "<group>"; };
 		033A2D1B24774BD900D52453 /* VDSDatabaseCacheConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSDatabaseCacheConfiguration.h; sourceTree = "<group>"; };
 		033A2D1C24774BD900D52453 /* VDSDatabaseCacheConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VDSDatabaseCacheConfiguration.m; sourceTree = "<group>"; };
 		033A2D1F24774BF200D52453 /* VDSMutableDatabaseCacheConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VDSMutableDatabaseCacheConfiguration.h; sourceTree = "<group>"; };
@@ -186,7 +184,6 @@
 				032ADF47245DD936008186D3 /* VDSBlockOperationTests.m */,
 				032ADF49245DD952008186D3 /* VDSGroupOperationTests.m */,
 				032ADF4B245DD968008186D3 /* VDSMutexConditionTests.m */,
-				032ADF4D245F4377008186D3 /* VDSOperationIntegrationTests.m */,
 				033B1A5B246220F200E5589B /* VDSOperationConditionTests.m */,
 			);
 			path = OperationTests;
@@ -450,7 +447,6 @@
 				032ADF48245DD936008186D3 /* VDSBlockOperationTests.m in Sources */,
 				032ADF46245DD920008186D3 /* VDSBlockObserverTests.m in Sources */,
 				033B1A752463658200E5589B /* VDSDatabaseCacheTests.m in Sources */,
-				032ADF4E245F4377008186D3 /* VDSOperationIntegrationTests.m in Sources */,
 				033B1A77246365B900E5589B /* VDSExpirableObjectTests.m in Sources */,
 				033B1A5C246220F200E5589B /* VDSOperationConditionTests.m in Sources */,
 				032ADF42245DD8F7008186D3 /* VDSOperationTests.m in Sources */,
@@ -659,10 +655,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/OCMockStatic",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -689,10 +682,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/OCMockStatic",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tether360.dataio.VDSKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

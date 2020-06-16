@@ -18,9 +18,14 @@
 - (void)testBasicInit {
     XCTAssertThrowsSpecificNamed([VDSBlockOperation new], NSException, NSInternalInconsistencyException);
     
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wnonnull"
+    
     XCTAssertThrowsSpecificNamed([[VDSBlockOperation alloc] initWithBlock:nil], NSException, NSInternalInconsistencyException);
     
     XCTAssertThrowsSpecificNamed([[VDSBlockOperation alloc] initWithMainQueueBlock:nil], NSException, NSInternalInconsistencyException);
+    
+    #pragma clang diagnostic pop
     
     void(^block)(void(^)(void)) = ^(void(^finishBlock)(void)){
         return;

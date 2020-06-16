@@ -12,7 +12,7 @@
 #import "VDSExpirableObject.h"
 #import "VDSDatabaseCacheConfiguration.h"
 #import "VDSMergeableObject.h"
-
+#import "objc/runtime.h"
 
 #include <list>
 
@@ -523,15 +523,15 @@ bool compare_expirations (const void* first, const void* second)
     /// speed up eviction.
     std::list<void*>::iterator* iterP = ((std::list<void*>::iterator*)NSMapGet(_expirationMap, (__bridge void*)key));
     if (iterP != NULL) {
-        VDSExpirableObject* object = (VDSExpirableObject*)CFBridgingRelease(**iterP);
+        VDSExpirableObject* object = (__bridge_transfer VDSExpirableObject*)(**iterP);
         object = nil;
         _expireList->erase(*iterP);
         NSMapRemove(_expirationMap, (__bridge void*)key);
     }
 
     
-    /// Begin with the default expiration.
-    NSDate* expires = [NSDate dateWithTimeIntervalSinceNow:self.defaultExpirationInterval];
+    /// Determine the expiration.
+    NSDate* expires = nil;
     
     /// If an expiration is provided as a parameter, that overrides all other options.
     if (expiration != nil) {
@@ -541,9 +541,12 @@ bool compare_expirations (const void* first, const void* second)
                                                                   context:[NSMutableDictionary dictionaryWithObject:[_cacheObjects objectForKey:key] forKey:VDSEntrySnapshotKey]];
         expires = [_expirationTimingMap[timingKey] expressionValueWithObject:key
                                                                      context:[NSMutableDictionary dictionaryWithObject:[_cacheObjects objectForKey:key] forKey:VDSEntrySnapshotKey]];
+    } else {
+        expires = [NSDate dateWithTimeIntervalSinceNow:self.defaultExpirationInterval];
     }
-    void* expirable = (__bridge_retained void*)[[VDSExpirableObject alloc] initWithExpiration:expires object:key];
-    _expireList->push_front(expirable);
+    
+    _expireList->push_front((__bridge_retained void*)[[VDSExpirableObject alloc] initWithExpiration:expires object:key]);
+    
 }
 
 

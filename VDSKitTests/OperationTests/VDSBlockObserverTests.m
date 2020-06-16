@@ -35,7 +35,6 @@
 
 - (void)testHandlers {
     BOOL __block startFlag = NO;
-    BOOL __block produceFlag = NO;
     BOOL __block finishFlag = NO;
 
     void(^start)(VDSOperation*) = ^(VDSOperation* operation){ startFlag = YES; };
@@ -49,7 +48,6 @@
     XCTAssertEqual(observer.didFinishOperationHandler, finish);
     
     VDSOperation* operation = [VDSOperation new];
-    NSOperation* newOperation = [NSOperation new];
     observer.didStartOperationHandler(operation);
     observer.didFinishOperationHandler(operation);
     XCTAssertTrue(startFlag);
