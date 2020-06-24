@@ -10,6 +10,9 @@
 #import "../../VDSKit/VDSKit.h"
 
 
+/// TODO: Add test for set with expiry, process evictions, track usage
+
+
 @interface VDSDatabaseCacheTests : XCTestCase
 
 @end
@@ -59,18 +62,19 @@
 
 }
 
+
 - (void)testCustomInitWithExpiration
 {
     VDSMutableDatabaseCacheConfiguration* config = [VDSMutableDatabaseCacheConfiguration new];
     config.expiresObjects = YES;
-    config.evictionInterval = 0;
+    config.evictionInterval = 6000;
     VDSDatabaseCache* cache = [[VDSDatabaseCache alloc] initWithConfiguration:config];
-    cache.defaultExpirationInterval = 300;
+    cache.defaultExpirationInterval = 3000;
     
     /// Confirm the configuration
     XCTAssertTrue(cache.configuration.expiresObjects);
-    XCTAssertEqual(cache.defaultExpirationInterval, 300);
-    XCTAssertEqual(cache.configuration.evictionInterval, 0);
+    XCTAssertEqual(cache.defaultExpirationInterval, 3000);
+    XCTAssertEqual(cache.configuration.evictionInterval, 6000);
     
     
     /// Add a single object to the cache

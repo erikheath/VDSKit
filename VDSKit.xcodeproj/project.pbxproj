@@ -644,10 +644,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/OCMock/macOS",
-					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
-					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
-					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
 				);
 				INFOPLIST_FILE = VDSKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -671,10 +667,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/OCMock/macOS",
-					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
-					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
-					"$(PROJECT_DIR)/OCMock/iOS\\ framework",
 				);
 				INFOPLIST_FILE = VDSKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
